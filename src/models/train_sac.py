@@ -75,26 +75,6 @@ def train_sac_single_error(
         else:
             progress_printer(progress=progress, real_time_start=real_time_start, logger=logger)
 
-    def policy_training_criterion() -> bool:
-        """Train policy networks only every k steps and/or only after j total steps to ensure a good value function"""
-        if (
-            simulation_step > config.config_learner.train_policy_after_j_steps
-            and
-            (simulation_step % config.config_learner.train_policy_every_k_steps) == 0
-        ):
-            return True
-        return False
-
-    def value_training_criterion() -> bool:
-        """Train value networks only every k steps and/or only after j total steps"""
-        if (
-            simulation_step > config.config_learner.train_value_after_j_steps
-            and
-            (simulation_step % config.config_learner.train_value_every_k_steps) == 0
-        ):
-            return True
-        return False
-
     def add_mmse_experience():
 
         # this needs to use erroneous csi, otherwise the data distribution in buffer
@@ -170,6 +150,8 @@ def train_sac_single_error(
             pickle.dump(metrics, file=file)
 
     logger = config.logger.getChild(__name__)
+
+    config.config_learner.algorithm_args['network_args']['num_actions'] = 2 * config.sat_nr * config.sat_ant_nr * config.user_nr
 
     satellite_manager = SatelliteManager(config=config)
     user_manager = UserManager(config=config)
@@ -253,12 +235,8 @@ def train_sac_single_error(
             sac.add_experience(experience=step_experience)
 
             # train allocator off-policy
-            train_policy = False
-            if policy_training_criterion():
-                train_policy = True
-            train_value = False
-            if value_training_criterion():
-                train_value = True
+            train_policy = config.config_learner.policy_training_criterion(simulation_step=simulation_step)
+            train_value = config.config_learner.value_training_criterion(simulation_step=simulation_step)
 
             if train_value or train_policy:
                 mean_log_prob_density, value_loss = sac.train(
