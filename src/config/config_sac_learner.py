@@ -130,4 +130,29 @@ class ConfigSACLearner:
                 self.network_args['size_state'] = 2 * sat_nr * sat_ant_nr * user_nr
             elif self.get_state_args['csi_format'] == 'rad_phase_reduced':
                 self.network_args['size_state'] = sat_nr * sat_ant_nr * user_nr + sat_nr * user_nr
-        self.network_args['num_actions'] = 2 * sat_nr * sat_ant_nr * user_nr
+
+    def policy_training_criterion(
+            self,
+            simulation_step
+    ) -> bool:
+        """Train policy networks only every k steps and/or only after j total steps to ensure a good value function"""
+        if (
+                simulation_step > self.train_policy_after_j_steps
+                and
+                (simulation_step % self.train_policy_every_k_steps) == 0
+        ):
+            return True
+        return False
+
+    def value_training_criterion(
+            self,
+            simulation_step
+    ) -> bool:
+        """Train value networks only every k steps and/or only after j total steps"""
+        if (
+                simulation_step > self.train_value_after_j_steps
+                and
+                (simulation_step % self.train_value_every_k_steps) == 0
+        ):
+            return True
+        return False
