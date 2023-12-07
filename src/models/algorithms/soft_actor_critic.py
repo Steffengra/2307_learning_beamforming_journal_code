@@ -91,17 +91,17 @@ class SoftActorCritic:
             )
 
         # compile networks
-        dummy_state = self.rng.random(size_state)
-        dummy_action = self.rng.random(num_actions)
+        dummy_state = self.rng.random((1, size_state), dtype='float32')
+        dummy_action = self.rng.random((1, num_actions), dtype='float32')
         for network_type, network_list in self.networks.items():
             # create dummy input
             if network_type == 'policy':
-                dummy_input = dummy_state[np.newaxis]
+                dummy_input = dummy_state
                 optimizer = policy_network_optimizer
                 optimizer_args = policy_network_optimizer_args
                 # loss = policy_network_loss
             elif network_type == 'value':
-                dummy_input = np.concatenate([dummy_state, dummy_action])[np.newaxis]
+                dummy_input = np.concatenate([dummy_state, dummy_action], axis=1)
                 optimizer = value_network_optimizer
                 optimizer_args = value_network_optimizer_args
                 # loss = value_network_loss
