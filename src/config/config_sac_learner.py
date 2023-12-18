@@ -36,13 +36,14 @@ class ConfigSACLearner:
         self.percentage_mmse_samples_added_to_exp_buffer: float = 0.0  # [0.0, 1.0] chance for mmse action to be added
         self.only_add_mmse_samples_with_greater_reward: bool = True  # only add samples with reward_mmse > reward_sac
 
+        self.action_bound_mode: str or None = 'tanh_positive'  # [>None, 'tanh', 'tanh_positive'] bound the actor NN output?
         self.training_args: dict = {
             'future_reward_discount_gamma': 0.0,  # Exponential future reward discount for stability
-            'entropy_scale_alpha_initial': 1,  # weights the 'soft' entropy penalty against the td error
+            'entropy_scale_alpha_initial': 0.2,  # weights the 'soft' entropy penalty against the td error
             'target_entropy': 1.0,  # SAC heuristic impl. = product of action_space.shape
             'entropy_scale_optimizer': tf.keras.optimizers.SGD,
             'entropy_scale_optimizer_args': {
-                'learning_rate': 1e-3,  # LR=0.0 -> No adaptive entropy scale -> manually tune initial entropy scale
+                'learning_rate': 0.0,  # LR=0.0 -> No adaptive entropy scale -> manually tune initial entropy scale
             },
             'training_minimum_experiences': 1_000,
             'training_batch_size': 1024,
@@ -113,6 +114,7 @@ class ConfigSACLearner:
             **self.training_args,
             'network_args': self.network_args,
             'experience_buffer_args': self.experience_buffer_args,
+            'action_bound_mode': self.action_bound_mode,
         }
 
     def update(

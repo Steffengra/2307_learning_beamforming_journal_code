@@ -84,7 +84,6 @@ class ValueNetwork(tf.keras.Model):
         """Ensure each method is traced once for saving."""
 
         self(inputs)
-        self.call(inputs)
 
 
 class PolicyNetwork(tf.keras.Model):
@@ -164,8 +163,8 @@ class PolicyNetwork(tf.keras.Model):
             inputs,
     ) -> None:
         """Ensure each method is traced once for saving."""
+
         self(inputs)
-        self.call(inputs)
 
 
 class PolicyNetworkSoft(tf.keras.Model):
@@ -283,4 +282,3 @@ class PolicyNetworkSoft(tf.keras.Model):
         """Ensure each method is traced once for saving."""
 
         self(inputs)
-        self.call(inputs)

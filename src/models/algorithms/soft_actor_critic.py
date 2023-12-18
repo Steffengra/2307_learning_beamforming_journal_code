@@ -9,6 +9,10 @@ from src.models.helpers.network_models import (
 from src.models.helpers.experience_buffer import (
     ExperienceBuffer,
 )
+from src.models.helpers.bound_action import (
+    bound_actions,
+    bound_actions_and_log_prob_densities_graph,
+)
 
 
 class SoftActorCritic:
@@ -29,6 +33,7 @@ class SoftActorCritic:
             training_l2_norm_scale_policy: float,
             experience_buffer_args: dict,
             network_args: dict,
+            action_bound_mode: str or None,
     ) -> None:
 
         self.rng = rng
@@ -49,6 +54,16 @@ class SoftActorCritic:
         self.l2_norm_scale_policy = training_l2_norm_scale_policy
 
         self.experience_buffer = ExperienceBuffer(rng=rng, **experience_buffer_args)
+
+        self.bound_actions = lambda actions: bound_actions(
+            actions,
+            mode=action_bound_mode,
+        )
+        self.bound_actions_and_log_prob_densities = lambda actions, action_log_prob_densities: bound_actions_and_log_prob_densities_graph(
+            actions,
+            action_log_prob_densities,
+            mode=action_bound_mode,
+        )
 
         self.networks: dict = {
             'value': [],
@@ -136,10 +151,16 @@ class SoftActorCritic:
             self,
             state: np.ndarray,
     ) -> np.ndarray:
+        """
+        Get action from neural net and convert to flat numpy array.
+        """
+
         actions, _ = self.networks['policy'][0]['primary'].get_action_and_log_prob_density(state=state,
                                                                                            print_stds=False)
 
-        return actions.numpy().flatten()
+        actions_bounded = self.bound_actions(actions.numpy().flatten())
+
+        return actions_bounded
 
     def add_experience(
             self,
@@ -213,6 +234,7 @@ class SoftActorCritic:
                     next_actions,
                     next_action_log_prob_densities,
                 ) = self.networks['policy'][0]['primary'].get_action_and_log_prob_density(state=next_states)
+                next_actions, next_action_log_prob_densities = self.bound_actions_and_log_prob_densities(next_actions, next_action_log_prob_densities)
                 value_network_input = tf.concat([next_states, next_actions], axis=1)
                 next_states_value_estimates_1 = self.networks['value'][0]['target'].call(value_network_input)
                 next_states_value_estimates_2 = self.networks['value'][1]['target'].call(value_network_input)
@@ -260,6 +282,7 @@ class SoftActorCritic:
                     policy_actions,
                     policy_action_log_prob_densities,
                 ) = network.get_action_and_log_prob_density(state=policy_network_input_batch, training=True)
+                policy_actions, policy_action_log_prob_densities = self.bound_actions_and_log_prob_densities(policy_actions, policy_action_log_prob_densities)
                 value_network_input_batch = tf.concat([states, policy_actions], axis=1)
                 # target or primary? primary -> faster updates, target -> stable but delayed
                 value_estimate_1 = self.networks['value'][0]['primary'].call(value_network_input_batch)
