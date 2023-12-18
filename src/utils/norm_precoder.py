@@ -27,9 +27,15 @@ def norm_precoder(
             satellite_index_start = satellite_id * sat_ant_nr
             w_precoder_slice = precoding_matrix[satellite_index_start:satellite_index_start + sat_ant_nr, :]
 
-            norm_factor_slice = np.sqrt(
-                power_constraint_watt / sat_nr / np.trace(np.matmul(w_precoder_slice.conj().T, w_precoder_slice))
-            )
+            trace = np.trace(np.matmul(w_precoder_slice.conj().T, w_precoder_slice))
+
+            if trace > 0:  # case: no power -> prevent error
+                norm_factor_slice = np.sqrt(
+                    power_constraint_watt / sat_nr / np.trace(np.matmul(w_precoder_slice.conj().T, w_precoder_slice))
+                )
+            else:
+                norm_factor_slice = 0.0
+
             w_precoder_slice_normed = norm_factor_slice * w_precoder_slice
 
             normalized_precoder[satellite_index_start:satellite_index_start + sat_ant_nr, :] = w_precoder_slice_normed.copy()  # todo: is copy required here?
