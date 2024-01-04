@@ -13,7 +13,7 @@ from src.analysis.helpers.test_precoder_error_sweep import (
 from src.data.calc_sum_rate import (
     calc_sum_rate,
 )
-from src.models.helpers.learned_precoder import get_learned_precoder_normalized
+from src.models.precoders.learned_precoder import get_learned_precoder_normalized
 
 
 def test_sac_precoder_error_sweep(

@@ -17,7 +17,7 @@ from src.data.channel.get_steering_vec import get_steering_vec
 from src.data.precoder.mmse_precoder import mmse_precoder_normalized
 from src.data.precoder.calc_autocorrelation import calc_autocorrelation
 from src.data.precoder.robust_SLNR_precoder import robust_SLNR_precoder_no_norm
-from src.models.helpers.learned_precoder import get_learned_precoder_normalized
+from src.models.precoders.learned_precoder import get_learned_precoder_normalized
 from src.utils.update_sim import update_sim
 from src.utils.progress_printer import progress_printer
 

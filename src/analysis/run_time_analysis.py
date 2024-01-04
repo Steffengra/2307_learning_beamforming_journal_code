@@ -8,14 +8,13 @@ import numpy as np
 import tensorflow as tf
 from keras.models import load_model
 
-import src
 from src.config.config import Config
 from src.data.satellite_manager import SatelliteManager
 from src.data.user_manager import UserManager
 from src.data.precoder.mmse_precoder import mmse_precoder_normalized
 from src.data.precoder.calc_autocorrelation import calc_autocorrelation
 from src.data.precoder.robust_SLNR_precoder import robust_SLNR_precoder_no_norm
-from src.models.helpers.learned_precoder import get_learned_precoder_normalized
+from src.models.precoders.learned_precoder import get_learned_precoder_normalized
 from src.utils.update_sim import update_sim
 from src.utils.profiling import start_profiling, end_profiling
 
