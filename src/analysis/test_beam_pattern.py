@@ -15,7 +15,8 @@ from src.config.config import Config
 from src.data.precoder.calc_autocorrelation import calc_autocorrelation
 from src.data.precoder.robust_SLNR_precoder import robust_SLNR_precoder_no_norm
 from src.data.precoder.mmse_precoder import mmse_precoder_normalized
-from src.models.helpers.learned_precoder import get_learned_precoder_normalized
+from src.models.precoders.learned_precoder import get_learned_precoder_normalized
+from src.models.precoders.adapted_precoder import adapt_robust_slnr_complete_precoder_normed
 from src.data.calc_sum_rate import calc_sum_rate
 from src.utils.plot_beampattern import plot_beampattern
 from src.utils.update_sim import update_sim
@@ -24,7 +25,8 @@ from src.utils.update_sim import update_sim
 plot = [
     'mmse',
     'slnr',
-    'learned',
+    # 'learned',
+    'slnr_adapted_complete',
     # 'ones',
 ]
 
@@ -38,13 +40,13 @@ config = Config()
 
 model_path = Path(  # SAC only
     config.trained_models_path,
-    '1_sat_10_ant_3_usr_10000_dist_0.0_error_on_cos_0.1_fading',
+    'test',
     'single_error',
-    'userwiggle_5000_snap_3.748',
+    'userwiggle_5000_snap_2.348',
     'model',
 )
 
-if 'learned' in plot:
+if any(value in plot for value in ['learned', 'slnr_adapted_complete']):
     from src.utils.compare_configs import compare_configs
     compare_configs(config, Path(model_path, '..', 'config'))
 
@@ -154,6 +156,42 @@ for iter_id in range(2):
             plot_title='learned',
             angle_sweep_range=angle_sweep_range,
         )
+
+    # learned fully adapted slnr
+    if 'slnr_adapted_complete':
+
+        with tf.device('CPU:0'):
+
+            state = config.config_learner.get_state(
+                satellite_manager=satellite_manager,
+                norm_factors=norm_factors,
+                **config.config_learner.get_state_args
+            )
+
+            w_adapted = adapt_robust_slnr_complete_precoder_normed(
+                satellite=satellite_manager.satellites[0],
+                error_model_config=config.config_error_model,
+                error_distribution='uniform',
+                channel_matrix=satellite_manager.erroneous_channel_state_information,
+                noise_power_watt=config.noise_power_watt,
+                power_constraint_watt=config.power_constraint_watt,
+                scaling_network=precoder_network,
+                scaler_input_state=state,
+                sat_nr=config.sat_nr,
+                sat_ant_nr=config.sat_ant_nr,
+            )
+
+            sum_rate_slnr_adapted_complete = calc_sum_rate(channel_state=satellite_manager.channel_state_information, w_precoder=w_adapted, noise_power_watt=config.noise_power_watt)
+
+            plot_beampattern(
+                satellite=satellite_manager.satellites[0],
+                users=user_manager.users,
+                w_precoder=w_adapted,
+                plot_title='slnr_adapted_complete',
+                angle_sweep_range=angle_sweep_range,
+            )
+
+            print(f'slnr_adapted_complete: {sum_rate_slnr_adapted_complete}')
 
     # Ones
     if 'ones' in plot:

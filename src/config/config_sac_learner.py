@@ -18,12 +18,13 @@ class ConfigSACLearner:
     ) -> None:
 
         self.training_name: str = (
-            '1_sat'
-            '_10_ant'
-            '_3_usr'
-            '_10000_dist'
-            '_0.0_error_on_cos'
-            '_0.1_fading'
+            # '1_sat'
+            # '_10_ant'
+            # '_3_usr'
+            # '_10000_dist'
+            # '_0.0_error_on_cos'
+            # '_0.1_fading'
+            'test'
         )
 
         self.get_state = get_state_erroneous_channel_state_information
@@ -71,7 +72,7 @@ class ConfigSACLearner:
             'value_network_optimizer': tf.keras.optimizers.Adam,
             'value_network_optimizer_args': {
                 # 'learning_rate': 1e-3,
-                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-5,
+                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-4,
                                                                                    first_decay_steps=100),
                 'amsgrad': False,
             },
@@ -85,7 +86,7 @@ class ConfigSACLearner:
             'policy_network_optimizer': tf.keras.optimizers.Adam,
             'policy_network_optimizer_args': {
                 # 'learning_rate': 1e-4,
-                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-6,
+                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-5,
                                                                                    first_decay_steps=100),
                 'amsgrad': True,
             },
