@@ -37,14 +37,14 @@ class ConfigSACLearner:
         self.percentage_mmse_samples_added_to_exp_buffer: float = 0.0  # [0.0, 1.0] chance for mmse action to be added
         self.only_add_mmse_samples_with_greater_reward: bool = True  # only add samples with reward_mmse > reward_sac
 
-        self.action_bound_mode: str or None = 'tanh_positive'  # [>None, 'tanh', 'tanh_positive'] bound the actor NN output?
+        self.action_bound_mode: str or None = None  # [>None, 'tanh', 'tanh_positive'] bound the actor NN output?
         self.training_args: dict = {
             'future_reward_discount_gamma': 0.0,  # Exponential future reward discount for stability
-            'entropy_scale_alpha_initial': 0.2,  # weights the 'soft' entropy penalty against the td error
+            'entropy_scale_alpha_initial': 1.0,  # weights the 'soft' entropy penalty against the td error
             'target_entropy': 1.0,  # SAC heuristic impl. = product of action_space.shape
             'entropy_scale_optimizer': tf.keras.optimizers.SGD,
             'entropy_scale_optimizer_args': {
-                'learning_rate': 0.0,  # LR=0.0 -> No adaptive entropy scale -> manually tune initial entropy scale
+                'learning_rate': 1e-3,  # LR=0.0 -> No adaptive entropy scale -> manually tune initial entropy scale
             },
             'training_minimum_experiences': 1_000,
             'training_batch_size': 1024,
@@ -72,7 +72,7 @@ class ConfigSACLearner:
             'value_network_optimizer': tf.keras.optimizers.Adam,
             'value_network_optimizer_args': {
                 # 'learning_rate': 1e-3,
-                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-4,
+                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-5,
                                                                                    first_decay_steps=100),
                 'amsgrad': False,
             },
@@ -86,14 +86,14 @@ class ConfigSACLearner:
             'policy_network_optimizer': tf.keras.optimizers.Adam,
             'policy_network_optimizer_args': {
                 # 'learning_rate': 1e-4,
-                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-5,
+                'learning_rate': tf.keras.optimizers.schedules.CosineDecayRestarts(initial_learning_rate=7e-6,
                                                                                    first_decay_steps=100),
                 'amsgrad': True,
             },
         }
 
         # TRAINING
-        self.training_episodes: int = 20_000  # a new episode is a full reset of the simulation environment
+        self.training_episodes: int = 13_000  # a new episode is a full reset of the simulation environment
         self.training_steps_per_episode: int = 1_000
 
         self._post_init(sat_nr=sat_nr, sat_ant_nr=sat_ant_nr, user_nr=user_nr)
