@@ -70,8 +70,8 @@ class Config:
         self.user_gain_linear: float = 10**(self.user_gain_dBi / 10)  # User gain linear
 
         # Satellite
-        self.sat_nr: int = 1  # Number of satellites
-        self.sat_tot_ant_nr: int = 16  # Total number of  Tx antennas, should be a number larger than sat nr
+        self.sat_nr: int = 2  # Number of satellites
+        self.sat_tot_ant_nr: int = 4  # Total number of  Tx antennas, should be a number larger than sat nr
         self.sat_gain_dBi: float = 20  # Total sat TODO: Wert nochmal checken
         self.sat_dist_average: float = 10_000  # Average satellite distance in meter
         self.sat_dist_bound: float = 0  # Variance of sat distance, uniform distribution [avg-bound, avg+bound]

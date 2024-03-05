@@ -183,6 +183,13 @@ class SatelliteManager:
         self.erroneous_channel_state_information = np.reshape(
             erroneous_channel_state_per_satellite, (len(users), self.satellites[0].antenna_nr * len(self.satellites)))
 
+    def get_erroneous_channel_state_information_per_sat(
+            self,
+    ) -> list[np.ndarray]:
+
+        erroneous_channel_states = [satellite.erroneous_channel_state_to_users for satellite in self.satellites]
+        return erroneous_channel_states
+
     def get_aods_to_users(
             self,
     ) -> np.ndarray:
