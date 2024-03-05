@@ -35,11 +35,26 @@ def generate_beampatterns(
 ) -> None:
 
     def calc_power_gains(w_precoder):
-        power_gains = np.empty((len(user_manager.users), len(angle_sweep_range)))
+        power_gains = np.empty((len(user_manager.users), len(angle_sweep_range), len(satellite_manager.satellites)))
         for user_idx in range(len(user_manager.users)):
-            for angle_id, angle in enumerate(angle_sweep_range):
-                power_gains[user_idx, angle_id] = abs(
-                    np.matmul(steering_vectors_to_users[user_idx, angle_id, :], w_precoder[:, user_idx])) ** 2
+
+            # slice precoder matrix for this user only
+            w_precoder_user = w_precoder[:, user_idx]
+
+            for satellite_idx, satellite in enumerate(satellite_manager.satellites):
+
+                # slice precoder matrix for this user and satellite only
+                w_precoder_satellite_user = w_precoder_user[satellite_idx*satellite.antenna_nr:satellite_idx*satellite.antenna_nr+satellite.antenna_nr]
+
+                for angle_id, _ in enumerate(angle_sweep_range):
+
+                    power_gains[user_idx, angle_id, satellite_idx] = abs(
+                        np.matmul(
+                            steering_vectors_to_users[user_idx, angle_id, satellite_idx, :],
+                            w_precoder_satellite_user
+                        )
+                    ) ** 2
+
         return power_gains
 
     def save_results():
@@ -50,10 +65,18 @@ def generate_beampatterns(
             pickle.dump([angle_sweep_range, data], file=file)
 
     # todo: hardcoded single satellite
-    steering_vectors_to_users = np.zeros((len(user_manager.users), len(angle_sweep_range), satellite_manager.satellites[0].antenna_nr), dtype='complex')
+    # steering_vectors_to_users = np.zeros((len(user_manager.users), len(angle_sweep_range), satellite_manager.satellites[0].antenna_nr), dtype='complex')
+    steering_vectors_to_users = np.zeros((
+        len(user_manager.users),
+        len(angle_sweep_range),
+        len(satellite_manager.satellites),
+        satellite_manager.satellites[0].antenna_nr
+    ), dtype='complex')  # todo: only works if all satellites have the same antenna nr as sat[0]
     for user in user_manager.users:
-        for angle_id, angle in enumerate(angle_sweep_range):
-            steering_vectors_to_users[user.idx, angle_id, :] = get_steering_vec(satellite=satellite_manager.satellites[0], phase_aod_steering=np.cos(angle))
+        for satellite in satellite_manager.satellites:
+            for angle_id, angle in enumerate(angle_sweep_range):
+                steering_vectors_to_users[user.idx, angle_id, satellite.idx, :] = get_steering_vec(satellite=satellite,
+                                                                                                   phase_aod_steering=np.cos(angle))
 
     learned_models = {}
     for model_name, model_path in learned_model_paths.items():
@@ -79,8 +102,15 @@ def generate_beampatterns(
 
         update_sim(config=config, satellite_manager=satellite_manager, user_manager=user_manager)
 
-        iter_data['estimation_errors'] = satellite_manager.satellites[0].estimation_errors.copy()  # todo hardcoded single sat
-        iter_data['user_positions'] = [satellite_manager.satellites[0].aods_to_users[user_idx].copy() for user_idx in range(len(user_manager.users))]
+        # iter_data['estimation_errors'] = satellite_manager.satellites[0].estimation_errors.copy()  # todo hardcoded single sat
+        iter_data['estimation_errors'] = [satellite.estimation_errors.copy()
+                                          for satellite in satellite_manager.satellites]
+        # iter_data['user_positions'] = [satellite_manager.satellites[0].aods_to_users[user_idx].copy() for user_idx in range(len(user_manager.users))]  # todo hardcoded single sat
+        iter_data['user_positions'] = [
+            [satellite.aods_to_users[user_idx].copy()
+             for user_idx in range(len(user_manager.users))]
+            for satellite in satellite_manager.satellites
+        ]
 
         for learned_model in learned_models:
             state = config.config_learner.get_state(
@@ -156,6 +186,7 @@ def generate_beampatterns(
             }
 
         if generate_ones:
+
             w_ones = np.ones(w_mmse.shape)
 
             sum_rate_ones = calc_sum_rate(
@@ -182,9 +213,9 @@ def generate_beampatterns(
 if __name__ == '__main__':
 
     angle_sweep_range = np.arange(1.2, 1.9, 0.1 * np.pi / 180)
-    num_patterns = 2_000
+    num_patterns = 10
     generate_mmse = True
-    generate_slnr = True
+    generate_slnr = False
     generate_ones = True
 
     config = Config()
@@ -202,20 +233,28 @@ if __name__ == '__main__':
 
     # todo: models currently must have the same get_state config
     model_paths = {
-        'learned_0.0_error':
+        # 'learned_0.0_error':
+        #     Path(
+        #         config.trained_models_path,
+        #         '1_sat_16_ant_3_usr_100000_dist_0.0_error_on_cos_0.1_fading',
+        #         'single_error',
+        #         'userwiggle_50000_snap_4.565',
+        #         'model',
+        #     ),
+        # 'learned_0.5_error':
+        #     Path(
+        #         config.trained_models_path,
+        #         '1_sat_16_ant_3_usr_100000_dist_0.05_error_on_cos_0.1_fading',
+        #         'single_error',
+        #         'userwiggle_50000_snap_2.710',
+        #         'model',
+        #     ),
+        'test':
             Path(
                 config.trained_models_path,
-                '1_sat_16_ant_3_usr_100000_dist_0.0_error_on_cos_0.1_fading',
+                'error_0.0',
                 'single_error',
-                'userwiggle_50000_snap_4.565',
-                'model',
-            ),
-        'learned_0.5_error':
-            Path(
-                config.trained_models_path,
-                '1_sat_16_ant_3_usr_100000_dist_0.05_error_on_cos_0.1_fading',
-                'single_error',
-                'userwiggle_50000_snap_2.710',
+                'userwiggle_50000_snap_4.539',
                 'model',
             ),
     }

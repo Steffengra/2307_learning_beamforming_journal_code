@@ -63,7 +63,7 @@ def plot_beam_patterns(
             ax = axes
 
         # User positions
-        for user_id, user_position in enumerate(data[realization]['user_positions']):
+        for user_id, user_position in enumerate(data[realization]['user_positions'][0]):  # todo: fix this for multi sat
             if user_id == 0:
                 label = 'Users'
             else:
@@ -85,6 +85,11 @@ def plot_beam_patterns(
 
         # Beam patterns
         for precoder_id, precoder in enumerate(precoders):
+            num_users = data[realization][precoder]['power_gains'].shape[0]
+            num_satellites = data[realization][precoder]['power_gains'].shape[2]
+
+            print(num_users)
+            print(num_satellites)
             for user_id in range(data[realization][precoder]['power_gains'].shape[0]):
                 if user_id == 0:
                     label = label_dict[precoder]
@@ -95,12 +100,12 @@ def plot_beam_patterns(
 
                 ax.plot(
                     angle_sweep_range,
-                    data[realization][precoder]['power_gains'][user_id],
+                    data[realization][precoder]['power_gains'][user_id, :, 0],  # todo: do we just add all sats here for multisat?
                     label=label,
                     color=color_dict[precoder],
                     linestyle=line_style_dict[precoder],
                     marker=marker_style_dict[precoder],
-                    markevery=[peak],
+                    # markevery=[peak],  # todo: fix this, probably broke with numpy update
                 )
 
             print(f'{precoder} sum rate: {data[realization][precoder]["sum_rate"]}')
@@ -118,7 +123,7 @@ def plot_beam_patterns(
 
     fig.tight_layout(pad=0)
 
-    save_figures(plots_parent_path=plots_parent_path, plot_name=name, padding=0)
+    # save_figures(plots_parent_path=plots_parent_path, plot_name=name, padding=0)
 
 
 def print_realizations(
@@ -130,9 +135,11 @@ def print_realizations(
 
     for date_entry_id, data_entry in enumerate(data):
         print(f'{date_entry_id}', '', end='')
-        for error in data_entry['estimation_errors']:
-            if any(data_entry['estimation_errors'][error]) != 0:
-                print(error, data_entry['estimation_errors'][error], '', end='')
+        for satellite_id in range(len(data_entry['estimation_errors'])):
+            print(f'Sat {satellite_id}', '', end='')
+            for error in data_entry['estimation_errors'][satellite_id]:
+                if any(data_entry['estimation_errors'][satellite_id][error]) != 0:
+                    print(error, data_entry['estimation_errors'][satellite_id][error], '', end='')
 
         print('sum rate: ', end='')
         for key in data_entry:
@@ -149,22 +156,22 @@ if __name__ == '__main__':
     list_patterns = True
 
     which_plots = [
+        # {
+        #     'row': 0,
+        #     'column': 0,
+        #     'realization': 1871,
+        #     'precoders': ['mmse', 'slnr']
+        # },
         {
             'row': 0,
             'column': 0,
-            'realization': 1871,
-            'precoders': ['mmse', 'slnr']
-        },
-        {
-            'row': 1,
-            'column': 0,
-            'realization': 1871,
-            'precoders': ['mmse', 'learned_0.0_error']
+            'realization': 5,
+            'precoders': ['mmse']
         },
     ]
 
     data_path = Path(cfg.output_metrics_path,
-                     'sat_1_ant_16_usr_3_satdist_10000_usrdist_100000', 'beam_patterns', 'beam_patterns.gzip')
+                     'sat_1_ant_16_usr_3_satdist_100000_usrdist_1000', 'beam_patterns', 'beam_patterns.gzip')
 
     plot_width = 0.99 * plot_cfg.textwidth
     # plot_width = 0.99 * 3.5
