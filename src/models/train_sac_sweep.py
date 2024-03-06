@@ -15,6 +15,8 @@ from src.config.config import (
 from src.models.train_sac import (
     train_sac_single_error,
 )
+from src.models.train_sac_adapt_robust_slnr_power import train_sac_adapt_robust_slnr_power
+from src.models.train_sac_adapt_robust_slnr_complete import train_sac_adapt_robust_slnr_complete
 from src.analysis.helpers.test_sac_precoder_error_sweep import (
     test_sac_precoder_error_sweep,
 )
@@ -170,8 +172,10 @@ testing_error_sweep_range_err_satpos_and_userpos = np.arange(0.0, 0.1, 0.01)
 
 def main():
 
-    learn(user_dist=100_000, additive_error_on_cosine_of_aod=0.0)
-    learn(user_dist=100_000, additive_error_on_cosine_of_aod=0.05)
+    learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.0)
+    learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.05)
+    learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.1)
+    learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.2)
 
 
 if __name__ == '__main__':

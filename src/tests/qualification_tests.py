@@ -71,7 +71,7 @@ class TestMMMSEPerformance(unittest.TestCase):
         # Satellite
         self.config.sat_nr = 1  # Number of satellites
         self.config.sat_tot_ant_nr = 16  # Total number of  Tx antennas, should be a number larger than sat nr
-        self.config.sat_gain_dBi = 20  # Total sat TODO: Wert nochmal checken
+        self.config.sat_gain_dBi = 20  # Total sat
         self.config.sat_dist_average = 10_000  # Average satellite distance in meter
         self.config.sat_dist_bound = 0  # Variance of sat distance, uniform distribution [avg-bound, avg+bound]
         self.config.sat_center_aod_earth_deg = 90  # Average center of satellites

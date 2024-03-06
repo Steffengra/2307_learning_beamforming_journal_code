@@ -1,8 +1,8 @@
 
 """
 These functions can be used to create "noisy actions", thereby forcing exploration.
-TODO: Remember that the output of this function must
-    be a valid output from the policy network, e.g., be normalized in the same way
+Remember that the output of this function must
+be a valid output from the policy network, e.g., be normalized in the same way
 """
 
 import numpy as np

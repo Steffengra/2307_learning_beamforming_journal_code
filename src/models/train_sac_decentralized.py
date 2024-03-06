@@ -48,6 +48,7 @@ from src.utils.update_sim import (
     update_sim,
 )
 
+
 def train_sac_decentralized(
         config: 'src.config.config.Config',
 ) -> Path:
@@ -155,8 +156,7 @@ def train_sac_decentralized(
             'value_loss': -np.infty * np.ones(config.config_learner.training_steps_per_episode),
         }
 
-
-        update_sim(config, satellite_manager, user_manager)  # todo: we update_sim twice in this script, correct?
+        update_sim(config, satellite_manager, user_manager)  # reset for new episode
         states_next = config.config_learner.get_state(
             satellite_manager=satellite_manager,
             norm_factors=norm_dict['norm_factors'],

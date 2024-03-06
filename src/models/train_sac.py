@@ -183,7 +183,7 @@ def train_sac_single_error(
             'value_loss': -np.infty * np.ones(config.config_learner.training_steps_per_episode),
         }
 
-        update_sim(config, satellite_manager, user_manager)  # todo: we update_sim twice in this script, correct?
+        update_sim(config, satellite_manager, user_manager)  # reset for new episode
         state_next = config.config_learner.get_state(
             satellite_manager=satellite_manager,
             norm_factors=norm_dict['norm_factors'],
@@ -285,10 +285,9 @@ def train_sac_single_error(
 
     save_results()
 
-    # TODO: Move this to proper place
-    plot_sweep(range(config.config_learner.training_episodes), metrics['mean_sum_rate_per_episode'],
-               'Training Episode', 'Sum Rate')
     if config.show_plots:
+        plot_sweep(range(config.config_learner.training_episodes), metrics['mean_sum_rate_per_episode'],
+                   'Training Episode', 'Sum Rate')
         plt_show()
 
     return best_model_path
