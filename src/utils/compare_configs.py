@@ -9,18 +9,33 @@ import src
 def compare_configs(
         config_current: 'src.config.config.Config',
         path_config_old: Path,
-) -> None:
+        log_differences: bool = True,
+) -> bool:
+    """
+    Compares values between one config in memory and one config on disk.
+    Returns False if a change was detected, else True if perfect match
+    """
 
-    def recursive_value_comparison(dict1, dict2, logger, parent=''):
+    def recursive_value_comparison(dict1, dict2, logger, log_differences, parent=''):
+
+        identical_flag = True
+
         for key1, key2 in zip(dict1, dict2):
             value_type = type(dict1[key1])
             if value_type is dict:
-                recursive_value_comparison(dict1[key1], dict2[key1], logger=logger, parent=f'{parent}{key1} > ')
+                if not recursive_value_comparison(dict1[key1], dict2[key1], logger, log_differences, parent=f'{parent}{key1} > '):
+                    identical_flag = False
             elif value_type in [bool, int, float]:
                 if dict1[key1] != dict2[key2]:
-                    logger.error(f'config mismatch - {parent}{key1} current: {dict1[key1]}, old: {dict2[key2]}')
+                    identical_flag = False
+                    if log_differences:
+                        logger.error(f'config mismatch - {parent}{key1} current: {dict1[key1]}, old: {dict2[key2]}, {identical_flag}')
+
+        return identical_flag
 
     logger = config_current.logger.getChild(__name__)
+
+    identical_config_flag = True
 
     spec_config = importlib.util.spec_from_file_location("config_old", Path(path_config_old, 'config.py'))
     spec_config_error_model = importlib.util.spec_from_file_location("config_old", Path(path_config_old, 'config_error_model.py'))
@@ -40,8 +55,12 @@ def compare_configs(
 
     vars_current = vars(config_current)
     vars_old = vars(config_old)
-    recursive_value_comparison(vars_current, vars_old, logger=logger)
+    if recursive_value_comparison(vars_current, vars_old, logger, log_differences) is False:
+        identical_config_flag = False
 
     vars_error_current = vars(config_current.config_error_model)
     vars_error_old = vars(config_error_model_old)
-    recursive_value_comparison(vars_error_current, vars_error_old, logger=logger)
+    if recursive_value_comparison(vars_error_current, vars_error_old, logger, log_differences) is False:
+        identical_config_flag = False
+
+    return identical_config_flag
