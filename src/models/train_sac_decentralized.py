@@ -228,7 +228,6 @@ def train_sac_decentralized(
                     mean_log_prob_density = np.nan
                     value_loss = np.nan
 
-
             # log results
             episode_metrics['sum_rate_per_step'][training_step_id] = reward
             episode_metrics['mean_log_prob_density'][training_step_id] = mean_log_prob_density  # todo: currently only logs last sac
