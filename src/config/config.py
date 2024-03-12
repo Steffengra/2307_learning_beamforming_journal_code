@@ -25,6 +25,9 @@ from src.data.channel.los_channel_model import (
 from src.utils.get_wavelength import (
     get_wavelength,
 )
+from src.utils.compare_configs import (
+    compare_configs,
+)
 
 
 class Config:
@@ -63,8 +66,8 @@ class Config:
         # User
         self.user_nr: int = 3  # Number of users
         self.user_gain_dBi: float = 0  # User gain in dBi
-        self.user_dist_average: float = 100_000  # Average user distance in m
-        self.user_dist_bound: float = 50_000  # Variance of user distance, uniform distribution [avg-bound, avg+bound]
+        self.user_dist_average: float = 1_000  # Average user distance in m
+        self.user_dist_bound: float = 30  # Variance of user distance, uniform distribution [avg-bound, avg+bound]
         self.user_center_aod_earth_deg: float = 90  # Average center of users
 
         self.user_gain_linear: float = 10**(self.user_gain_dBi / 10)  # User gain linear
@@ -161,6 +164,39 @@ class Config:
             'power_constraint_watt': self.power_constraint_watt,
         }
 
+    def generate_path_from_config(
+            self,
+            root_path: Path,
+    ) -> Path:
+        """
+        Generates a path for a specific config
+        """
+
+        config_name = None
+        default_configs_path = Path(self.project_root_path, 'src', 'config', 'default_configs')
+        for default_config_path in default_configs_path.iterdir():
+            if compare_configs(self, default_config_path, log_differences=False):
+                self.logger.info(f'current config matches default config {default_config_path.stem}')
+                config_name = default_config_path.stem
+                break
+
+        if config_name is None:
+            config_name = (
+                f'{self.sat_nr}sat_'
+                f'{self.sat_ant_nr}ant_'
+                f'{self.sat_dist_average}~'
+                f'{self.sat_dist_bound}_'
+                f'{self.user_nr}usr_'
+                f'{self.user_dist_average}~'
+                f'{self.user_dist_bound}'
+            )
+
+        path = Path(
+            root_path,
+            config_name,
+        )
+        return path
+
     def __logging_setup(
             self,
     ) -> None:
@@ -173,15 +209,15 @@ class Config:
 
         # Create Handlers
         logging_file_handler = RotatingFileHandler(self.logfile_path, maxBytes=self.logfile_max_bytes, backupCount=1)
-        logging_stdio_handler = logging.StreamHandler(stdout)
+        # logging_stdio_handler = logging.StreamHandler(stdout)
 
         # Set Logging Level
         logging_file_handler.setLevel(self._logging_level_file)
 
-        if self.verbosity == 0:
-            logging_stdio_handler.setLevel(logging.CRITICAL + 1)
-        else:
-            logging_stdio_handler.setLevel(self._logging_level_stdio)
+        # if self.verbosity == 0:
+        #     logging_stdio_handler.setLevel(logging.CRITICAL + 1)
+        # else:
+        #     logging_stdio_handler.setLevel(self._logging_level_stdio)
 
         tensorflow_logger = tf_get_logger()
         tensorflow_logger.setLevel(self._logging_level_tensorflow)
@@ -195,8 +231,8 @@ class Config:
 
         # Set Formatting
         logging_file_handler.setFormatter(logging_formatter)
-        logging_stdio_handler.setFormatter(logging_formatter)
+        # logging_stdio_handler.setFormatter(logging_formatter)
 
         # Add Handlers
         self.logger.addHandler(logging_file_handler)
-        self.logger.addHandler(logging_stdio_handler)
+        # self.logger.addHandler(logging_stdio_handler)
