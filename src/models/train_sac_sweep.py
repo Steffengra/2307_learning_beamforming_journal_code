@@ -17,6 +17,7 @@ from src.models.train_sac import (
 )
 from src.models.train_sac_adapt_robust_slnr_power import train_sac_adapt_robust_slnr_power
 from src.models.train_sac_adapt_robust_slnr_complete import train_sac_adapt_robust_slnr_complete
+from src.models.train_sac_decentralized import train_sac_decentralized
 from src.analysis.helpers.test_sac_precoder_error_sweep import (
     test_sac_precoder_error_sweep,
 )
@@ -39,10 +40,11 @@ def learn(
     cfg.config_error_model.error_rng_parametrizations['additive_error_on_cosine_of_aod']['args']['high'] = additive_error_on_cosine_of_aod
 
     config_name = cfg.generate_name_from_config()
-    config_name += ''
+    config_name += f'_additive_{additive_error_on_cosine_of_aod}'
     cfg.config_learner.training_name = config_name
 
     best_model_path = train_sac(config=cfg)
+    best_model_path = train_sac_decentralized(config=cfg)
 
     # if test:
     #     test_precoder(config=cfg,
@@ -178,7 +180,7 @@ def main():
     learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.0)
     learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.05)
     learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.1)
-    learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.2)
+    # learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.2)
 
 
 if __name__ == '__main__':
