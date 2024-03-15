@@ -185,7 +185,7 @@ class Config:
         if config_name is None:
             config_name = (
                 f'{self.sat_nr}sat_'
-                f'{self.sat_ant_nr}ant_'
+                f'{self.sat_tot_ant_nr}ant_'
                 f'{self.sat_dist_average}~'
                 f'{self.sat_dist_bound}_'
                 f'{self.user_nr}usr_'
