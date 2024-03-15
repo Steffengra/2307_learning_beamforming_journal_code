@@ -17,7 +17,7 @@ from src.models.train_sac import (
 )
 from src.models.train_sac_adapt_robust_slnr_power import train_sac_adapt_robust_slnr_power
 from src.models.train_sac_adapt_robust_slnr_complete import train_sac_adapt_robust_slnr_complete
-from src.models.train_sac_decentralized import train_sac_decentralized
+from src.models.train_sac_decentralized_blind import train_sac_decentralized_blind
 from src.analysis.helpers.test_sac_precoder_error_sweep import (
     test_sac_precoder_error_sweep,
 )
@@ -44,7 +44,7 @@ def learn(
     cfg.config_learner.training_name = config_name
 
     best_model_path = train_sac(config=cfg)
-    best_model_path = train_sac_decentralized(config=cfg)
+    best_model_path = train_sac_decentralized_blind(config=cfg)
 
     # if test:
     #     test_precoder(config=cfg,

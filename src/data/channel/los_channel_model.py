@@ -8,7 +8,7 @@ from src.data.channel.get_steering_vec import get_steering_vec
 def los_channel_model(
         satellite: 'src.data.satellite.Satellite',
         users: list,
-        error_free: bool = False,
+        scale: float = 0,
 ) -> np.ndarray:
 
     """
@@ -19,17 +19,14 @@ def los_channel_model(
     TODO: describe this - correct? reference?
     """
 
-    if error_free is True:
-        errors = {
-            'large_scale_fading': satellite.estimation_errors['large_scale_fading'],
-            'additive_error_on_overall_phase_shift': np.zeros(len(users)),
-            'additive_error_on_aod': np.zeros(len(users)),
-            'additive_error_on_cosine_of_aod': np.zeros(len(users)),
-            'additive_error_on_channel_vector': np.zeros(len(users)),
-        }
-
-    else:
-        errors = satellite.estimation_errors
+    # scale
+    errors = {
+        'large_scale_fading': satellite.estimation_errors['large_scale_fading'],  # don't scale this one
+        'additive_error_on_overall_phase_shift': scale * satellite.estimation_errors['additive_error_on_overall_phase_shift'],
+        'additive_error_on_aod': scale * satellite.estimation_errors['additive_error_on_aod'],
+        'additive_error_on_cosine_of_aod': scale * satellite.estimation_errors['additive_error_on_cosine_of_aod'],
+        'additive_error_on_channel_vector': scale * satellite.estimation_errors['additive_error_on_channel_vector'],
+    }
 
     channel_state_information = np.zeros((len(users), satellite.antenna_nr), dtype='complex128')
 

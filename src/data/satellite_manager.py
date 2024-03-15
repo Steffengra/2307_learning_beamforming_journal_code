@@ -183,6 +183,68 @@ class SatelliteManager:
         self.erroneous_channel_state_information = np.reshape(
             erroneous_channel_state_per_satellite, (len(users), self.satellites[0].antenna_nr * len(self.satellites)))
 
+    def update_scaled_erroneous_channel_state_information(
+            self,
+            channel_model,
+            users: list,
+    ) -> None:
+        """
+        Updates scaled erroneous csit per satellite. Note: a scaling factor must be set.
+        """
+
+        for satellite in self.satellites:
+            satellite.update_scaled_erroneous_channel_state_information(channel_model=channel_model, users=users)
+
+    def set_csi_error_scale(
+            self,
+            scale: float,
+    ) -> None:
+        """
+        Set csi error scale for all satellites.
+        """
+
+        for satellite in self.satellites:
+            satellite.csi_error_scale = scale
+
+    def get_local_channel_state_information(
+            self,
+            satellite_id: int,
+            own: str,  # ['error_free', 'erroneous']
+            others: str,  # ['erroneous', 'scaled_erroneous']
+    ) -> np.ndarray:
+        """
+        Generate a full csi matrix for all satellites & users. CSI values have different
+        degrees of precision: own csi can be error-free or erroneous, other satellites
+        csi can be erroneous or scaled_erroneous (usually higher error, simulates communication delay)
+        """
+
+        num_users = self.satellites[satellite_id].channel_state_to_users.shape[0]
+
+        local_channel_state = np.zeros(
+            (num_users, self.satellites[satellite_id].antenna_nr, len(self.satellites)),
+            dtype='complex128',
+        )
+
+        # own
+        if own == 'error_free':
+            local_channel_state[:, :, satellite_id] = self.satellites[satellite_id].channel_state_to_users
+        elif own == 'erroneous':
+            local_channel_state[:, :, satellite_id] = self.satellites[satellite_id].erroneous_channel_state_to_users
+        else:
+            raise ValueError(f'invalid config {own}')
+
+        for satellite in self.satellites:
+            if satellite.idx == satellite_id:
+                continue  # skip this one
+            if others == 'erroneous':
+                local_channel_state[:, :, satellite.idx] = satellite.erroneous_channel_state_to_users
+            elif others == 'scaled_erroneous':
+                local_channel_state[:, :, satellite.idx] = satellite.scaled_erroneous_channel_state_to_users
+            else:
+                raise ValueError(f'invalid config {others}')
+
+        return np.reshape(local_channel_state, (num_users, self.satellites[satellite_id].antenna_nr * len(self.satellites)))
+
     def get_erroneous_channel_state_information_per_sat(
             self,
     ) -> list[np.ndarray]:

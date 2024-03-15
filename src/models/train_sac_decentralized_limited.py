@@ -48,8 +48,10 @@ from src.utils.update_sim import (
     update_sim,
 )
 
+from src.models.helpers.get_state import get_state_erroneous_channel_state_information_local
 
-def train_sac_decentralized(
+
+def train_sac_decentralized_limited(
         config: 'src.config.config.Config',
 ) -> Path:
     """Train one Soft Actor Critic precoder per satellite according to the config."""
@@ -73,7 +75,7 @@ def train_sac_decentralized(
         checkpoint_path = Path(
             config.trained_models_path,
             config.config_learner.training_name,
-            'decentralized',
+            'decentralized_limited',
             name,
         )
 
@@ -101,7 +103,7 @@ def train_sac_decentralized(
                 prior_checkpoint_path = Path(
                     config.trained_models_path,
                     config.config_learner.training_name,
-                    'decentralized',
+                    'decentralized_limited',
                     name
                 )
                 rmtree(path=prior_checkpoint_path, ignore_errors=True)
@@ -113,7 +115,7 @@ def train_sac_decentralized(
 
         name = f'training_error_userwiggle_{config.user_dist_bound}.gzip'
 
-        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'decentralized')
+        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'decentralized_limited')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump(metrics, file=file)
@@ -121,7 +123,6 @@ def train_sac_decentralized(
     logger = config.logger.getChild(__name__)
 
     config.config_learner.algorithm_args['network_args']['num_actions'] = 2 * config.sat_ant_nr * config.user_nr
-    config.config_learner.network_args['size_state'] = int(config.config_learner.network_args['size_state'] / config.sat_nr)
 
     satellite_manager = SatelliteManager(config=config)
     user_manager = UserManager(config=config)
@@ -130,9 +131,14 @@ def train_sac_decentralized(
         for _ in range(config.sat_nr)
     ]
 
-    norm_dict = get_state_norm_factors(config=config, satellite_manager=satellite_manager, user_manager=user_manager, per_sat=True)
+    norm_dict = get_state_norm_factors(config=config, satellite_manager=satellite_manager, user_manager=user_manager)
     logger.info('State normalization factors found')
     logger.info(norm_dict)
+
+    config.config_learner.get_state = get_state_erroneous_channel_state_information_local
+    satellite_manager.set_csi_error_scale(scale=config.csi_error_scale)
+    config.config_learner.get_state_args['local_csi_own_quality'] = config.local_csi_own_quality
+    config.config_learner.get_state_args['local_csi_others_quality'] = config.local_csi_others_quality
 
     metrics: dict = {
         'mean_sum_rate_per_episode': -np.infty * np.ones(config.config_learner.training_episodes)
@@ -161,7 +167,6 @@ def train_sac_decentralized(
             satellite_manager=satellite_manager,
             norm_factors=norm_dict['norm_factors'],
             **config.config_learner.get_state_args,
-            per_sat=True
         )
 
         for training_step_id in range(config.config_learner.training_steps_per_episode):
@@ -205,8 +210,8 @@ def train_sac_decentralized(
                 satellite_manager=satellite_manager,
                 norm_factors=norm_dict['norm_factors'],
                 **config.config_learner.get_state_args,
-                per_sat=True
             )
+            # print(states_next[0])
             for sat_id in range(config.sat_nr):
                 step_experiences[sat_id]['next_state'] = states_next[sat_id]
 
@@ -270,4 +275,4 @@ def train_sac_decentralized(
 
 if __name__ == '__main__':
     cfg = Config()
-    train_sac_decentralized(config=cfg)
+    train_sac_decentralized_limited(config=cfg)

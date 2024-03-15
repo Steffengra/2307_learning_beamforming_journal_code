@@ -8,6 +8,8 @@ from src.utils.real_complex_vector_reshaping import (
 )
 
 
+# todo: cleanup
+
 def get_state_erroneous_channel_state_information(
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         csi_format: str,
@@ -112,6 +114,56 @@ def get_state_erroneous_channel_state_information(
             raise ValueError(f'Unknown CSI Format {csi_format}')
 
         return state_real
+
+
+def get_state_erroneous_channel_state_information_local(
+        satellite_manager: 'src.data.satellite_manager.SatelliteManager',
+        csi_format: str,
+        local_csi_own_quality: str,
+        local_csi_others_quality: str,
+        norm_state: bool,
+        norm_factors: dict or list or None = None,
+) -> list[np.ndarray]:
+
+    def method_rad_phase(complex_input, norm_factors):
+        state_real = complex_vector_to_rad_and_phase(complex_input)
+        if norm_state:
+            half_length_idx = int(len(state_real) / 2)
+
+            # normalize radius
+            # heuristic standardization
+            state_real[:half_length_idx] -= norm_factors['radius_mean']  # needs a moderate amount of samples
+            state_real[:half_length_idx] /= norm_factors['radius_std']  # needs few samples
+
+            # normalize phase
+            # heuristic standardization
+            # state_real[half_length_idx:] -= norm_factors['phase_mean']  # needs A LOT of samples
+            state_real[half_length_idx:] /= norm_factors['phase_std']  # needs few samples
+
+        return state_real
+
+    if norm_state and norm_factors is None:
+        raise ValueError('no norm factors provided')
+
+    local_csits = []
+    for satellite in satellite_manager.satellites:
+
+        if csi_format == 'rad_phase':
+
+            local_csi = satellite_manager.get_local_channel_state_information(
+                satellite_id=satellite.idx,
+                own=local_csi_own_quality,
+                others=local_csi_others_quality,
+            ).flatten()
+
+            local_csi_real = method_rad_phase(local_csi, norm_factors)
+
+            local_csits.append(local_csi_real)
+
+        else:
+            raise ValueError(f'Unknown CSI Format {csi_format}')
+
+    return local_csits
 
 
 def get_state_aods(

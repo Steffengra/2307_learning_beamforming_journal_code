@@ -50,8 +50,10 @@ class Satellite:
         self.aods_to_users = None  # user_idx[int]: aod[float] in rad, [0, 2pi], most commonly ~pi/2, aod looks from sat towards users
         self.steering_error = None
 
+        self.csi_error_scale = None
         self.channel_state_to_users: np.ndarray = np.array([])  # depends on channel model
         self.erroneous_channel_state_to_users: np.ndarray = np.array([])  # depends on channel & error model
+        self.scaled_erroneous_channel_state_to_users: np.ndarray = np.array([])  # e.g., for sharing with other sats
 
         self.estimation_error_functions: dict = error_functions
         self.estimation_errors: dict = {}
@@ -133,7 +135,7 @@ class Satellite:
         This function updates the channel state to given users
         according to a given channel model.
         """
-        self.channel_state_to_users = channel_model(self, users, error_free=True)
+        self.channel_state_to_users = channel_model(self, users, scale=0)
 
     def update_erroneous_channel_state_information(
             self,
@@ -145,4 +147,18 @@ class Satellite:
         according to a given user list and error model config.
         """
 
-        self.erroneous_channel_state_to_users = channel_model(satellite=self, users=users, error_free=False)
+        self.erroneous_channel_state_to_users = channel_model(satellite=self, users=users, scale=1)
+
+    def update_scaled_erroneous_channel_state_information(
+            self,
+            channel_model,
+            users: list,
+    ) -> None:
+        """
+        This function updates erroneous channel state information to users
+        with scaled error realizations, e.g., for sharing csi with increased error w/
+        other users.
+        """
+
+        if self.csi_error_scale is not None:
+            self.scaled_erroneous_channel_state_to_users = channel_model(satellite=self, users=users, scale=self.csi_error_scale)

@@ -19,3 +19,5 @@ def update_sim(
                                                        users=user_manager.users)
     satellite_manager.update_erroneous_channel_state_information(channel_model=config.channel_model,
                                                                  users=user_manager.users)
+    satellite_manager.update_scaled_erroneous_channel_state_information(channel_model=config.channel_model,
+                                                                        users=user_manager.users)
