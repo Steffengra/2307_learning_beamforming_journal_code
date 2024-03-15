@@ -175,7 +175,7 @@ class Config:
 
         # compare to default configs
         default_configs_path = Path(self.project_root_path, 'src', 'config', 'default_configs')
-        for default_config_path in default_configs_path.iterdir():
+        for default_config_path in [subitem for subitem in default_configs_path.iterdir() if subitem.is_dir()]:
             if compare_configs(self, default_config_path, log_differences=False):
                 self.logger.info(f'current config matches default config {default_config_path.stem}')
                 config_name = default_config_path.stem
