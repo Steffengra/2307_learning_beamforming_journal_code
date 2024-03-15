@@ -127,7 +127,7 @@ def train_sac(
         for high_score_prior_id, high_score_prior in enumerate(reversed(high_scores)):
             if high_score > 1.05 * high_score_prior or high_score_prior_id > 3:
 
-                name = f'userwiggle_{config.user_dist_bound}_snap_{high_score_prior:.3f}'
+                name = f'snap_{high_score_prior:.3f}'
 
                 prior_checkpoint_path = Path(
                     config.trained_models_path,
