@@ -13,7 +13,7 @@ from src.config.config import (
     Config,
 )
 from src.models.train_sac import (
-    train_sac_single_error,
+    train_sac,
 )
 from src.models.train_sac_adapt_robust_slnr_power import train_sac_adapt_robust_slnr_power
 from src.models.train_sac_adapt_robust_slnr_complete import train_sac_adapt_robust_slnr_complete
@@ -32,14 +32,17 @@ def learn(
     cfg = Config()
     cfg.profile = False
     cfg.show_plots = False
-    cfg.config_learner.training_name = f'error_{additive_error_on_cosine_of_aod}'
 
     cfg.user_dist_average = user_dist
 
     cfg.config_error_model.error_rng_parametrizations['additive_error_on_cosine_of_aod']['args']['low'] = -additive_error_on_cosine_of_aod
     cfg.config_error_model.error_rng_parametrizations['additive_error_on_cosine_of_aod']['args']['high'] = additive_error_on_cosine_of_aod
 
-    best_model_path = train_sac_single_error(config=cfg)
+    config_name = cfg.generate_name_from_config()
+    config_name += ''
+    cfg.config_learner.training_name = config_name
+
+    best_model_path = train_sac(config=cfg)
 
     # if test:
     #     test_precoder(config=cfg,

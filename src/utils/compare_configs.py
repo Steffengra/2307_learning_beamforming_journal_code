@@ -37,6 +37,7 @@ def compare_configs(
 
     identical_config_flag = True
 
+    # import from path
     spec_config = importlib.util.spec_from_file_location("config_old", Path(path_config_old, 'config.py'))
     spec_config_error_model = importlib.util.spec_from_file_location("config_old", Path(path_config_old, 'config_error_model.py'))
     module_config = importlib.util.module_from_spec(spec_config)

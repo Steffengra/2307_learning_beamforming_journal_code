@@ -64,11 +64,11 @@ def train_sac_decentralized(
         else:
             progress_printer(progress=progress, real_time_start=real_time_start, logger=logger)
 
-    def save_model_checkpoints(extra=None):
+    def save_model_checkpoints(extra):
 
-        name = f'userwiggle_{config.user_dist_bound}'
+        name = f''
         if extra is not None:
-            name += f'_snap_{extra:.3f}'
+            name += f'snap_{extra:.3f}'
 
         checkpoint_path = Path(
             config.trained_models_path,

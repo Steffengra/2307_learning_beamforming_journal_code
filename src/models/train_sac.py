@@ -60,7 +60,7 @@ from src.utils.update_sim import (
 )
 
 
-def train_sac_single_error(
+def train_sac(
         config: 'src.config.config.Config',
 ) -> Path:
     """Train a Soft Actor Critic precoder according to the config."""
@@ -98,15 +98,15 @@ def train_sac_single_error(
             }
             sac.add_experience(mmse_experience)
 
-    def save_model_checkpoint(extra=None):
+    def save_model_checkpoint(extra):
 
-        name = f'userwiggle_{config.user_dist_bound}'
+        name = f''
         if extra is not None:
-            name += f'_snap_{extra:.3f}'
+            name += f'snap_{extra:.3f}'
         checkpoint_path = Path(
             config.trained_models_path,
             config.config_learner.training_name,
-            'single_error',
+            'base',
             name,
         )
 
@@ -132,7 +132,7 @@ def train_sac_single_error(
                 prior_checkpoint_path = Path(
                     config.trained_models_path,
                     config.config_learner.training_name,
-                    'single_error',
+                    'base',
                     name
                 )
                 rmtree(path=prior_checkpoint_path, ignore_errors=True)
@@ -144,7 +144,7 @@ def train_sac_single_error(
 
         name = f'training_error_userwiggle_{config.user_dist_bound}.gzip'
 
-        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'single_error')
+        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'base')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump(metrics, file=file)
@@ -270,14 +270,14 @@ def train_sac_single_error(
             f' std {np.nanstd(episode_metrics["sum_rate_per_step"]):.2f},'
             f' current exploration: {np.nanmean(episode_metrics["mean_log_prob_density"]):.2f},'
             f' value loss: {np.nanmean(episode_metrics["value_loss"]):.5f}'
-            f' curr. lr: {sac.networks["policy"][0]["primary"].optimizer.learning_rate(sac.networks["policy"][0]["primary"].optimizer.iterations):.2E}'
+            # f' curr. lr: {sac.networks["policy"][0]["primary"].optimizer.learning_rate(sac.networks["policy"][0]["primary"].optimizer.iterations):.2E}'
         )
 
         # save network snapshot
         if episode_mean_sum_rate > high_score:
             high_score = episode_mean_sum_rate.copy()
             high_scores.append(high_score)
-            best_model_path = save_model_checkpoint(extra=episode_mean_sum_rate)
+            best_model_path = save_model_checkpoint(episode_mean_sum_rate)
 
     # end compute performance profiling
     if profiler is not None:
@@ -295,4 +295,4 @@ def train_sac_single_error(
 
 if __name__ == '__main__':
     cfg = Config()
-    train_sac_single_error(config=cfg)
+    train_sac(config=cfg)

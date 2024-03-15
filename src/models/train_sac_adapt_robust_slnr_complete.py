@@ -67,14 +67,15 @@ def train_sac_adapt_robust_slnr_complete(
         else:
             progress_printer(progress=progress, real_time_start=real_time_start, logger=logger)
 
-    def save_model_checkpoint(extra=None):
-        name = f'userwiggle_{config.user_dist_bound}'
+    def save_model_checkpoint(extra):
+
+        name = f''
         if extra is not None:
-            name += f'_snap_{extra:.3f}'
+            name += f'snap_{extra:.3f}'
         checkpoint_path = Path(
             config.trained_models_path,
             config.config_learner.training_name,
-            'single_error',
+            'adapt_robust_slnr_complete',
             name,
         )
 
@@ -100,7 +101,7 @@ def train_sac_adapt_robust_slnr_complete(
                 prior_checkpoint_path = Path(
                     config.trained_models_path,
                     config.config_learner.training_name,
-                    'single_error',
+                    'adapt_robust_slnr_complete',
                     name
                 )
                 rmtree(path=prior_checkpoint_path, ignore_errors=True)
@@ -111,7 +112,7 @@ def train_sac_adapt_robust_slnr_complete(
     def save_results():
         name = f'training_error_userwiggle_{config.user_dist_bound}.gzip'
 
-        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'single_error')
+        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'adapt_robust_slnr_complete')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump(metrics, file=file)
