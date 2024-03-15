@@ -177,6 +177,16 @@ class Config:
         Generates a path for a specific config
         """
 
+        def format_distance(distance) -> str:
+            if distance < 1_000:
+                return f'{distance}'
+            else:
+                distance = distance / 1000
+                if distance.is_integer():
+                    return f'{int(distance)}k'
+                else:
+                    return f'{distance}k'
+
         config_name = None
 
         # compare to default configs
@@ -192,11 +202,11 @@ class Config:
             config_name = (
                 f'{self.sat_nr}sat_'
                 f'{self.sat_tot_ant_nr}ant_'
-                f'{self.sat_dist_average}~'
-                f'{self.sat_dist_bound}_'
+                f'{format_distance(self.sat_dist_average)}~'
+                f'{format_distance(self.sat_dist_bound)}_'
                 f'{self.user_nr}usr_'
-                f'{self.user_dist_average}~'
-                f'{self.user_dist_bound}'
+                f'{format_distance(self.user_dist_average)}~'
+                f'{format_distance(self.user_dist_bound)}'
             )
 
         return config_name
