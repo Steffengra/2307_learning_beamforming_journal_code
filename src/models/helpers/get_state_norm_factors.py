@@ -28,7 +28,7 @@ def get_state_norm_factors(
         radius_mean = np.mean(states_radius)
         radius_std = np.std(states_radius)
         phase_mean = np.mean(states_phase)
-        phase_std = np.mean(states_phase)
+        phase_std = np.std(states_phase)
         # note: statistical analysis has shown that the means, especially of phase,
         #  take a lot of iterations to determine with confidence. Hence, we might only use std for norm.
         return radius_mean, radius_std, phase_mean, phase_std
