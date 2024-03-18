@@ -71,11 +71,11 @@ def train_sac_adapt_robust_slnr_complete(
 
         name = f''
         if extra is not None:
-            name += f'snap_{extra:.3f}'
+            name += f'adapt_slnr_complete_snap_{extra:.3f}'
         checkpoint_path = Path(
             config.trained_models_path,
             config.config_learner.training_name,
-            'adapt_robust_slnr_complete',
+            'base',
             name,
         )
 
@@ -96,12 +96,12 @@ def train_sac_adapt_robust_slnr_complete(
         for high_score_prior_id, high_score_prior in enumerate(reversed(high_scores)):
             if high_score > 1.05 * high_score_prior or high_score_prior_id > 3:
 
-                name = f'snap_{high_score_prior:.3f}'
+                name = f'adapt_slnr_complete_snap_{high_score_prior:.3f}'
 
                 prior_checkpoint_path = Path(
                     config.trained_models_path,
                     config.config_learner.training_name,
-                    'adapt_robust_slnr_complete',
+                    'base',
                     name
                 )
                 rmtree(path=prior_checkpoint_path, ignore_errors=True)
@@ -110,9 +110,9 @@ def train_sac_adapt_robust_slnr_complete(
         return checkpoint_path
 
     def save_results():
-        name = f'training_error_userwiggle_{config.user_dist_bound}.gzip'
+        name = f'training_error_adapt_slnr_complete.gzip'
 
-        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'adapt_robust_slnr_complete')
+        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'base')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump(metrics, file=file)
