@@ -18,6 +18,7 @@ from src.models.train_sac import (
 from src.models.train_sac_adapt_robust_slnr_power import train_sac_adapt_robust_slnr_power
 from src.models.train_sac_adapt_robust_slnr_complete import train_sac_adapt_robust_slnr_complete
 from src.models.train_sac_decentralized_blind import train_sac_decentralized_blind
+from src.models.train_sac_decentralized_limited import train_sac_decentralized_limited
 from src.analysis.helpers.test_sac_precoder_error_sweep import (
     test_sac_precoder_error_sweep,
 )
@@ -43,8 +44,9 @@ def learn(
     config_name += f'_additive_{additive_error_on_cosine_of_aod}'
     cfg.config_learner.training_name = config_name
 
-    best_model_path = train_sac(config=cfg)
-    best_model_path = train_sac_decentralized_blind(config=cfg)
+    # best_model_path = train_sac(config=cfg)
+    # best_model_path = train_sac_decentralized_blind(config=cfg)
+    best_model_path = train_sac_decentralized_limited(config=cfg)
 
     # if test:
     #     test_precoder(config=cfg,
@@ -180,7 +182,7 @@ def main():
     learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.0)
     learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.05)
     learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.1)
-    # learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.2)
+    learn(user_dist=1_000, additive_error_on_cosine_of_aod=0.2)
 
 
 if __name__ == '__main__':

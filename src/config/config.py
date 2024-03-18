@@ -92,7 +92,7 @@ class Config:
         #  Remember to satellite_manager.set_csi_error_scale(scale), disabled by default for performance
         self.csi_error_scale = 2  # factor by which error is magnified for csi received from other sats
         self.local_csi_own_quality = 'error_free'  # ['error_free', 'erroneous'] quality of local sats own csi
-        self.local_csi_others_quality = 'scaled_erroneous'  # ['erroneous', 'scaled_erroneous'] quality of other satellites csi
+        self.local_csi_others_quality = 'erroneous'  # ['erroneous', 'scaled_erroneous'] quality of other satellites csi
 
         self._post_init()
 

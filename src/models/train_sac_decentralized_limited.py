@@ -75,7 +75,7 @@ def train_sac_decentralized_limited(
         checkpoint_path = Path(
             config.trained_models_path,
             config.config_learner.training_name,
-            'decentralized_limited',
+            f'decentralized_limited_{config.local_csi_own_quality}_{config.local_csi_others_quality}',
             name,
         )
 
@@ -103,7 +103,7 @@ def train_sac_decentralized_limited(
                 prior_checkpoint_path = Path(
                     config.trained_models_path,
                     config.config_learner.training_name,
-                    'decentralized_limited',
+                    f'decentralized_limited_{config.local_csi_own_quality}_{config.local_csi_others_quality}',
                     name
                 )
                 rmtree(path=prior_checkpoint_path, ignore_errors=True)
@@ -115,7 +115,8 @@ def train_sac_decentralized_limited(
 
         name = f'training_error_userwiggle_{config.user_dist_bound}.gzip'
 
-        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'decentralized_limited')
+        results_path = Path(config.output_metrics_path, config.config_learner.training_name,
+            f'decentralized_limited_{config.local_csi_own_quality}_{config.local_csi_others_quality}')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump(metrics, file=file)
