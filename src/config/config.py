@@ -100,6 +100,11 @@ class Config:
             self,
     ) -> None:
 
+        if self.__class__.__module__ == 'src.config.config':  # check if self is main instance of config
+            self._inert = False
+        else:
+            self._inert = True
+
         self.rng = np.random.default_rng()
         self.logger = logging.getLogger()
 
@@ -107,14 +112,20 @@ class Config:
         self.performance_profile_path = Path(self.project_root_path, 'outputs', 'performance_profiles')
         self.output_metrics_path = Path(self.project_root_path, 'outputs', 'metrics')
         self.trained_models_path = Path(self.project_root_path, 'models')
+        self.logfile_path = Path(self.project_root_path, 'outputs', 'logs', 'log.txt')
 
-        self.performance_profile_path.mkdir(parents=True, exist_ok=True)
-        self.output_metrics_path.mkdir(parents=True, exist_ok=True)
-        self.trained_models_path.mkdir(parents=True, exist_ok=True)
+        if not self._inert:
+            self.performance_profile_path.mkdir(parents=True, exist_ok=True)
+            self.output_metrics_path.mkdir(parents=True, exist_ok=True)
+            self.trained_models_path.mkdir(parents=True, exist_ok=True)
+            self.logfile_path.parent.mkdir(parents=True, exist_ok=True)
 
     def _post_init(
             self,
     ) -> None:
+
+        if not self._inert:
+            self.__logging_setup()
 
         # Error Model
         self.config_error_model = ConfigErrorModel(
@@ -130,11 +141,6 @@ class Config:
             sat_ant_nr=self.sat_ant_nr,
             user_nr=self.user_nr,
         )
-
-        # Logging
-        self.logfile_path = Path(self.project_root_path, 'outputs', 'logs', 'log.txt')
-        self.logfile_path.parent.mkdir(parents=True, exist_ok=True)
-        self.__logging_setup()
 
         # Collected args
         self.satellite_args: dict = {
