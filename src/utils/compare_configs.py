@@ -29,7 +29,7 @@ def compare_configs(
                 if dict1[key1] != dict2[key2]:
                     identical_flag = False
                     if log_differences:
-                        logger.error(f'config mismatch - {parent}{key1} current: {dict1[key1]}, old: {dict2[key2]}, {identical_flag}')
+                        logger.error(f'config mismatch - {parent}{key1} current: {dict1[key1]}, old: {dict2[key2]}}')
 
         return identical_flag
 
