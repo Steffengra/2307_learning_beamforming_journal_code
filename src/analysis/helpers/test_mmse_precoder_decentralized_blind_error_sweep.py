@@ -17,7 +17,7 @@ from src.utils.norm_precoder import (
 )
 
 
-def test_mmse_precoder_decentralized_error_sweep(
+def test_mmse_precoder_decentralized_blind_error_sweep(
     config: 'src.config.config.Config',
     error_sweep_parameter: str,
     error_sweep_range: np.ndarray,
@@ -28,7 +28,7 @@ def test_mmse_precoder_decentralized_error_sweep(
     def get_precoder_decentralized_mmse(
         config: 'src.config.config.Config',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
-    ):
+    ) -> np.ndarray:
 
         erroneous_csit_per_sat = satellite_manager.get_erroneous_channel_state_information_per_sat()
 
@@ -57,7 +57,7 @@ def test_mmse_precoder_decentralized_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
-        precoder_name='mmse_decentralized',
+        precoder_name='mmse_decentralized_blind',
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=get_precoder_decentralized_mmse,
         calc_sum_rate_func=calc_sum_rate,

@@ -71,6 +71,8 @@ def test_precoder_error_sweep(
     satellite_manager = SatelliteManager(config=config)
     user_manager = UserManager(config=config)
 
+    satellite_manager.set_csi_error_scale(scale=config.csi_error_scale)
+
     real_time_start = datetime.now()
 
     profiler = None
@@ -97,8 +99,8 @@ def test_precoder_error_sweep(
             update_sim(config, satellite_manager, user_manager)
 
             w_precoder = get_precoder_func(
-                config=config,
-                satellite_manager=satellite_manager
+                config,
+                satellite_manager,
             )
 
             sum_rate = calc_sum_rate_func(

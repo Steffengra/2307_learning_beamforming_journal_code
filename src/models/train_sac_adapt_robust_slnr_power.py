@@ -182,6 +182,9 @@ def train_sac_adapt_robust_slnr_power(
             action = sac.get_action(state=state_current)
             step_experience['action'] = action
 
+            # reshape learner scaling into matrix
+            scaling_factors = np.diag(action)
+
             # calculate precoding as per robust SLNR precoder
             autocorrelation = calc_autocorrelation(
                 satellite=satellite_manager.satellites[0],  # todo: only implemented for one satellite
@@ -195,17 +198,7 @@ def train_sac_adapt_robust_slnr_power(
                 power_constraint_watt=config.power_constraint_watt,
             )
 
-            # reshape learner scaling into matrix
-            # scaling_action = np.sqrt(softmax(action) * config.user_nr)  # normalized scaling
-            # print(scaling_action)
-            # scaling_factors = np.diag(scaling_action)
-            scaling_factors = np.diag(action)
-
             # rescale SLNR precoder & normalize power
-            # np.set_printoptions(linewidth=200)
-            # print(scaling_action)
-            # print(robust_slnr_precoding)
-            # print(np.trace(np.matmul(robust_slnr_precoding.conj().T, robust_slnr_precoding)))
             scaled_precoding = np.matmul(robust_slnr_precoding, scaling_factors)  # scale columns -> precoding vectors per user
             normed_scaled_precoding = norm_precoder(
                 precoding_matrix=scaled_precoding,
@@ -214,11 +207,6 @@ def train_sac_adapt_robust_slnr_power(
                 sat_nr=config.sat_nr,
                 sat_ant_nr=config.sat_ant_nr
             )
-            # print(scaled_precoding)
-            # print(np.trace(np.matmul(scaled_precoding.conj().T, scaled_precoding)))
-            # print(normed_scaled_precoding)
-            # print(np.trace(np.matmul(normed_scaled_precoding.conj().T, normed_scaled_precoding)))
-            # exit()
 
             # step simulation based on action, determine reward
             reward = calc_sum_rate(
