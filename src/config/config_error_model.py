@@ -39,7 +39,7 @@ class ConfigErrorModel:
             'distribution': self.rng.lognormal,
             'args': {
                 'mean': 0.0,
-                'sigma': 0.1,
+                'sigma': 0,
                 'size': self._user_nr,
             }
         }
@@ -65,8 +65,8 @@ class ConfigErrorModel:
         self.error_rng_parametrizations['additive_error_on_cosine_of_aod'] = {
             'distribution': self.rng.uniform,
             'args': {
-                'low': -0.05,
-                'high': 0.05,
+                'low': -0.00,
+                'high': 0.00,
                 'size': self._user_nr,
             },
         }
