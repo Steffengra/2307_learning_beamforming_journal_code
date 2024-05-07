@@ -12,6 +12,7 @@ from sys import stdout
 import numpy as np
 from scipy import constants
 from tensorflow import get_logger as tf_get_logger
+from tensorflow.config import list_physical_devices
 
 from src.config.config_error_model import (
     ConfigErrorModel,
@@ -256,3 +257,5 @@ class Config:
         # Add Handlers
         self.logger.addHandler(logging_file_handler)
         self.logger.addHandler(logging_stdio_handler)
+
+        self.logger.info(f'GPUs detected: {list_physical_devices("GPU")}')
