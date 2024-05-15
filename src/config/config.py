@@ -8,6 +8,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from sys import stdout
+from datetime import datetime
 
 import numpy as np
 from scipy import constants
@@ -107,7 +108,7 @@ class Config:
             self._inert = True
 
         self.rng = np.random.default_rng()
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger(datetime.now().strftime('%H-%M-%S'))
 
         self.project_root_path = Path(__file__).parent.parent.parent
         self.performance_profile_path = Path(self.project_root_path, 'outputs', 'performance_profiles')
