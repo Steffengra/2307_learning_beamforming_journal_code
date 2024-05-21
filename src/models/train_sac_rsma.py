@@ -101,7 +101,7 @@ def train_sac_RSMA(
 
         name = f''
         if extra is not None:
-            name += f'full_snap_{extra:.3f}'
+            name += f'full_rsma_snap_{extra:.3f}'
         checkpoint_path = Path(
             config.trained_models_path,
             config.config_learner.training_name,
@@ -126,7 +126,7 @@ def train_sac_RSMA(
         for high_score_prior_id, high_score_prior in enumerate(reversed(high_scores)):
             if high_score > 1.05 * high_score_prior or high_score_prior_id > 3:
 
-                name = f'full_snap_{high_score_prior:.3f}'
+                name = f'full_rsma_snap_{high_score_prior:.3f}'
 
                 prior_checkpoint_path = Path(
                     config.trained_models_path,
@@ -141,7 +141,7 @@ def train_sac_RSMA(
 
     def save_results():
 
-        name = f'training_error_full.gzip'
+        name = f'training_error_full_rsma.gzip'
 
         results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'base')
         results_path.mkdir(parents=True, exist_ok=True)
@@ -208,8 +208,7 @@ def train_sac_RSMA(
             w_precoder_normed = norm_precoder(precoding_matrix=w_precoder, power_constraint_watt=config.power_constraint_watt,
                                               per_satellite=True, sat_nr=config.sat_nr, sat_ant_nr=config.sat_ant_nr)
             #print(w_precoder_normed)
-            #print(w_precoder_normed.shape)
-            
+
             # step simulation based on action, determine reward
             reward = calc_sum_rate_RSMA(
                 channel_state=satellite_manager.channel_state_information,
