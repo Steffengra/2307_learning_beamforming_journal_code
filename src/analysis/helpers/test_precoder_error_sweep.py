@@ -133,6 +133,3 @@ def test_precoder_error_sweep(
         ylabel='sum rate',
         title=precoder_name,
     )
-
-    if config.show_plots:
-        plt_show()
