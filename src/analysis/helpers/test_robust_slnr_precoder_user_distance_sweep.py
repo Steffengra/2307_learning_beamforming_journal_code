@@ -4,7 +4,7 @@ import numpy as np
 import src
 from src.analysis.helpers.test_precoder_user_distance_sweep import test_precoder_user_distance_sweep
 from src.data.calc_sum_rate import calc_sum_rate
-from src.analysis.helpers.get_precoding import get_precoding_robust_slnr
+from src.utils.get_precoding import get_precoding_robust_slnr
 
 
 # todo: currently only implemented for 1 satellite, uniform error distr.

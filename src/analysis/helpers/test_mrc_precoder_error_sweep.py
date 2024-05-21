@@ -4,7 +4,7 @@ import numpy as np
 import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.data.calc_sum_rate_no_iui import calc_sum_rate_no_iui
-from src.analysis.helpers.get_precoding import get_precoding_mrc
+from src.utils.get_precoding import get_precoding_mrc
 
 
 def test_mrc_precoder_error_sweep(

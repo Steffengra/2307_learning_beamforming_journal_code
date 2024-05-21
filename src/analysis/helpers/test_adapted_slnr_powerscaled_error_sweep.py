@@ -7,7 +7,7 @@ import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.data.calc_sum_rate import calc_sum_rate
 from src.utils.load_model import load_model
-from src.analysis.helpers.get_precoding import get_precoding_adapted_slnr_powerscaled
+from src.utils.get_precoding import get_precoding_adapted_slnr_powerscaled
 
 
 def test_adapted_slnr_powerscaled_error_sweep(

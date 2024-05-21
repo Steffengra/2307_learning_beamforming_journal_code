@@ -4,7 +4,7 @@ import numpy as np
 import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.data.calc_sum_rate import calc_sum_rate
-from src.analysis.helpers.get_precoding import get_precoding_robust_slnr
+from src.utils.get_precoding import get_precoding_robust_slnr
 
 
 def test_robust_slnr_precoder_error_sweep(
