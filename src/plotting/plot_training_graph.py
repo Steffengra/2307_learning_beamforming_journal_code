@@ -45,12 +45,13 @@ def plot_training_graph(
     generic_styling(ax=ax)
     fig.tight_layout(pad=0)
 
-    plot_config.save_figures(plot_name=name, padding=0)
+    # plot_config.save_figures(plot_name=name, padding=0)
 
 
 if __name__ == '__main__':
     cfg = Config()
-    path = Path(cfg.output_metrics_path, 'sat_2_ant_4_usr_3_satdist_10000_usrdist_1000', 'err_mult_on_steering_cos', 'single_error', 'training_error_0.0_userwiggle_30.gzip')
+    # path = Path(cfg.output_metrics_path, 'sat_2_ant_4_usr_3_satdist_10000_usrdist_1000', 'err_mult_on_steering_cos', 'single_error', 'training_error_0.0_userwiggle_30.gzip')
+    path = Path(cfg.output_metrics_path, 'training_error_full.gzip')
 
     plot_training_graph(path, name='training_test', xlabel='Training Episode', ylabel='Mean Reward')
     plt.show()

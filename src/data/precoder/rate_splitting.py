@@ -9,8 +9,6 @@ from src.data.precoder.mmse_precoder import (
 )
 
 
-# WIP
-
 def rate_splitting_no_norm(
         channel_matrix,
         noise_power_watt: float,

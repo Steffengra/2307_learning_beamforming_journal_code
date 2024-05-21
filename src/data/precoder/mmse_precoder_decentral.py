@@ -16,7 +16,7 @@ def mmse_precoder_decentral_limited_no_norm(
     """TODO: Comment"""
 
     user_nr = local_channel_matrices[0].shape[0]
-    sat_tot_ant_nr = local_channel_matrices[0].shape[1]
+    # sat_tot_ant_nr = local_channel_matrices[0].shape[1]
 
     # inversion_constant_lambda = finfo('float32').tiny
     inversion_constant_lambda = 0
@@ -35,7 +35,7 @@ def mmse_precoder_decentral_limited_no_norm(
                     + (
                         noise_power_watt
                         * user_nr
-                        / (power_constraint_watt / sat_nr)
+                        / power_constraint_watt  # todo: macht gesamtpower hier sinn?
                         + inversion_constant_lambda
                     ) * np.eye(user_nr)
                 )
