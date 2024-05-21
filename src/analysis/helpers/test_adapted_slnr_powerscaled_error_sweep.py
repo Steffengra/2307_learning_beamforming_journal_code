@@ -1,15 +1,13 @@
 
 from pathlib import Path
-import gzip
-import pickle
 
 import numpy as np
-from keras.models import load_model
 
 import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.data.calc_sum_rate import calc_sum_rate
 from src.models.precoders.scaled_precoder import scale_robust_slnr_complete_precoder_normed
+from src.utils.load_model import load_model
 
 
 def test_adapted_slnr_powerscaled_error_sweep(
@@ -46,11 +44,7 @@ def test_adapted_slnr_powerscaled_error_sweep(
 
         return precoding
 
-    scaling_network = load_model(model_path)
-
-    with gzip.open(Path(model_path, '..', 'config', 'norm_dict.gzip')) as file:
-        norm_dict = pickle.load(file)
-    norm_factors = norm_dict['norm_factors']
+    scaling_network, norm_factors = load_model(model_path)
 
     test_precoder_error_sweep(
         config=config,

@@ -1,12 +1,9 @@
 
-import gzip
-import pickle
 import pprint
 from pathlib import Path
 
 import numpy as np
 import tensorflow as tf
-from keras.models import load_model
 from matplotlib.pyplot import show as plt_show
 
 from src.data.satellite_manager import SatelliteManager
@@ -20,13 +17,14 @@ from src.models.precoders.adapted_precoder import adapt_robust_slnr_complete_pre
 from src.data.calc_sum_rate import calc_sum_rate
 from src.utils.plot_beampattern import plot_beampattern
 from src.utils.update_sim import update_sim
+from src.utils.load_model import load_model
 
 
 plot = [
     'mmse',
     'slnr',
-    # 'learned',
-    'slnr_adapted_complete',
+    'learned',
+    # 'slnr_adapted_complete',
     # 'ones',
 ]
 
@@ -40,9 +38,9 @@ config = Config()
 
 model_path = Path(  # SAC only
     config.trained_models_path,
-    'test',
-    'single_error',
-    'userwiggle_5000_snap_2.348',
+    '1sat_16ant_100k~0_3usr_100k_50k_additive_0.0',
+    'base',
+    'full_snap_4.553',
     'model',
 )
 
@@ -52,15 +50,12 @@ if any(value in plot for value in ['learned', 'slnr_adapted_complete']):
 
     with tf.device('CPU:0'):
 
-        with gzip.open(Path(model_path, '..', 'config', 'norm_dict.gzip')) as file:
-            norm_dict = pickle.load(file)
-        norm_factors = norm_dict['norm_factors']
+        precoder_network, norm_factors = load_model(model_path)
+
         if norm_factors != {}:
             config.config_learner.get_state_args['norm_state'] = True
         else:
             config.config_learner.get_state_args['norm_state'] = False
-
-        precoder_network = load_model(model_path)
 
 satellite_manager = SatelliteManager(config)
 user_manager = UserManager(config)
@@ -158,7 +153,7 @@ for iter_id in range(2):
         )
 
     # learned fully adapted slnr
-    if 'slnr_adapted_complete':
+    if 'slnr_adapted_complete' in plot:
 
         with tf.device('CPU:0'):
 

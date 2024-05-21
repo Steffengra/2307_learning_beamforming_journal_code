@@ -1,10 +1,7 @@
 
 from pathlib import Path
-import gzip
-import pickle
 
 import numpy as np
-from keras.models import load_model
 
 import src
 from src.analysis.helpers.test_precoder_error_sweep import (
@@ -14,6 +11,7 @@ from src.data.calc_sum_rate import (
     calc_sum_rate,
 )
 from src.models.precoders.learned_precoder import get_learned_precoder_decentralized_normalized
+from src.utils.load_model import load_models
 
 
 def test_sac_precoder_decentralized_error_sweep(
@@ -32,7 +30,7 @@ def test_sac_precoder_decentralized_error_sweep(
 
         states = config.config_learner.get_state(
             satellite_manager=satellite_manager,
-            norm_factors=norm_dict['norm_factors'],
+            norm_factors=norm_factors,
             **config.config_learner.get_state_args,
             per_sat=True
         )
@@ -45,16 +43,7 @@ def test_sac_precoder_decentralized_error_sweep(
 
         return w_precoder_normalized
 
-    precoder_paths = sorted([
-        Path(path, 'model')
-        for path in model_path.iterdir()
-        if path.is_dir() and 'agent' in path.name
-    ])
-    precoder_networks = [load_model(model_path) for model_path in precoder_paths]
-
-    with gzip.open(Path(model_path, 'config', 'norm_dict.gzip')) as file:
-        norm_dict = pickle.load(file)
-    norm_factors = norm_dict['norm_factors']
+    precoder_networks, norm_factors = load_models(model_path)
 
     test_precoder_error_sweep(
         config=config,

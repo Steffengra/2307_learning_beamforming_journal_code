@@ -5,8 +5,7 @@ from pathlib import Path
 from datetime import datetime
 
 import numpy as np
-import tensorflow as tf
-from keras.models import load_model
+from src.utils.load_model import load_model
 
 import src
 from src.config.config import Config
@@ -81,17 +80,16 @@ def generate_beampatterns(
     learned_models = {}
     for model_name, model_path in learned_model_paths.items():
 
-        with gzip.open(Path(model_path, '..', 'config', 'norm_dict.gzip')) as file:
-            norm_dict = pickle.load(file)
-        norm_factors = norm_dict['norm_factors']
-        if norm_factors != {}:  # todo
+        learned_models[model_name] = {}
+        (
+            learned_models[model_name]['model'],
+            learned_models[model_name]['norm_dict']
+        ) = load_model(model_path)
+
+        if learned_models[model_name]['norm_dict'] != {}:  # todo
             config.config_learner.get_state_args['norm_state'] = True
         else:
             config.config_learner.get_state_args['norm_state'] = False
-
-        learned_models[model_name] = {}
-        learned_models[model_name]['model'] = load_model(model_path)
-        learned_models[model_name]['norm_dict'] = norm_factors
 
     real_time_start = datetime.now()
 
@@ -220,13 +218,9 @@ if __name__ == '__main__':
 
     config = Config()
 
-    config.config_learner.training_name = (
-        f'sat_{config.sat_nr}'
-        f'_ant_{config.sat_tot_ant_nr}'
-        f'_usr_{config.user_nr}'
-        f'_satdist_{config.sat_dist_average}'
-        f'_usrdist_{config.user_dist_average}'
-    )
+    # TODO: UPDATE THIS
+    raise Exception('UPDATE THIS')
+    config.config_learner.training_name = config.generate_name_from_config()
 
     satellite_manager = SatelliteManager(config)
     user_manager = UserManager(config)
@@ -252,9 +246,9 @@ if __name__ == '__main__':
         'test':
             Path(
                 config.trained_models_path,
-                'error_0.0',
-                'single_error',
-                'userwiggle_50000_snap_4.539',
+                '1sat_16ant_100k~0_3usr_100k_50k_additive_0.0',
+                'base',
+                'full_snap_4.553',
                 'model',
             ),
     }

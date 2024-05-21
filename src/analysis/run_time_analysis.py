@@ -1,12 +1,9 @@
 
-import gzip
-import pickle
 import time
 from pathlib import Path
 
 import numpy as np
 import tensorflow as tf
-from keras.models import load_model
 
 from src.config.config import Config
 from src.data.satellite_manager import SatelliteManager
@@ -17,6 +14,7 @@ from src.data.precoder.robust_SLNR_precoder import robust_SLNR_precoder_no_norm
 from src.models.precoders.learned_precoder import get_learned_precoder_normalized
 from src.utils.update_sim import update_sim
 from src.utils.profiling import start_profiling, end_profiling
+from src.utils.load_model import load_model
 
 
 def main():
@@ -54,11 +52,7 @@ def main():
 
     elif which_precoder == 'sac':
 
-        model = load_model(model_path)
-
-        with gzip.open(Path(model_path, '..', 'config', 'norm_dict.gzip')) as file:
-            norm_dict = pickle.load(file)
-        norm_factors = norm_dict['norm_factors']
+        model, norm_factors = load_model(model_path)
 
         def precoder(sat_man):
             state = config.config_learner.get_state(satellite_manager=sat_man, norm_factors=norm_factors, **config.config_learner.get_state_args)
