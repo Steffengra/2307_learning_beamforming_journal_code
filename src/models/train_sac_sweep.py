@@ -19,12 +19,6 @@ from src.models.train_sac_adapt_robust_slnr_power import train_sac_adapt_robust_
 from src.models.train_sac_adapt_robust_slnr_complete import train_sac_adapt_robust_slnr_complete
 from src.models.train_sac_decentralized_blind import train_sac_decentralized_blind
 from src.models.train_sac_decentralized_limited import train_sac_decentralized_limited
-from src.analysis.helpers.test_sac_precoder_error_sweep import (
-    test_sac_precoder_error_sweep,
-)
-from src.analysis.helpers.test_sac_precoder_user_distance_sweep import (
-    test_sac_precoder_user_distance_sweep,
-)
 
 
 def learn(
@@ -122,53 +116,53 @@ def learn(
 #                       error_sweep_range=testing_error_sweep_range_err_satpos_and_userpos)
 
 
-def test_precoder(
-        config,
-        model_path,
-        error_sweep_range,
-):
-    model_parent_path = model_path.parent
-    model_name = model_path.name
-    monte_carlo_iterations = 10_000
-
-    # distance within wiggle
-    test_sac_precoder_user_distance_sweep(
-        config=deepcopy(config),
-        model_path=model_path,
-        distance_sweep_range=np.arange(config.user_dist_average - config.user_dist_bound,
-                                       config.user_dist_average + config.user_dist_bound,
-                                       0.01),
-    )
-
-    # distance outside wiggle
-    test_sac_precoder_user_distance_sweep(
-        config=deepcopy(config),
-        model_path=model_path,
-        distance_sweep_range=np.arange(config.user_dist_average - 10 * config.user_dist_bound,
-                                       config.user_dist_average + 10 * config.user_dist_bound,
-                                       0.01),
-    )
-
-    # error with wiggle
-    test_sac_precoder_error_sweep(
-        config=deepcopy(config),
-        model_parent_path=model_parent_path,
-        model_name=model_name,
-        error_sweep_range=error_sweep_range,
-        monte_carlo_iterations=monte_carlo_iterations,
-    )
-
-    # error no wiggle
-    old_user_dist_bound = config.user_dist_bound
-    config.user_dist_bound = 0.0
-    test_sac_precoder_error_sweep(
-        config=deepcopy(config),
-        model_parent_path=model_parent_path,
-        model_name=model_name,
-        error_sweep_range=error_sweep_range,
-        monte_carlo_iterations=monte_carlo_iterations,
-    )
-    config.user_dist_bound = old_user_dist_bound
+# def test_precoder(
+#         config,
+#         model_path,
+#         error_sweep_range,
+# ):
+#     model_parent_path = model_path.parent
+#     model_name = model_path.name
+#     monte_carlo_iterations = 10_000
+#
+#     # distance within wiggle
+#     test_sac_precoder_user_distance_sweep(
+#         config=deepcopy(config),
+#         model_path=model_path,
+#         distance_sweep_range=np.arange(config.user_dist_average - config.user_dist_bound,
+#                                        config.user_dist_average + config.user_dist_bound,
+#                                        0.01),
+#     )
+#
+#     # distance outside wiggle
+#     test_sac_precoder_user_distance_sweep(
+#         config=deepcopy(config),
+#         model_path=model_path,
+#         distance_sweep_range=np.arange(config.user_dist_average - 10 * config.user_dist_bound,
+#                                        config.user_dist_average + 10 * config.user_dist_bound,
+#                                        0.01),
+#     )
+#
+#     # error with wiggle
+#     test_sac_precoder_error_sweep(
+#         config=deepcopy(config),
+#         model_parent_path=model_parent_path,
+#         model_name=model_name,
+#         error_sweep_range=error_sweep_range,
+#         monte_carlo_iterations=monte_carlo_iterations,
+#     )
+#
+#     # error no wiggle
+#     old_user_dist_bound = config.user_dist_bound
+#     config.user_dist_bound = 0.0
+#     test_sac_precoder_error_sweep(
+#         config=deepcopy(config),
+#         model_parent_path=model_parent_path,
+#         model_name=model_name,
+#         error_sweep_range=error_sweep_range,
+#         monte_carlo_iterations=monte_carlo_iterations,
+#     )
+#     config.user_dist_bound = old_user_dist_bound
 
 
 test = True

@@ -13,6 +13,7 @@ from src.data.precoder.mmse_precoder_decentral import mmse_precoder_decentral_li
 from src.data.precoder.mrc_precoder import mrc_precoder_normalized
 from src.data.precoder.calc_autocorrelation import calc_autocorrelation
 from src.data.precoder.robust_SLNR_precoder import robust_SLNR_precoder_no_norm
+from src.data.precoder.rate_splitting import rate_splitting_no_norm
 
 
 def get_precoding_learned(
@@ -193,3 +194,21 @@ def get_precoding_robust_slnr(
     )
 
     return w_robust_slnr
+
+
+def get_precoding_rsma(
+        config: 'src.config.config.Config',
+        satellite_manager: 'src.data.satellite_manager.SatelliteManager',
+        rsma_factor: float,
+        common_part_precoding_style: str,
+) -> np.ndarray:
+
+    w_rsma = rate_splitting_no_norm(
+        channel_matrix=satellite_manager.erroneous_channel_state_information,
+        noise_power_watt=config.noise_power_watt,
+        power_constraint_watt=config.power_constraint_watt,
+        rsma_factor=rsma_factor,
+        common_part_precoding_style=common_part_precoding_style
+    )
+
+    return w_rsma
