@@ -5,7 +5,6 @@ import gzip
 import pickle
 
 import numpy as np
-from matplotlib.pyplot import show as plt_show
 
 import src
 from src.data.satellite_manager import (
