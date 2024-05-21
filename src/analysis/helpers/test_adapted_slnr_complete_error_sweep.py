@@ -6,7 +6,7 @@ import numpy as np
 import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.data.calc_sum_rate import calc_sum_rate
-from src.analysis.helpers.get_precoder import get_precoding_adapted_slnr_complete
+from src.analysis.helpers.get_precoding import get_precoding_adapted_slnr_complete
 from src.utils.load_model import load_model
 
 

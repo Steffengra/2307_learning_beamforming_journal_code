@@ -4,14 +4,10 @@ from pathlib import Path
 import numpy as np
 
 import src
-from src.analysis.helpers.test_precoder_error_sweep import (
-    test_precoder_error_sweep,
-)
-from src.data.calc_sum_rate import (
-    calc_sum_rate,
-)
-from src.models.precoders.learned_precoder import get_learned_precoder_normalized
+from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
+from src.data.calc_sum_rate import calc_sum_rate
 from src.utils.load_model import load_model
+from src.analysis.helpers.get_precoding import get_precoding_learned
 
 
 def test_sac_precoder_error_sweep(
@@ -23,25 +19,6 @@ def test_sac_precoder_error_sweep(
 ) -> None:
     """Test the learned SAC precoder for a range of error configuration with monte carlo average."""
 
-    def get_precoder_function_learned(
-        config: 'src.config.config.Config',
-        satellite_manager: 'src.data.satellite_manager.SatelliteManager',
-    ):
-
-        state = config.config_learner.get_state(
-            satellite_manager=satellite_manager,
-            norm_factors=norm_factors,
-            **config.config_learner.get_state_args
-        )
-
-        w_precoder_normalized = get_learned_precoder_normalized(
-            state=state,
-            precoder_network=precoder_network,
-            **config.learned_precoder_args,
-        )
-
-        return w_precoder_normalized
-
     precoder_network, norm_factors = load_model(model_path)
 
     test_precoder_error_sweep(
@@ -50,6 +27,6 @@ def test_sac_precoder_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='learned',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=get_precoder_function_learned,
+        get_precoder_func=lambda cfg, sat_man: get_precoding_learned(cfg, sat_man, norm_factors, precoder_network),
         calc_sum_rate_func=calc_sum_rate,
     )
