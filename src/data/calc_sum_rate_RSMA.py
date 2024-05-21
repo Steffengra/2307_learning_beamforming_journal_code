@@ -4,13 +4,13 @@ import numpy as np
 
 def calc_sum_rate_RSMA(
     channel_state: np.ndarray,
-    precoder_RSMA: np.ndarray,
+    w_precoder: np.ndarray,
     noise_power_watt: float
 ) -> float:
     """TODO: comment"""
 
     user_nr = channel_state.shape[0]
-    precoder_private = precoder_RSMA[:,1:]
+    precoder_private = w_precoder[:, 1:]
 
     sinr_users = np.zeros(user_nr)
     sinr_common_part = np.zeros(user_nr)
@@ -34,7 +34,7 @@ def calc_sum_rate_RSMA(
     # calculating SINR common part
     for user_idx in range(user_nr):
         channel_user_H_k = channel_state[user_idx, :]
-        power_fading_precoded_sigma_x = abs(np.matmul(channel_user_H_k, precoder_RSMA[:, 0]))**2
+        power_fading_precoded_sigma_x = abs(np.matmul(channel_user_H_k, w_precoder[:, 0])) ** 2
 
         power_interference_private_users_sigma_i = [
             abs(np.matmul(channel_user_H_k, precoder_private[:, other_user_idx]))**2

@@ -213,7 +213,7 @@ def train_sac_RSMA(
             # step simulation based on action, determine reward
             reward = calc_sum_rate_RSMA(
                 channel_state=satellite_manager.channel_state_information,
-                precoder_RSMA=w_precoder_normed,
+                w_precoder=w_precoder_normed,
                 noise_power_watt=config.noise_power_watt,
             )
             step_experience['reward'] = reward

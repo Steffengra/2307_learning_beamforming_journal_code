@@ -96,6 +96,31 @@ def get_precoding_adapted_slnr_powerscaled(
     return precoding
 
 
+def get_precoding_learned_rsma_complete(
+        config: 'src.config.config.Config',
+        satellite_manager: 'src.data.satellite_manager.SatelliteManager',
+        norm_factors: dict,
+        precoder_network: tf.keras.models.Model,
+) -> np.ndarray:
+
+    state = config.config_learner.get_state(
+        satellite_manager=satellite_manager,
+        norm_factors=norm_factors,
+        **config.config_learner.get_state_args
+    )
+
+    w_precoder_normalized = get_learned_precoder_normalized(
+        state=state,
+        precoder_network=precoder_network,
+        sat_nr=config.sat_nr,
+        sat_ant_nr=config.sat_ant_nr,
+        user_nr=config.user_nr + 1,
+        power_constraint_watt=config.power_constraint_watt,
+    )
+
+    return w_precoder_normalized
+
+
 def get_precoding_learned_decentralized(
         config: 'src.config.config.Config',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
