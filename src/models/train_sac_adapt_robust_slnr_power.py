@@ -1,6 +1,10 @@
-from datetime import datetime
+
 from pathlib import Path
 from sys import path as sys_path
+project_root_path = Path(Path(__file__).parent, '..', '..')
+sys_path.append(str(project_root_path.resolve()))
+
+from datetime import datetime
 from shutil import (
     copytree,
     rmtree,
@@ -9,12 +13,7 @@ import gzip
 import pickle
 
 import numpy as np
-import tensorflow as tf
 from matplotlib.pyplot import show as plt_show
-from scipy.special import softmax
-
-project_root_path = Path(Path(__file__).parent, '..', '..')
-sys_path.append(str(project_root_path.resolve()))
 
 import src
 from src.config.config import (
@@ -36,14 +35,6 @@ from src.models.helpers.get_state_norm_factors import (
 )
 from src.data.calc_sum_rate import (
     calc_sum_rate,
-)
-from src.data.precoder.mmse_precoder import (
-    mmse_precoder_normalized,
-)
-from src.utils.real_complex_vector_reshaping import (
-    real_vector_to_half_complex_vector,
-    complex_vector_to_double_real_vector,
-    rad_and_phase_to_complex_vector,
 )
 from src.utils.norm_precoder import (
     norm_precoder,
