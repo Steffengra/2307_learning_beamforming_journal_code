@@ -59,7 +59,6 @@ def test_precoder_error_sweep(
         name = (
             f'testing_{precoder_name}'
             f'_sweep_{error_sweep_range[0]}_{error_sweep_range[-1]}'
-            f'_userwiggle_{config.user_dist_bound}'
             f'.gzip'
         )
         results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'error_sweep')
