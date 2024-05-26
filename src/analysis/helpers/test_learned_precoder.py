@@ -121,7 +121,7 @@ def test_adapted_slnr_powerscaled_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
-        precoder_name='adapted_slnr_complete',
+        precoder_name='adapted_slnr_powerscaled',
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, sat_man: get_precoding_adapted_slnr_powerscaled(cfg, sat_man, norm_factors, scaling_network),
         calc_sum_rate_func=calc_sum_rate,
