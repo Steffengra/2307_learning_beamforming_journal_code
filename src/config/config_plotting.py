@@ -35,6 +35,22 @@ class PlotConfig:
         # \Huge         19.90 21.15 22.39 23.64 24.88 26.12 27.37 28.61 29.86
         # \HUGE         24.05 25.55 27.05 28.56 30.06 31.56 33.07 34.57 36.07
 
+        plt.rc(
+            'legend',
+            framealpha=1.0,  # no transparency for .eps compatibility, default=0.8
+            fancybox=False,  # round edges >True or False
+            columnspacing=1.0,  # between columns, default=2.0
+        )
+
+        plt.rc(
+            'xtick',
+            direction='in',
+        )
+        plt.rc(
+            'ytick',
+            direction='in',
+        )
+
         plt.rc('lines', linewidth=1)
         plt.rc('lines', markersize=4)
         plt.rc('errorbar', capsize=3)
@@ -42,14 +58,14 @@ class PlotConfig:
         plt.rc(
             'grid',
             color='gainsboro',
-            linewidth=0.5 * plt.rcParams['grid.linewidth']  # linewidth of grid lines, default: 0.8
+            linewidth=0.4  # linewidth of grid lines, default: 0.8
         )
         plt.rc('axes.spines', top=False, right=False)  # Visibility of axis spines
         plt.rc('xtick.minor', visible=True)  # set minor x axis ticks visible
         plt.rc('ytick.minor', visible=True)  # set minor y axis ticks visible
         plt.rc('font', family='serif')  # label fonts, ['serif', >'sans-serif', 'monospace']
 
-        plt.rc('text', usetex=True)  # use inline math for ticks, default: False
+        # plt.rc('text', usetex=True)  # use inline math for ticks, default: False
 
     def _pre_init(
             self,
@@ -132,12 +148,32 @@ def save_figures(
 ) -> None:
     """Save a pyplot fig in multiple formats."""
 
-    plt.savefig(Path(plots_parent_path, 'pgf', f'{plot_name}.pgf'),
-                bbox_inches='tight', pad_inches=padding, transparent=True)
-    plt.savefig(Path(plots_parent_path, 'pdf', f'{plot_name}.pdf'),
-                bbox_inches='tight', pad_inches=padding, dpi=800, transparent=True)
-    plt.savefig(Path(plots_parent_path, 'eps', f'{plot_name}.eps'),
-                bbox_inches='tight', pad_inches=padding)
+    pgf_path = Path(plots_parent_path, 'pgf')
+    pdf_path = Path(plots_parent_path, 'pdf')
+    eps_path = Path(plots_parent_path, 'eps')
+
+    pgf_path.mkdir(exist_ok=True)
+    pdf_path.mkdir(exist_ok=True)
+    eps_path.mkdir(exist_ok=True)
+
+    plt.savefig(
+        Path(pgf_path, f'{plot_name}.pgf'),
+        bbox_inches='tight',
+        pad_inches=padding,
+        transparent=True,
+    )
+    plt.savefig(
+        Path(pdf_path, f'{plot_name}.pdf'),
+        bbox_inches='tight',
+        pad_inches=padding,
+        dpi=800,
+        transparent=True,
+    )
+    plt.savefig(
+        Path(eps_path, f'{plot_name}.eps'),
+        bbox_inches='tight',
+        pad_inches=padding,
+    )
 
 
 def generic_styling(
@@ -153,6 +189,9 @@ def generic_styling(
         linewidth=0.8 * plt.rcParams['grid.linewidth']
     )
     ax.tick_params(axis='y', which='minor', left=False)
+    ax.tick_params(axis='y', which='major', left=False)
+    ax.tick_params(axis='x', which='minor', bottom=False)
+    ax.tick_params(axis='x', which='major', bottom=False)
 
 
 def pt_to_inches(
