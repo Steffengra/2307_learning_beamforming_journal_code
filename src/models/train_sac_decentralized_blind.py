@@ -115,7 +115,7 @@ def train_sac_decentralized_blind(
 
     def save_results():
 
-        name = f'training_error_userwiggle_{config.user_dist_bound}.gzip'
+        name = f'training_error_decentralized_blind.gzip'
 
         results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'decentralized_blind')
         results_path.mkdir(parents=True, exist_ok=True)

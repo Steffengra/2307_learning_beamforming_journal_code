@@ -117,7 +117,7 @@ def train_sac_decentralized_limited(
 
     def save_results():
 
-        name = f'training_error_userwiggle_{config.user_dist_bound}.gzip'
+        name = f'training_error_decentralized_limited.gzip'
 
         results_path = Path(config.output_metrics_path, config.config_learner.training_name,
             f'decentralized_limited_{config.local_csi_own_quality}_{config.local_csi_others_quality}')
