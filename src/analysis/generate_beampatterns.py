@@ -233,7 +233,6 @@ if __name__ == '__main__':
         #         '1_sat_16_ant_3_usr_100000_dist_0.0_error_on_cos_0.1_fading',
         #         'single_error',
         #         'userwiggle_50000_snap_4.565',
-        #         'model',
         #     ),
         # 'learned_0.5_error':
         #     Path(
@@ -241,7 +240,6 @@ if __name__ == '__main__':
         #         '1_sat_16_ant_3_usr_100000_dist_0.05_error_on_cos_0.1_fading',
         #         'single_error',
         #         'userwiggle_50000_snap_2.710',
-        #         'model',
         #     ),
         'test':
             Path(
@@ -249,7 +247,6 @@ if __name__ == '__main__':
                 '1sat_16ant_100k~0_3usr_100k_50k_additive_0.0',
                 'base',
                 'full_snap_4.553',
-                'model',
             ),
     }
 

@@ -41,7 +41,6 @@ model_path = Path(  # SAC only
     '1sat_16ant_100k~0_3usr_100k_50k_additive_0.0',
     'base',
     'full_snap_4.553',
-    'model',
 )
 
 if any(value in plot for value in ['learned', 'slnr_adapted_complete']):

@@ -31,7 +31,6 @@ def main():
         '1_sat_16_ant_3_usr_100000_dist_0.0_error_on_cos_0.1_fading',
         'single_error',
         'userwiggle_50000_snap_4.565',
-        'model',
     )
 
     if which_precoder == 'mmse':
