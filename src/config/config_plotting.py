@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
 
 
 class PlotConfig:
@@ -188,6 +189,8 @@ def generic_styling(
         color='whitesmoke',
         linewidth=0.8 * plt.rcParams['grid.linewidth']
     )
+    ax.xaxis.set_minor_locator(AutoMinorLocator(3))  # set no. of minor ticks btw. major ticks = number-1
+    ax.yaxis.set_minor_locator(AutoMinorLocator(3))  # e.g., AutoMinorLocator(3) -> 2 minor ticks
     ax.tick_params(axis='y', which='minor', left=False)
     ax.tick_params(axis='y', which='major', left=False)
     ax.tick_params(axis='x', which='minor', bottom=False)

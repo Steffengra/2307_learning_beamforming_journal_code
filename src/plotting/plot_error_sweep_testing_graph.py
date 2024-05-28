@@ -72,7 +72,11 @@ def plot_error_sweep_testing_graph(
     ax.set_ylabel(ylabel)
 
     if legend:
-        ax.legend(ncols=2)
+        from matplotlib import container
+        handles, labels = ax.get_legend_handles_labels()
+        handles = [h[0] if isinstance(h, container.ErrorbarContainer) else h for h in handles]  # remove error bars
+        legend = ax.legend(handles, legend, ncols=2)
+        legend.get_frame().set_linewidth(0.8)
 
     generic_styling(ax=ax)
     fig.tight_layout(pad=0)
@@ -87,26 +91,47 @@ if __name__ == '__main__':
 
     data_paths = [
         Path(cfg.output_metrics_path,
-             'sat_1_ant_16_usr_3_satdist_10000_usrdist_100000', 'error_sweep',
-             'testing_mmse_sweep_0.0_0.1_userwiggle_50000.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+             'testing_mmse_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             'sat_1_ant_16_usr_3_satdist_10000_usrdist_100000', 'error_sweep',
-             'testing_robust_slnr_sweep_0.0_0.1_userwiggle_50000.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+             'testing_robust_slnr_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             'sat_1_ant_16_usr_3_satdist_10000_usrdist_100000', 'error_sweep',
-             'testing_learned1_sweep_0.0_0.1_userwiggle_50000.gzip'),
-        Path(cfg.output_metrics_path,
-             'sat_1_ant_16_usr_3_satdist_10000_usrdist_100000', 'error_sweep',
-             'testing_learned2_sweep_0.0_0.1_userwiggle_50000.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+             'testing_learned_sweep_0.0_0.1.gzip'),
+        # Path(cfg.output_metrics_path,
+        #      '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+        #      'testing_learned2_sweep_0.0_0.1_userwiggle_50000.gzip'),
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
     plot_height = plot_width * 9 / 20
 
-    plot_legend = ['MMSE', 'SLNR', 'SAC1', 'SAC2']
-    plot_markerstyle = ['o', '^', 's', 'x']
-    plot_colors = [plot_cfg.cp2['blue'], plot_cfg.cp2['black'], plot_cfg.cp2['magenta'], plot_cfg.cp2['green']]
-    plot_linestyles = ['-', '--', '-', '-']
+    plot_legend = [
+        'MMSE',
+        'SLNR',
+        'SAC1',
+        'SAC2',
+    ]
+
+    plot_markerstyle = [
+        'o',
+        '^',
+        's',
+        'x',
+    ]
+    plot_colors = [
+        plot_cfg.cp2['blue'],
+        plot_cfg.cp2['black'],
+        plot_cfg.cp2['magenta'],
+        plot_cfg.cp2['green'],
+    ]
+    plot_linestyles = [
+        '-',
+        '--',
+        '-',
+        '-',
+    ]
 
     plot_error_sweep_testing_graph(
         paths=data_paths,
