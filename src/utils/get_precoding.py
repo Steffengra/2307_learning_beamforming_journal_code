@@ -121,7 +121,7 @@ def get_precoding_learned_rsma_complete(
     return w_precoder_normalized
 
 
-def get_precoding_learned_decentralized(
+def get_precoding_learned_decentralized_blind(
         config: 'src.config.config.Config',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
@@ -133,6 +133,28 @@ def get_precoding_learned_decentralized(
         norm_factors=norm_factors,
         **config.config_learner.get_state_args,
         per_sat=True
+    )
+
+    w_precoder_normalized = get_learned_precoder_decentralized_normalized(
+        states=states,
+        precoder_networks=precoder_networks,
+        **config.learned_precoder_args,
+    )
+
+    return w_precoder_normalized
+
+
+def get_precoding_learned_decentralized_limited(
+        config: 'src.config.config.Config',
+        satellite_manager: 'src.data.satellite_manager.SatelliteManager',
+        norm_factors: dict,
+        precoder_networks: list[tf.keras.models.Model],
+) -> np.ndarray:
+
+    states = config.config_learner.get_state(
+            satellite_manager=satellite_manager,
+            norm_factors=norm_factors,
+            **config.config_learner.get_state_args,
     )
 
     w_precoder_normalized = get_learned_precoder_decentralized_normalized(

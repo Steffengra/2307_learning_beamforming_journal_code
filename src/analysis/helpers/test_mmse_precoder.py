@@ -54,11 +54,18 @@ def test_mmse_precoder_decentralized_limited_error_sweep(
 ) -> None:
     """Test the MMSE precoder for a range of error configuration with monte carlo average."""
 
+    if config.local_csi_own_quality == 'error_free' and config.local_csi_others_quality == 'erroneous':
+        precoder_name = 'mmse_decentralized_limited_L1'
+    elif config.local_csi_own_quality == 'erroneous' and config.local_csi_others_quality == 'scaled_erroneous':
+        precoder_name = 'mmse_decentralized_limited_L2'
+    else:
+        raise ValueError('Unknown decentralized_limited scenario')
+
     test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
-        precoder_name='mmse_decentralized_limited',
+        precoder_name=precoder_name,
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, sat_man: get_precoding_mmse_decentralized_limited(cfg, sat_man),
         calc_sum_rate_func=calc_sum_rate,
