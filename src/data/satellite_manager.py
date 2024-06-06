@@ -157,13 +157,8 @@ class SatelliteManager:
         for satellite in self.satellites:
             satellite.update_channel_state_information(channel_model=channel_model, users=users)
 
-        # build global channel state information
-        channel_state_per_satellite = np.zeros((len(users), self.satellites[0].antenna_nr, len(self.satellites)),
-                                               dtype='complex128')
         for satellite in self.satellites:
-            channel_state_per_satellite[:, :, satellite.idx] = satellite.channel_state_to_users
-        self.channel_state_information = np.reshape(
-            channel_state_per_satellite, (len(users), self.satellites[0].antenna_nr * len(self.satellites)))
+            self.channel_state_information[:, satellite.idx*satellite.antenna_nr:satellite.idx*satellite.antenna_nr+satellite.antenna_nr] = satellite.channel_state_to_users
 
     def update_erroneous_channel_state_information(
             self,
@@ -180,14 +175,8 @@ class SatelliteManager:
             satellite.update_erroneous_channel_state_information(channel_model=channel_model, users=users)
 
         # gather global erroneous channel state information
-        erroneous_channel_state_per_satellite = np.zeros(
-            (len(users), self.satellites[0].antenna_nr, len(self.satellites)),
-            dtype='complex128',
-        )
         for satellite in self.satellites:
-            erroneous_channel_state_per_satellite[:, :, satellite.idx] = satellite.erroneous_channel_state_to_users
-        self.erroneous_channel_state_information = np.reshape(
-            erroneous_channel_state_per_satellite, (len(users), self.satellites[0].antenna_nr * len(self.satellites)))
+            self.erroneous_channel_state_information[:, satellite.idx*satellite.antenna_nr:satellite.idx*satellite.antenna_nr+satellite.antenna_nr] = satellite.erroneous_channel_state_to_users
 
     def update_scaled_erroneous_channel_state_information(
             self,
