@@ -257,3 +257,23 @@ class SatelliteManager:
             aods_to_users[satellite_id, :] = satellite.aods_to_users
 
         return aods_to_users
+
+    def get_inter_satellite_distances(
+            self
+    ) -> np.ndarray:
+        """todo: doc"""
+
+        from src.utils.euclidian_distance import euclidian_distance
+
+        distances = np.zeros((len(self.satellites), len(self.satellites)))
+        for satellite_id in range(len(self.satellites)):
+            for other_satellite_id in range(satellite_id+1, len(self.satellites)):
+                distance = euclidian_distance(
+                    self.satellites[satellite_id].cartesian_coordinates,
+                    self.satellites[other_satellite_id].cartesian_coordinates
+                )
+                distances[satellite_id, other_satellite_id] = distance
+                distances[other_satellite_id, satellite_id] = -distance
+
+        return distances
+
