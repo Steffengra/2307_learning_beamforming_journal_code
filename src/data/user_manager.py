@@ -30,7 +30,7 @@ class UserManager:
         """TODO: Comment"""
 
         # calculate average user positions
-        user_pos_average = (np.arange(0, config.user_nr) - (config.user_nr - 1) / 2) * config.user_dist_average
+        user_pos_average = (np.arange(0, config.user_nr, dtype='float128') - (config.user_nr - 1) / 2) * config.user_dist_average
 
         # add random value on user distances
         random_factor = self.rng.uniform(low=-config.user_dist_bound,

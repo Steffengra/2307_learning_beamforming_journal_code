@@ -23,9 +23,9 @@ class SatelliteManager:
         self.satellites: list[Satellite] = []
         self._initialize_satellites(config=config)
 
-        self.channel_state_information: np.ndarray = np.array([])  # nr_user x (nr_antennas * nr_satellites)
+        self.channel_state_information: np.ndarray = np.zeros((config.user_nr, config.sat_ant_nr*config.sat_nr), dtype='complex128')  # nr_user x (nr_antennas * nr_satellites)
                                                                    #   per user: sat 1 ant1, sat 1 ant 2, sat 1 ant 3, sat 2 ant 1, ...
-        self.erroneous_channel_state_information: np.ndarray = np.array([])  # nr_user x (nr_antennas * nr_satellites)
+        self.erroneous_channel_state_information: np.ndarray = np.zeros((config.user_nr, config.sat_ant_nr*config.sat_nr), dtype='complex128')  # nr_user x (nr_antennas * nr_satellites)
 
         self.logger.info('satellites setup complete')
 
@@ -36,7 +36,7 @@ class SatelliteManager:
         """Todo: doc"""
 
         # calculate average satellite positions
-        sat_pos_average = (np.arange(0, config.sat_nr) - (config.sat_nr - 1) / 2) * config.sat_dist_average
+        sat_pos_average = (np.arange(0, config.sat_nr, dtype='float128') - (config.sat_nr - 1) / 2) * config.sat_dist_average
 
         # add random value on satellite distances
         random_factor = self.rng.uniform(low=-config.sat_dist_bound,
