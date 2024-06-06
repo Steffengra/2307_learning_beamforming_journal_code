@@ -78,7 +78,10 @@ class SatelliteManager:
         Initializes satellite object list for given configuration
         """
 
-        sat_spherical_coordinates = self.calc_spherical_coordinates(config=config)
+        sat_spherical_coordinates = np.flip(
+            self.calc_spherical_coordinates(config=config),
+            axis=1,
+        )
 
         for sat_idx in range(config.sat_nr):
             self.satellites.append(
@@ -95,7 +98,10 @@ class SatelliteManager:
     ) -> None:
         """Todo: doc"""
 
-        sat_spherical_coordinates = self.calc_spherical_coordinates(config=config)
+        sat_spherical_coordinates = np.flip(
+            self.calc_spherical_coordinates(config=config),
+            axis=1,
+        )
 
         for satellite in self.satellites:
             satellite.update_position(

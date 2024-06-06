@@ -70,7 +70,10 @@ class UserManager:
     ) -> None:
         """TODO: Comment"""
 
-        user_spherical_coordinates = self.calc_spherical_coordinates(config=config)
+        user_spherical_coordinates = np.flip(
+            self.calc_spherical_coordinates(config=config),
+            axis=1,
+        )
 
         for user_idx in range(config.user_nr):
             self.users.append(
@@ -87,7 +90,10 @@ class UserManager:
     ) -> None:
         """TODO: Comment"""
 
-        user_spherical_coordinates = self.calc_spherical_coordinates(config=config)
+        user_spherical_coordinates = np.flip(
+            self.calc_spherical_coordinates(config=config),
+            axis=1,
+        )
 
         for user in self.users:
             user.update_position(
