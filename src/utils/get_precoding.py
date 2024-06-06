@@ -227,6 +227,7 @@ def get_precoding_robust_slnr(
         config: 'src.config.config.Config',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
 ) -> np.ndarray:
+
     autocorrelation = calc_autocorrelation(
         satellite=satellite_manager.satellites[0],
         error_model_config=config.config_error_model,
