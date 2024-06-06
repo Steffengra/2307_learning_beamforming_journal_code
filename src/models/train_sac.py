@@ -142,7 +142,7 @@ def train_sac(
 
     def save_results():
 
-        name = f'training_error_full.gzip'
+        name = f'training_error_learned_full.gzip'
 
         results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'base')
         results_path.mkdir(parents=True, exist_ok=True)
