@@ -13,7 +13,7 @@ def spherical_to_cartesian_coordinates(
         z = radius * cos(inclination)
     """
 
-    cartesian_coordinates = np.zeros(3)
+    cartesian_coordinates = np.zeros(3, dtype='float128')
     cartesian_coordinates[0] = spherical_coordinates[0] * np.sin(spherical_coordinates[1]) * np.cos(spherical_coordinates[2])
     cartesian_coordinates[1] = spherical_coordinates[0] * np.sin(spherical_coordinates[1]) * np.sin(spherical_coordinates[2])
     cartesian_coordinates[2] = spherical_coordinates[0] * np.cos(spherical_coordinates[1])
