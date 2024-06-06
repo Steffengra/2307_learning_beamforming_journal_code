@@ -50,10 +50,10 @@ def mmse_precoder_no_norm(
             np.linalg.inv(
                 np.matmul(channel_matrix.conj().T, channel_matrix)
                 + (
-                        noise_power_watt
-                        * user_nr
-                        / power_constraint_watt
-                        + inversion_constant_lambda
+                    noise_power_watt
+                    * user_nr
+                    / power_constraint_watt
+                    + inversion_constant_lambda
                 ) * np.eye(sat_tot_ant_nr)
             ),
             channel_matrix.conj().T
