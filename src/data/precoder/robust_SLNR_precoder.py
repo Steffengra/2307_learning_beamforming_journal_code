@@ -13,7 +13,7 @@ def robust_SLNR_precoder_no_norm(
 
     user_nr = channel_matrix.shape[0]
     sat_tot_ant_nr = channel_matrix.shape[1]
-    precoding_matrix = np.empty((sat_tot_ant_nr, user_nr), dtype='complex128')
+    precoding_matrix = np.zeros((sat_tot_ant_nr, user_nr), dtype='complex128')
 
     for user_idx in range(user_nr):
 
