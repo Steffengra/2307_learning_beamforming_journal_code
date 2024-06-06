@@ -119,6 +119,7 @@ def test_precoder_error_sweep(
     if profiler is not None:
         end_profiling(profiler)
 
+    print()
     for error_sweep_value, mean_sum_rate, std_sum_rate in zip(error_sweep_range, metrics['sum_rate']['mean'], metrics['sum_rate']['std']):
         print(f'{error_sweep_value:.2f}: {mean_sum_rate:.2f}+-{std_sum_rate:.4f}')
 
