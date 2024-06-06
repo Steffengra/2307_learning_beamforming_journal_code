@@ -3,6 +3,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
+import matplotlib.colors as mc
+import colorsys
 
 
 class PlotConfig:
@@ -219,3 +221,24 @@ def plot_color_palette(
     plt.yticks(range(len(list_of_colors)), list_of_colors)
     plt.grid(alpha=.25)
     plt.show()
+
+
+def change_lightness(color, amount=0.5):
+    """
+    Lightens the given color by multiplying (1-luminosity) by the given amount.
+    Input can be matplotlib color string, hex string, or RGB tuple.
+
+    amount<1 -> lighter
+    amount>1 -> darker
+
+    Examples:
+    >> lighten_color('g', 0.3)
+    >> lighten_color('#F034A3', 0.6)
+    >> lighten_color((.3,.55,.1), 0.5)
+    """
+    try:
+        c = mc.cnames[color]
+    except:
+        c = color
+    c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+    return colorsys.hls_to_rgb(c[0], 1 - amount * (1 - c[1]), c[2])
