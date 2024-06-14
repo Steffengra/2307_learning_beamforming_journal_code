@@ -14,6 +14,7 @@ import pickle
 
 import numpy as np
 from matplotlib.pyplot import show as plt_show
+import optuna
 
 import src
 from src.config.config import (
@@ -56,6 +57,7 @@ from src.utils.update_sim import (
 
 def train_sac_adapt_robust_slnr_complete(
         config: 'src.config.config.Config',
+        optuna_trial: optuna.Trial or None = None,
 ) -> Path:
 
     def progress_print(to_log: bool = False) -> None:
@@ -238,6 +240,16 @@ def train_sac_adapt_robust_slnr_complete(
             episode_metrics['mean_log_prob_density'][training_step_id] = mean_log_prob_density
             episode_metrics['value_loss'][training_step_id] = value_loss
 
+            # If doing optuna optimization: check trial results, stop early if bad
+            if optuna_trial:
+                window = 10
+                lower_end = max(training_episode_id - window, 0)
+                episode_result = np.nanmean(metrics['mean_sum_rate_per_episode'][lower_end:training_episode_id + 1])
+
+                optuna_trial.report(episode_result, training_episode_id)
+                if optuna_trial.should_prune():
+                    raise optuna.TrialPruned()
+
             if config.verbosity > 0:
                 if training_step_id % 50 == 0:
                     progress_print()
@@ -275,7 +287,7 @@ def train_sac_adapt_robust_slnr_complete(
                    'Training Episode', 'Sum Rate')
         plt_show()
 
-    return best_model_path
+    return best_model_path, metrics
 
 
 if __name__ == '__main__':

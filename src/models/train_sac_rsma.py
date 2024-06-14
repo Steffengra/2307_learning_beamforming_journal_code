@@ -14,6 +14,7 @@ import pickle
 
 import numpy as np
 from matplotlib.pyplot import show as plt_show
+import optuna
 
 import src
 from src.config.config import (
@@ -62,6 +63,7 @@ from src.utils.update_sim import (
 
 def train_sac_RSMA(
         config: 'src.config.config.Config',
+        optuna_trial: optuna.Trial or None = None,
 ) -> Path:
     """Train a Soft Actor Critic precoder according to the config."""
 
@@ -264,6 +266,16 @@ def train_sac_RSMA(
         episode_mean_sum_rate = np.nanmean(episode_metrics['sum_rate_per_step'])
         metrics['mean_sum_rate_per_episode'][training_episode_id] = episode_mean_sum_rate
 
+        # If doing optuna optimization: check trial results, stop early if bad
+        if optuna_trial:
+            window = 10
+            lower_end = max(training_episode_id-window, 0)
+            episode_result = np.nanmean(metrics['mean_sum_rate_per_episode'][lower_end:training_episode_id+1])
+
+            optuna_trial.report(episode_result, training_episode_id)
+            if optuna_trial.should_prune():
+                raise optuna.TrialPruned()
+
         if config.verbosity > 0:
             print('\r', end='')  # clear console for logging results
         progress_print(to_log=True)
@@ -293,7 +305,7 @@ def train_sac_RSMA(
                    'Training Episode', 'Sum Rate')
         plt_show()
 
-    return best_model_path
+    return best_model_path, metrics
 
 
 if __name__ == '__main__':
