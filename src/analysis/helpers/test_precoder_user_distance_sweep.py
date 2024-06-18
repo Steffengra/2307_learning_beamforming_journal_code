@@ -90,8 +90,9 @@ def test_precoder_user_distance_sweep(
         metrics['sum_rate']['mean'][distance_sweep_idx] = sum_rate
         metrics['sum_rate']['std'][distance_sweep_idx] = 0
 
-        if distance_sweep_idx % 10 == 0:
-            progress_print()
+        if config.verbosity > 0:
+            if distance_sweep_idx % 10 == 0:
+                progress_print()
 
     if profiler is not None:
         end_profiling(profiler)

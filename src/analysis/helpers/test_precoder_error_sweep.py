@@ -110,8 +110,9 @@ def test_precoder_error_sweep(
             # log results
             sum_rate_per_monte_carlo[iter_idx] = sum_rate
 
-            if iter_idx % 50 == 0:
-                progress_print()
+            if config.verbosity > 0:
+                if iter_idx % 50 == 0:
+                    progress_print()
 
         metrics['sum_rate']['mean'][error_sweep_idx] = np.mean(sum_rate_per_monte_carlo)
         metrics['sum_rate']['std'][error_sweep_idx] = np.std(sum_rate_per_monte_carlo)
@@ -119,9 +120,10 @@ def test_precoder_error_sweep(
     if profiler is not None:
         end_profiling(profiler)
 
-    print()
-    for error_sweep_value, mean_sum_rate, std_sum_rate in zip(error_sweep_range, metrics['sum_rate']['mean'], metrics['sum_rate']['std']):
-        print(f'{error_sweep_value:.2f}: {mean_sum_rate:.2f}+-{std_sum_rate:.4f}')
+    if config.verbosity > 0:
+        print()
+        for error_sweep_value, mean_sum_rate, std_sum_rate in zip(error_sweep_range, metrics['sum_rate']['mean'], metrics['sum_rate']['std']):
+            print(f'{error_sweep_value:.2f}: {mean_sum_rate:.2f}+-{std_sum_rate:.4f}')
 
     save_results()
 
