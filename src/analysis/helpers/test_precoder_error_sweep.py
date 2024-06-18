@@ -51,7 +51,7 @@ def test_precoder_error_sweep(
             config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args']['low'] = -1 * error_sweep_value
             config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args']['high'] = error_sweep_value
         elif 'scale' in config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args']:
-            config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args']['scale'] = error_sweep_range
+            config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args']['scale'] = error_sweep_value
         else:
             raise ValueError('Unknown error distribution')
 
