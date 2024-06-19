@@ -50,11 +50,8 @@ def learn_baseline(
     config_name += f'_additive_{additive_error_on_cosine_of_aod}'
     config.config_learner.training_name = config_name
 
-    print('training sac')
     best_model_path, _ = train_sac(config=config)
-    print(f'best model path {best_model_path}')
 
-    print('testing sac')
     test_sac_precoder_error_sweep(
         config=deepcopy(config),
         model_path=best_model_path,
@@ -64,7 +61,6 @@ def learn_baseline(
     )
 
     if additive_error_on_cosine_of_aod == 0.0:
-        print('testing mmse')
         test_mmse_precoder_error_sweep(
             config=deepcopy(config),
             error_sweep_parameter='additive_error_on_cosine_of_aod',
@@ -103,10 +99,8 @@ def learn_decentralized(
     config_name += f'_additive_{additive_error_on_cosine_of_aod}'
     config.config_learner.training_name = config_name
 
-    print('training sac')
     if mode == 'blind':
         best_model_path, _ = train_sac_decentralized_blind(config=config)
-        print(f'best model path {best_model_path}')
 
         test_sac_precoder_decentralized_blind_error_sweep(
             config=deepcopy(config),
@@ -119,11 +113,7 @@ def learn_decentralized(
     elif mode == 'L1':
         config.local_csi_own_quality = 'error_free'
         config.local_csi_others_quality = 'erroneous'
-        # config.config_learner.get_state = get_state_erroneous_channel_state_information_local
-        # config.config_learner.get_state_args['local_csi_own_quality'] = config.local_csi_own_quality
-        # config.config_learner.get_state_args['local_csi_others_quality'] = config.local_csi_others_quality
         best_model_path, _ = train_sac_decentralized_limited(config=config)
-        print(f'best model path {best_model_path}')
 
         test_sac_precoder_decentralized_limited_error_sweep(
             config=deepcopy(config),
@@ -140,7 +130,6 @@ def learn_decentralized(
         # config.config_learner.get_state_args['local_csi_own_quality'] = config.local_csi_own_quality
         # config.config_learner.get_state_args['local_csi_others_quality'] = config.local_csi_others_quality
         best_model_path, _ = train_sac_decentralized_limited(config=config)
-        print(f'best model path {best_model_path}')
 
         test_sac_precoder_decentralized_limited_error_sweep(
             config=deepcopy(config),
