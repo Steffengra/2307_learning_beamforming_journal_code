@@ -5,7 +5,6 @@ project_root_path = Path(Path(__file__).parent, '../..', '..')
 sys_path.append(str(project_root_path.resolve()))
 
 import numpy as np
-from copy import deepcopy
 
 from src.config.config import Config
 from src.models.train_sac import train_sac
@@ -49,7 +48,7 @@ def learn_baseline(
     best_model_path, _ = train_sac(config=config)
 
     test_sac_precoder_error_sweep(
-        config=deepcopy(config),
+        config=config,
         model_path=best_model_path,
         error_sweep_range=testing_range,
         monte_carlo_iterations=5_000,
@@ -58,14 +57,14 @@ def learn_baseline(
 
     if additive_error_on_cosine_of_aod == 0.0:
         test_mmse_precoder_error_sweep(
-            config=deepcopy(config),
+            config=config,
             error_sweep_parameter='additive_error_on_cosine_of_aod',
             error_sweep_range=testing_range,
             monte_carlo_iterations=5_000,
         )
 
         test_robust_slnr_precoder_error_sweep(
-            config=deepcopy(config),
+            config=config,
             error_sweep_parameter='additive_error_on_cosine_of_aod',
             error_sweep_range=testing_range,
             monte_carlo_iterations=5_000,
@@ -104,7 +103,7 @@ def learn_other_error_model(
 
     print('testing sac')
     test_sac_precoder_error_sweep(
-        config=deepcopy(config),
+        config=config,
         model_path=best_model_path,
         error_sweep_range=testing_range,
         monte_carlo_iterations=5_000,
@@ -114,7 +113,7 @@ def learn_other_error_model(
     if additive_error_on_cosine_of_aod == 0.0:
         print('testing mmse')
         test_mmse_precoder_error_sweep(
-            config=deepcopy(config),
+            config=config,
             error_sweep_parameter='additive_error_on_aod',
             error_sweep_range=testing_range,
             monte_carlo_iterations=5_000,
@@ -122,7 +121,7 @@ def learn_other_error_model(
 
         print('testing slnr')
         test_robust_slnr_precoder_error_sweep(
-            config=deepcopy(config),
+            config=config,
             error_sweep_parameter='additive_error_on_aod',
             error_sweep_range=testing_range,
             monte_carlo_iterations=5_000,
@@ -189,7 +188,7 @@ def main():
     learn_baseline(user_dist=10_000, user_wiggle=5_000, additive_error_on_cosine_of_aod=0.00, testing_range=testing_error_sweep_range_10k)
     learn_baseline(user_dist=10_000, user_wiggle=5_000, additive_error_on_cosine_of_aod=0.03, testing_range=testing_error_sweep_range_10k)
 
-    learn_other_error_model(additive_error_on_cosine_of_aod=0.1, additive_error_on_aod=0.0, testing_range=testing_error_sweep_range_100k_error2)
+    # learn_other_error_model(additive_error_on_cosine_of_aod=0.1, additive_error_on_aod=0.0, testing_range=testing_error_sweep_range_100k_error2)
     learn_other_error_model(additive_error_on_cosine_of_aod=0.1, additive_error_on_aod=0.025, testing_range=testing_error_sweep_range_100k_error2)
     learn_other_error_model(additive_error_on_cosine_of_aod=0.1, additive_error_on_aod=0.05, testing_range=testing_error_sweep_range_100k_error2)
 

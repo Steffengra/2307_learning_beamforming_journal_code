@@ -5,7 +5,6 @@ project_root_path = Path(Path(__file__).parent, '../..', '..')
 sys_path.append(str(project_root_path.resolve()))
 
 import numpy as np
-from copy import deepcopy
 
 from src.config.config import Config
 from src.models.helpers.get_state import get_state_erroneous_channel_state_information_local
@@ -53,7 +52,7 @@ def learn_baseline(
     best_model_path, _ = train_sac(config=config)
 
     test_sac_precoder_error_sweep(
-        config=deepcopy(config),
+        config=config,
         model_path=best_model_path,
         error_sweep_range=testing_range,
         monte_carlo_iterations=5_000,
@@ -62,7 +61,7 @@ def learn_baseline(
 
     if additive_error_on_cosine_of_aod == 0.0:
         test_mmse_precoder_error_sweep(
-            config=deepcopy(config),
+            config=config,
             error_sweep_parameter='additive_error_on_cosine_of_aod',
             error_sweep_range=testing_range,
             monte_carlo_iterations=5_000,
@@ -103,7 +102,7 @@ def learn_decentralized(
         best_model_path, _ = train_sac_decentralized_blind(config=config)
 
         test_sac_precoder_decentralized_blind_error_sweep(
-            config=deepcopy(config),
+            config=config,
             models_path=best_model_path,
             error_sweep_parameter='additive_error_on_cosine_of_aod',
             error_sweep_range=testing_range,
@@ -116,7 +115,7 @@ def learn_decentralized(
         best_model_path, _ = train_sac_decentralized_limited(config=config)
 
         test_sac_precoder_decentralized_limited_error_sweep(
-            config=deepcopy(config),
+            config=config,
             models_path=best_model_path,
             error_sweep_parameter='additive_error_on_cosine_of_aod',
             error_sweep_range=testing_range,
@@ -126,13 +125,10 @@ def learn_decentralized(
     elif mode == 'L2':
         config.local_csi_own_quality = 'erroneous'
         config.local_csi_others_quality = 'scaled_erroneous'
-        # config.config_learner.get_state = get_state_erroneous_channel_state_information_local
-        # config.config_learner.get_state_args['local_csi_own_quality'] = config.local_csi_own_quality
-        # config.config_learner.get_state_args['local_csi_others_quality'] = config.local_csi_others_quality
         best_model_path, _ = train_sac_decentralized_limited(config=config)
 
         test_sac_precoder_decentralized_limited_error_sweep(
-            config=deepcopy(config),
+            config=config,
             models_path=best_model_path,
             error_sweep_parameter='additive_error_on_cosine_of_aod',
             error_sweep_range=testing_range,

@@ -66,6 +66,8 @@ def test_precoder_error_sweep(
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump([error_sweep_range, metrics], file=file)
 
+    initial_error_config = config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args'].copy()
+
     satellite_manager = SatelliteManager(config=config)
     user_manager = UserManager(config=config)
 
@@ -126,6 +128,8 @@ def test_precoder_error_sweep(
             print(f'{error_sweep_value:.2f}: {mean_sum_rate:.2f}+-{std_sum_rate:.4f}')
 
     save_results()
+
+    config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args'] = initial_error_config
 
     plot_sweep(
         x=error_sweep_range,
