@@ -154,7 +154,9 @@ def main():
 
     learn_decentralized(sat_dist=100_000, user_dist=1_000, user_wiggle=500, additive_error_on_cosine_of_aod=0.0, mode='blind', testing_range=testing_error_sweep_range_100k)
     learn_decentralized(sat_dist=100_000, user_dist=1_000, user_wiggle=500, additive_error_on_cosine_of_aod=0.25, mode='blind', testing_range=testing_error_sweep_range_100k)
+    learn_decentralized(sat_dist=100_000, user_dist=1_000, user_wiggle=500, additive_error_on_cosine_of_aod=0.0, mode='L1', testing_range=testing_error_sweep_range_100k)
     learn_decentralized(sat_dist=100_000, user_dist=1_000, user_wiggle=500, additive_error_on_cosine_of_aod=0.25, mode='L1', testing_range=testing_error_sweep_range_100k)
+    learn_decentralized(sat_dist=100_000, user_dist=1_000, user_wiggle=500, additive_error_on_cosine_of_aod=0.0, mode='L2', testing_range=testing_error_sweep_range_100k)
     learn_decentralized(sat_dist=100_000, user_dist=1_000, user_wiggle=500, additive_error_on_cosine_of_aod=0.25, mode='L2', testing_range=testing_error_sweep_range_100k)
 
 
