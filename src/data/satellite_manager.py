@@ -216,15 +216,15 @@ class SatelliteManager:
         num_users = self.satellites[satellite_id].channel_state_to_users.shape[0]
 
         local_channel_state = np.zeros(
-            (num_users, self.satellites[satellite_id].antenna_nr, len(self.satellites)),
+            (num_users, self.satellites[satellite_id].antenna_nr*len(self.satellites)),
             dtype='complex128',
         )
 
         # own
         if own == 'error_free':
-            local_channel_state[:, :, satellite_id] = self.satellites[satellite_id].channel_state_to_users
+            local_channel_state[:, satellite_id*self.satellites[satellite_id].antenna_nr:satellite_id*self.satellites[satellite_id].antenna_nr+self.satellites[satellite_id].antenna_nr] = self.satellites[satellite_id].channel_state_to_users
         elif own == 'erroneous':
-            local_channel_state[:, :, satellite_id] = self.satellites[satellite_id].erroneous_channel_state_to_users
+            local_channel_state[:, satellite_id*self.satellites[satellite_id].antenna_nr:satellite_id*self.satellites[satellite_id].antenna_nr+self.satellites[satellite_id].antenna_nr] = self.satellites[satellite_id].erroneous_channel_state_to_users
         else:
             raise ValueError(f'invalid config {own}')
 
@@ -232,13 +232,13 @@ class SatelliteManager:
             if satellite.idx == satellite_id:
                 continue  # skip this one
             if others == 'erroneous':
-                local_channel_state[:, :, satellite.idx] = satellite.erroneous_channel_state_to_users
+                local_channel_state[:, satellite_id*self.satellites[satellite_id].antenna_nr:satellite_id*self.satellites[satellite_id].antenna_nr+self.satellites[satellite_id].antenna_nr] = self.satellites[satellite_id].erroneous_channel_state_to_users
             elif others == 'scaled_erroneous':
-                local_channel_state[:, :, satellite.idx] = satellite.scaled_erroneous_channel_state_to_users
+                local_channel_state[:, satellite_id*self.satellites[satellite_id].antenna_nr:satellite_id*self.satellites[satellite_id].antenna_nr+self.satellites[satellite_id].antenna_nr] = self.satellites[satellite_id].scaled_erroneous_channel_state_to_users
             else:
                 raise ValueError(f'invalid config {others}')
 
-        return np.reshape(local_channel_state, (num_users, self.satellites[satellite_id].antenna_nr * len(self.satellites)))
+        return local_channel_state
 
     def get_erroneous_channel_state_information_per_sat(
             self,

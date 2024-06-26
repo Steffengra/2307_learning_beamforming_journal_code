@@ -58,14 +58,14 @@ def plot_error_sweep_testing_graph(
         else:
             linestyle = None
 
-        ax.errorbar(
+        ax.plot(
             data_entry[0],
             data_entry[1]['sum_rate']['mean'],
-            yerr=data_entry[1]['sum_rate']['std'],
             marker=marker,
             color=color,
             linestyle=linestyle,
             label=legend[data_id],
+            fillstyle='none',
         )
 
     ax.set_xlabel(xlabel)
@@ -75,7 +75,11 @@ def plot_error_sweep_testing_graph(
         from matplotlib import container
         handles, labels = ax.get_legend_handles_labels()
         handles = [h[0] if isinstance(h, container.ErrorbarContainer) else h for h in handles]  # remove error bars
-        legend = ax.legend(handles, legend, ncols=2)
+        legend = ax.legend(
+            handles, legend,
+            ncols=2,
+            # loc='lower left',
+        )
         legend.get_frame().set_linewidth(0.8)
 
     generic_styling(ax=ax)
@@ -98,37 +102,44 @@ if __name__ == '__main__':
              'testing_robust_slnr_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
              '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
-             'testing_learned_sweep_0.0_0.1.gzip'),
-        # Path(cfg.output_metrics_path,
-        #      '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
-        #      'testing_learned2_sweep_0.0_0.1_userwiggle_50000.gzip'),
+             'testing_learned_0.0_sweep_0.0_0.1.gzip'),
+        Path(cfg.output_metrics_path,
+             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+             'testing_learned_0.025_sweep_0.0_0.1.gzip'),
+        Path(cfg.output_metrics_path,
+             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+             'testing_learned_0.05_sweep_0.0_0.1.gzip'),
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
-    plot_height = plot_width * 9 / 20
+    plot_height = plot_width * 15 / 20
 
     plot_legend = [
         'MMSE',
         'SLNR',
         'SAC1',
         'SAC2',
+        'SAC3',
     ]
 
     plot_markerstyle = [
         'o',
-        '^',
-        's',
         'x',
+        's',
+        'D',
+        'd',
     ]
     plot_colors = [
-        plot_cfg.cp2['blue'],
         plot_cfg.cp2['black'],
-        plot_cfg.cp2['magenta'],
-        plot_cfg.cp2['green'],
+        plot_cfg.cp2['black'],
+        plot_cfg.cp3['blue2'],
+        plot_cfg.cp3['red2'],
+        plot_cfg.cp3['red3'],
     ]
     plot_linestyles = [
         '-',
-        '--',
+        ':',
+        '-',
         '-',
         '-',
     ]
@@ -138,7 +149,7 @@ if __name__ == '__main__':
         name='error_sweep_test',
         width=plot_width,
         xlabel='Error Bound',
-        ylabel='Sum Rate',
+        ylabel='Avg. Sum Rate (bits/s/Hz)',
         height=plot_height,
         legend=plot_legend,
         colors=plot_colors,
