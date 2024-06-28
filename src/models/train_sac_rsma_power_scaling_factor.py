@@ -205,12 +205,14 @@ def train_sac_RSMA_power_scaling_factor(
             action = sac.get_action(state=state_current)
             step_experience['action'] = action
 
+            rsma_factor = 1/2 * (np.tanh(action) + 1)
+
             # reshape to fit reward calculation
             w_precoder = rate_splitting_no_norm(
                 channel_matrix=satellite_manager.erroneous_channel_state_information,
                 noise_power_watt=config.noise_power_watt,
                 power_constraint_watt=config.power_constraint_watt,
-                rsma_factor=action,
+                rsma_factor=rsma_factor,
                 common_part_precoding_style='MRT',
             )
             #real_vector_to_half_complex_vector(action)
