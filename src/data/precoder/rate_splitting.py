@@ -47,7 +47,7 @@ def rate_splitting_no_norm(
             w_mrc[:, user_id] = w
 
         w_mrc_overlap = np.sum(w_mrc, axis=1)[np.newaxis].T
-        print(w_mrc_overlap)
+        # print(w_mrc_overlap)
 
         precoding_vector_common = w_mrc_overlap * np.sqrt(power_constraint_common_part)/np.linalg.norm(w_mrc_overlap)
     
