@@ -44,7 +44,7 @@ def plot_beampattern(
         )
 
     # sweep power gains for each user depending on their angle
-    power_gains = np.empty((len(users), len(angle_sweep_range)))
+    power_gains = np.zeros((len(users), len(angle_sweep_range)))
     for user_idx in range(len(users)):
 
         # sweep angles

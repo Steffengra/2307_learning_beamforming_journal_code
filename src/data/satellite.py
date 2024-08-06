@@ -10,6 +10,7 @@ from src.utils.euclidian_distance import (
 from src.utils.get_wavelength import (
     get_wavelength,
 )
+from src.utils.vector_functions import angle_between
 
 
 class Satellite:
@@ -85,38 +86,15 @@ class Satellite:
             users: list
     ) -> None:
         """
-        The calculation of the AODs is given by
-        AOD = asin(
-            ((orbit+radius_earth)^2 + sat_user_dist^2 - radius_earth^2)
-            /
-            (2 * (orbit+radius_earth) * sat_user_dist)
-        )
+        The calculation of AOD from the point of view of the satellite.
         """
 
         if self.aods_to_users is None:
             self.aods_to_users = np.zeros(len(users))
 
-        user_pos_idx = np.arange(0, len(users)) - (len(users) - 1) / 2
-
         for user in users:
-
-            self.aods_to_users[user.idx] = np.arcsin(
-                (
-                        + self.spherical_coordinates[0] ** 2
-                        + self.distance_to_users[user.idx] ** 2
-                        - user.spherical_coordinates[0] ** 2
-                )  # numerator
-                /
-                (
-                        2 * self.spherical_coordinates[0] * self.distance_to_users[user.idx]
-                )  # denominator
-            )
-
-            if user_pos_idx[user.idx] >= 0:
-                self.aods_to_users[user.idx] = (
-                        2 * (self.center_aod_earth_deg * np.pi/180)
-                        - self.aods_to_users[user.idx]
-                )
+            vec = user.cartesian_coordinates - self.cartesian_coordinates
+            self.aods_to_users[user.idx] = angle_between(np.array([-1, 0, 0]), vec)
 
     def roll_estimation_errors(
             self,
