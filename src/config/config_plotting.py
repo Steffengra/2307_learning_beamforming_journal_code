@@ -54,8 +54,8 @@ class PlotConfig:
             direction='in',
         )
 
-        plt.rc('lines', linewidth=1)
-        plt.rc('lines', markersize=4)
+        plt.rc('lines', linewidth=1.2)
+        plt.rc('lines', markersize=6)
         plt.rc('errorbar', capsize=3)
 
         plt.rc(
@@ -63,10 +63,14 @@ class PlotConfig:
             color='gainsboro',
             linewidth=0.4  # linewidth of grid lines, default: 0.8
         )
-        plt.rc('axes.spines', top=False, right=False)  # Visibility of axis spines
+        plt.rc('axes.spines',   # Visibility of axis spines
+               top=False, right=False,
+               # bottom=False,
+               # left=False,
+        )
         plt.rc('xtick.minor', visible=True)  # set minor x axis ticks visible
         plt.rc('ytick.minor', visible=True)  # set minor y axis ticks visible
-        plt.rc('font', family='serif')  # label fonts, ['serif', >'sans-serif', 'monospace']
+        plt.rc('font', family='sans-serif')  # label fonts, ['serif', >'sans-serif', 'monospace']
 
         # plt.rc('text', usetex=True)  # use inline math for ticks, default: False
 

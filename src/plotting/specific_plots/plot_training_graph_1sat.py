@@ -31,6 +31,7 @@ def plot_training_graph(
         plots_parent_path: Path,
         colors: None or list = None,
         legend: None or list = None,
+        plot_markerstyles: None or list = None,
         xlabel: None or str = None,
         ylabel: None or str = None,
 ):
@@ -63,13 +64,17 @@ def plot_training_graph(
             averaged_data,
             color=colors[path_id] if colors else None,
             label=legend[path_id] if legend else None,
+            marker=plot_markerstyles[path_id] if plot_markerstyles else None,
+            # markevery=1000,
+            markevery=[-1],
+            fillstyle='none',
         )
-        ax.fill_between(
-            range(len(averaged_data)),
-            y1=averaged_data_low,
-            y2=averaged_data_high,
-            color=change_lightness(colors[path_id], amount=0.2) if colors else None,
-        )
+        # ax.fill_between(
+        #     range(len(averaged_data)),
+        #     y1=averaged_data_low,
+        #     y2=averaged_data_high,
+        #     color=change_lightness(colors[path_id], amount=0.2) if colors else None,
+        # )
 
     if xlabel:
         ax.set_xlabel(xlabel)
@@ -77,7 +82,7 @@ def plot_training_graph(
         ax.set_ylabel(ylabel)
 
     if legend:
-        ax.legend()
+        ax.legend(ncols=2)
 
     generic_styling(ax=ax)
     fig.tight_layout(pad=0)
@@ -91,21 +96,31 @@ if __name__ == '__main__':
     # path = Path(cfg.output_metrics_path, 'sat_2_ant_4_usr_3_satdist_10000_usrdist_1000', 'err_mult_on_steering_cos', 'single_error', 'training_error_0.0_userwiggle_30.gzip')
     paths = [
         Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'base', 'training_error_learned_full.gzip'),
-        # Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k', 'base', 'training_error_adapt_slnr_complete.gzip'),
-        # Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k', 'base', 'training_error_adapt_slnr_power.gzip'),
         Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k_vanilla_sac', 'base', 'training_error_learned_full.gzip'),
+        Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'base', 'training_error_adapt_slnr_complete.gzip'),
+        Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'base', 'training_error_adapt_slnr_power.gzip'),
     ]
 
     colors = [
-        plot_cfg.cp2['magenta'],
-        plot_cfg.cp2['blue'],
-        plot_cfg.cp2['green'],
+        plot_cfg.cp3['blue1'],
+        plot_cfg.cp3['black'],
+        plot_cfg.cp3['blue2'],
+        plot_cfg.cp3['blue3'],
     ]
 
     legend = [
-        'learned_full',
-        'adapt_complete',
-        'adapt_power',
+        'Base',
+        'Vanilla',
+        'Adapt SLNR',
+        'Adapt SLNR Power',
+    ]
+
+    plot_markerstyles = [
+        's',
+        '|',
+        'x',
+        'o',
+        'd',
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
@@ -113,12 +128,13 @@ if __name__ == '__main__':
 
     plot_training_graph(
         paths,
-        name='training_test',
+        name='journal_training_convergence',
         width=plot_width,
         height=plot_height,
         window_length=1000,
         colors=colors,
         legend=legend,
+        plot_markerstyles=plot_markerstyles,
         plots_parent_path=plot_cfg.plots_parent_path,
         xlabel='Training Episode',
         ylabel='Mean Reward'
