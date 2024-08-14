@@ -5,6 +5,7 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 os.environ["OMP_NUM_THREADS"] = "1"
 
 import logging
+import json
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from sys import stdout
@@ -218,6 +219,22 @@ class Config:
             )
 
         return config_name
+
+    def save(
+            self,
+            path: Path,
+    ) -> None:
+        """
+        Serialize config to json
+        """
+
+        path.mkdir(parents=True, exist_ok=True)
+        with open(Path(path, 'config.json'), 'w') as file:
+            json.dump(vars(self), file, indent=4, default=lambda o: f'{str(o)}')
+        with open(Path(path, 'config_sac_learner.json'), 'w') as file:
+            json.dump(vars(self.config_learner), file, indent=4, default=lambda o: f'{str(o)}')
+        with open(Path(path, 'config_error_model.json'), 'w') as file:
+            json.dump(vars(self.config_error_model), file, indent=4, default=lambda o: f'{str(o)}')
 
     def __logging_setup(
             self,
