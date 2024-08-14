@@ -16,6 +16,7 @@ from src.models.precoders.learned_precoder import get_learned_precoder_normalize
 from src.models.precoders.adapted_precoder import adapt_robust_slnr_complete_precoder_normed
 from src.data.calc_sum_rate import calc_sum_rate
 from src.utils.plot_beampattern import plot_beampattern
+from src.utils.plot_directional_signal_interference_gain import plot_directional_signal_interference_gain
 from src.utils.update_sim import update_sim
 from src.utils.load_model import load_model
 
@@ -23,7 +24,7 @@ from src.utils.load_model import load_model
 plot = [
     'mmse',
     'slnr',
-    'learned',
+    # 'learned',
     # 'slnr_adapted_complete',
     # 'ones',
 ]
@@ -59,7 +60,7 @@ if any(value in plot for value in ['learned', 'slnr_adapted_complete']):
 satellite_manager = SatelliteManager(config)
 user_manager = UserManager(config)
 
-for iter_id in range(2):
+for iter_id in range(1):
 
     update_sim(config=config, satellite_manager=satellite_manager, user_manager=user_manager)
     for satellite in satellite_manager.satellites:
@@ -85,6 +86,16 @@ for iter_id in range(2):
             plot_title='mmse',
             angle_sweep_range=angle_sweep_range,
         )
+        # plot_directional_signal_interference_gain(
+        #     # satellites=satellite_manager.satellites[0],
+        #     # users=user_manager.users,
+        #     satellite_manager=satellite_manager,
+        #     user_manager=user_manager,
+        #     w_precoder=w_mmse,
+        #     plot_title='mmse',
+        #     log_scale=True,
+        #     # angle_sweep_range=angle_sweep_range,
+        # )
 
         print(f'mmse: {sum_rate_mmse}')
 
@@ -116,6 +127,17 @@ for iter_id in range(2):
             plot_title='slnr',
             angle_sweep_range=angle_sweep_range,
         )
+
+        # plot_directional_signal_interference_gain(
+        #     # satellites=satellite_manager.satellites[0],
+        #     # users=user_manager.users,
+        #     satellite_manager=satellite_manager,
+        #     user_manager=user_manager,
+        #     w_precoder=w_slnr,
+        #     plot_title='slnr',
+        #     log_scale=True,
+        #     # angle_sweep_range=angle_sweep_range,
+        # )
         print(f'slnr: {sum_rate_slnr}')
 
     # Learned
