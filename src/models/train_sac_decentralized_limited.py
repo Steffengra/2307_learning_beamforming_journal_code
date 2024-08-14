@@ -92,9 +92,7 @@ def train_sac_decentralized_limited(
         logger.info(f'Saved model checkpoint at mean reward {extra:.3f}')
 
         # save config
-        copytree(Path(config.project_root_path, 'src', 'config'),
-                 Path(checkpoint_path, 'config'),
-                 dirs_exist_ok=True)
+        config.save(Path(checkpoint_path, 'config'))
 
         # save norm dict
         with gzip.open(Path(checkpoint_path, 'config', 'norm_dict.gzip'), 'wb') as file:

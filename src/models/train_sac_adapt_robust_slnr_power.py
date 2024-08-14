@@ -87,9 +87,7 @@ def train_sac_adapt_robust_slnr_power(
         sac.networks['policy'][0]['primary'].save(Path(checkpoint_path, 'model'))
 
         # save config
-        copytree(Path(config.project_root_path, 'src', 'config'),
-                 Path(checkpoint_path, 'config'),
-                 dirs_exist_ok=True)
+        config.save(Path(checkpoint_path, 'config'))
 
         # save norm dict
         with gzip.open(Path(checkpoint_path, 'config', 'norm_dict.gzip'), 'wb') as file:
