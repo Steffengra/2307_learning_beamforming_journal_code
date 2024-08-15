@@ -37,6 +37,7 @@ def test_mrc_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='mrc',
+        mode='user',
         get_precoder_func=lambda cfg, sat_man: get_precoding_mrc(cfg, sat_man),
         calc_sum_rate_func=calc_sum_rate_no_iui,
     )

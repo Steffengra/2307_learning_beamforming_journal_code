@@ -38,6 +38,7 @@ def test_robust_slnr_precoder_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='robust_slnr',
+        mode='user',
         get_precoder_func=lambda cfg, sat_man: get_precoding_robust_slnr(cfg, sat_man),
         calc_sum_rate_func=calc_sum_rate,
     )

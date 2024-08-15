@@ -33,12 +33,14 @@ def test_precoder_user_distance_sweep(
     config: 'src.config.config.Config',
     distance_sweep_range,
     precoder_name: str,
+    mode: str,
     get_precoder_func,
     calc_sum_rate_func,
 ) -> None:
     """
     Calculate the sum rates that a given precoder achieves for a given config
-    over a given range of inter-user-distances with no channel error
+    over a given range of inter-user-distances or inter-satellite-distances with no channel error
+    mode: ['user', 'satellite']
     """
 
     def progress_print() -> None:
@@ -46,7 +48,7 @@ def test_precoder_user_distance_sweep(
         progress_printer(progress=progress, real_time_start=real_time_start)
 
     def save_results():
-        name = f'testing_{precoder_name}_sweep_{round(distance_sweep_range[0])}_{round(distance_sweep_range[-1])}.gzip'
+        name = f'testing_{precoder_name}_{mode}sweep_{round(distance_sweep_range[0])}_{round(distance_sweep_range[-1])}.gzip'
         results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'distance_sweep')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
@@ -70,16 +72,20 @@ def test_precoder_user_distance_sweep(
 
     for distance_sweep_idx, distance_sweep_value in enumerate(distance_sweep_range):
 
-        config.user_dist_average = distance_sweep_value
-        config.user_dist_bound = 0
+        if mode == 'user':
+            config.user_dist_average = distance_sweep_value
+            config.user_dist_bound = 0
+        elif mode == 'satellite':
+            config.sat_dist_average = distance_sweep_value
+            config.sat_dist_bound = 0
 
         config.config_error_model.set_zero_error()
 
         update_sim(config, satellite_manager, user_manager)
 
         w_precoder = get_precoder_func(
-            config=config,
-            satellite_manager=satellite_manager
+            config,
+            satellite_manager,
         )
         sum_rate = calc_sum_rate_func(
             channel_state=satellite_manager.channel_state_information,

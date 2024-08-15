@@ -60,6 +60,7 @@ def test_sac_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='learned',
+        mode='user',
         get_precoder_func=lambda cfg, sat_man: get_precoding_learned(cfg, sat_man, norm_factors, precoder_network),
         calc_sum_rate_func=calc_sum_rate,
     )

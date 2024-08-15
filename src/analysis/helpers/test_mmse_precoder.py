@@ -41,6 +41,23 @@ def test_mmse_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='mmse',
+        mode='user',
+        get_precoder_func=lambda cfg, sat_man: get_precoding_mmse(cfg, sat_man),
+        calc_sum_rate_func=calc_sum_rate,
+    )
+
+
+def test_mmse_precoder_satellite_distance_sweep(
+    config: 'src.config.config.Config',
+    distance_sweep_range: np.ndarray,
+) -> None:
+    """Test the MMSE precoder over a range of distances with zero error."""
+
+    test_precoder_user_distance_sweep(
+        config=config,
+        distance_sweep_range=distance_sweep_range,
+        precoder_name='mmse',
+        mode='satellite',
         get_precoder_func=lambda cfg, sat_man: get_precoding_mmse(cfg, sat_man),
         calc_sum_rate_func=calc_sum_rate,
     )
