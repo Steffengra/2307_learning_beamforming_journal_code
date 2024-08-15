@@ -31,12 +31,12 @@ def plot_directional_signal_interference_gain(
 
     # mark user positions
     for user in user_manager.users:
-        # ax.scatter(
-        #     user.spherical_coordinates[2],
-        #     0,
-        #     # color='black',
-        #     label=f'user {user.idx}'
-        # )
+        ax.scatter(
+            user.spherical_coordinates[2],
+            0,
+            # color='black',
+            label=f'user {user.idx}'
+        )
         ax.axvline(
             user.spherical_coordinates[2],
             color='black',
@@ -53,6 +53,7 @@ def plot_directional_signal_interference_gain(
             (user_manager.users[-1].spherical_coordinates[2] - user_manager.users[0].spherical_coordinates[2]) / 100
         )
 
+    # calculate power gains
     directional_power_gains = np.zeros((len(satellite_manager.satellites), len(user_manager.users), len(position_sweep_range)))
     for user in user_manager.users:
         for position_id, position in enumerate(position_sweep_range):
@@ -67,7 +68,7 @@ def plot_directional_signal_interference_gain(
 
                 steering_vector_to_user = get_steering_vec(satellite=satellite, phase_aod_steering=np.cos(satellite.aods_to_users[user.idx]))
 
-                directional_power_gain = abs(np.matmul(steering_vector_to_user, w_precoder[:, user.idx])) ** 2
+                directional_power_gain = abs(np.matmul(steering_vector_to_user, w_precoder[satellite.idx:satellite.idx + satellite.antenna_nr, user.idx])) ** 2
 
                 directional_power_gains[satellite.idx, user.idx, position_id] = directional_power_gain
 
@@ -83,8 +84,10 @@ def plot_directional_signal_interference_gain(
     signal_to_interference_ratio = np.sum(signal_to_interference_ratio_per_user, axis=0)
     if log_scale:
         signal_to_interference_ratio = np.log2(signal_to_interference_ratio)
+        signal_to_interference_ratio_per_user = np.log2(signal_to_interference_ratio_per_user)
 
-    ax.plot(position_sweep_range, signal_to_interference_ratio)
+    # ax.plot(position_sweep_range, signal_to_interference_ratio)
+    ax.plot(position_sweep_range, signal_to_interference_ratio_per_user.T)
 
     # ax.legend()
     ax.set_xlabel('User Position')

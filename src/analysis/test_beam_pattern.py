@@ -23,7 +23,7 @@ from src.utils.load_model import load_model
 
 plot = [
     'mmse',
-    'slnr',
+    # 'slnr',
     # 'learned',
     # 'slnr_adapted_complete',
     # 'ones',
@@ -80,22 +80,24 @@ for iter_id in range(1):
         )
 
         plot_beampattern(
-            satellite=satellite_manager.satellites[0],
-            users=user_manager.users,
+            # satellite=satellite_manager.satellites[0],
+            # users=user_manager.users,
+            satellite_manager=satellite_manager,
+            user_manager=user_manager,
             w_precoder=w_mmse,
             plot_title='mmse',
-            angle_sweep_range=angle_sweep_range,
+            # angle_sweep_range=angle_sweep_range,
         )
-        # plot_directional_signal_interference_gain(
-        #     # satellites=satellite_manager.satellites[0],
-        #     # users=user_manager.users,
-        #     satellite_manager=satellite_manager,
-        #     user_manager=user_manager,
-        #     w_precoder=w_mmse,
-        #     plot_title='mmse',
-        #     log_scale=True,
-        #     # angle_sweep_range=angle_sweep_range,
-        # )
+        plot_directional_signal_interference_gain(
+            # satellites=satellite_manager.satellites[0],
+            # users=user_manager.users,
+            satellite_manager=satellite_manager,
+            user_manager=user_manager,
+            w_precoder=w_mmse,
+            plot_title='mmse',
+            log_scale=True,
+            # angle_sweep_range=angle_sweep_range,
+        )
 
         print(f'mmse: {sum_rate_mmse}')
 

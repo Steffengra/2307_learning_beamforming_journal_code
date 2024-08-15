@@ -9,59 +9,80 @@ from src.config.config_plotting import generic_styling
 
 
 def plot_beampattern(
-        satellite: 'src.data.satellite.Satellite',
-        users: list['src.data.user.User'],
+        satellite_manager: 'src.data.satellite_manager.SatelliteManager',
+        user_manager: 'src.data.user_manager.UserManager',
         w_precoder: np.ndarray,
-        angle_sweep_range: np.ndarray or None = None,
+        position_sweep_range: np.ndarray or None = None,
         plot_title: str or None = None,
 ) -> None:
     """Plots beam power toward each user from the point of view of a satellite for a given precoding w_precoder."""
+
+    # save original positions
+    original_pos = [
+        user.spherical_coordinates
+        for user in user_manager.users
+    ]
 
     # create a figure
     fig, ax = plt.subplots()
 
     # mark user positions
-    for user_idx in range(len(users)):
+    for user in user_manager.users:
         ax.scatter(
-            satellite.aods_to_users[user_idx],
+            user.spherical_coordinates[2],
             0,
-            label=f'user {user_idx}'
+            # color='black',
+            label=f'user {user.idx}'
         )
         ax.axvline(
-            satellite.aods_to_users[user_idx],
-            color=mpl_colors.TABLEAU_COLORS[list(mpl_colors.TABLEAU_COLORS.keys())[user_idx]],
+            user.spherical_coordinates[2],
+            color='black',
             linestyle='dashed'
         )
 
     # calculate auto x axis scaling
-    if angle_sweep_range is None:
-        max_dist = users[-1].spherical_coordinates[2] - users[0].spherical_coordinates[2]
+    if position_sweep_range is None:
+        max_dist = user_manager.users[-1].spherical_coordinates[2] - user_manager.users[0].spherical_coordinates[2]
 
-        angle_sweep_range = np.arange(
-            users[0].spherical_coordinates[2] - 0.5 * max_dist,
-            users[-1].spherical_coordinates[2] + 0.5 * max_dist,
-            (users[-1].spherical_coordinates[2] - users[0].spherical_coordinates[2]) / 100
+        position_sweep_range = np.arange(
+            user_manager.users[0].spherical_coordinates[2] - 0.5 * max_dist,
+            user_manager.users[-1].spherical_coordinates[2] + 0.5 * max_dist,
+            (user_manager.users[-1].spherical_coordinates[2] - user_manager.users[0].spherical_coordinates[2]) / 100
         )
 
-    # sweep power gains for each user depending on their angle
-    power_gains = np.zeros((len(users), len(angle_sweep_range)))
-    for user_idx in range(len(users)):
+    # calculate power gains
+    directional_power_gains = np.zeros((len(satellite_manager.satellites), len(user_manager.users), len(position_sweep_range)))
+    for user in user_manager.users:
+        for position_id, position in enumerate(position_sweep_range):
 
-        # sweep angles
-        for angle_id, angle in enumerate(angle_sweep_range):
+            user.update_position(
+                [user.spherical_coordinates[0], user.spherical_coordinates[1], position]
+            )
+            satellite_manager.calculate_satellite_distances_to_users(users=user_manager.users)
+            satellite_manager.calculate_satellite_aods_to_users(users=user_manager.users)
 
-            steering_vector_to_user = get_steering_vec(satellite=satellite, phase_aod_steering=np.cos(angle))
+            for satellite in satellite_manager.satellites:
 
-            power_gain_user_main = abs(np.matmul(steering_vector_to_user, w_precoder[:, user_idx])) ** 2
+                steering_vector_to_user = get_steering_vec(satellite=satellite, phase_aod_steering=np.cos(satellite.aods_to_users[user.idx]))
 
-            power_gains[user_idx, angle_id] = power_gain_user_main
+                directional_power_gain = abs(np.matmul(steering_vector_to_user, w_precoder[satellite.idx:satellite.idx + satellite.antenna_nr, user.idx])) ** 2
 
-        ax.plot(angle_sweep_range, power_gains[user_idx, :])
+                directional_power_gains[satellite.idx, user.idx, position_id] = directional_power_gain
+
+    sum_directional_power_gains = np.sum(directional_power_gains, axis=0)
+
+    ax.plot(position_sweep_range, sum_directional_power_gains.T)
 
     ax.legend()
     ax.set_xlabel('User AOD from satellite')
-    ax.set_ylabel('Power Gain')
+    ax.set_ylabel('Directional Power Gain')
     if plot_title is not None:
         ax.set_title(plot_title)
 
     generic_styling(ax=ax)
+
+    # reset original coordinates
+    for user in user_manager.users:
+        user.update_position(original_pos[user.idx])
+    satellite_manager.calculate_satellite_distances_to_users(users=user_manager.users)
+    satellite_manager.calculate_satellite_aods_to_users(users=user_manager.users)
