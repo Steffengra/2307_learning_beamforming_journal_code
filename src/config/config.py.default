@@ -266,7 +266,7 @@ class Config:
         matplotlib_logger = logging.getLogger('matplotlib')
         matplotlib_logger.setLevel(self._logging_level_matplotlib)
 
-        self.logger.setLevel(logging.NOTSET)  # set primary logger level to lowest to catch all
+        self.logger.setLevel(logging.DEBUG-1)  # set primary logger level to lowest to catch all
 
         # Set Formatting
         logging_file_handler.setFormatter(logging_formatter)
@@ -275,5 +275,7 @@ class Config:
         # Add Handlers
         self.logger.addHandler(logging_file_handler)
         self.logger.addHandler(logging_stdio_handler)
+
+        self.logger.propagate = False  # prevent logs being passed to system root logger
 
         self.logger.info(f'GPUs detected: {list_physical_devices("GPU")}')
