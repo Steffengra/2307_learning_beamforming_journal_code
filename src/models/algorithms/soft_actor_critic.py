@@ -250,7 +250,7 @@ class SoftActorCritic:
             with tf.GradientTape() as tape:  # Autograd
                 estimated_q = network.call(value_network_input_batch, training=True)
                 td_error = estimated_q - target_q
-                # todo 1: l2 norm calculated currently even when scale=0 -> performance loss
+
                 # from bengio deep learning book: we note
                 # that for neural networks, we typically choose to use a parameter norm penalty
                 # Ω that only penalizes the interaction weights, i.e we leave the offsets unregular-
@@ -260,13 +260,13 @@ class SoftActorCritic:
                 # single variable. This means that we do not induce too much variance by leaving
                 # the offsets unregularized. Also, regularizing the offsets can introduce a significant
                 # amount of underfitting.
-                l2_norm_loss = self.l2_norm_scale_value * tf.reduce_sum(
-                    [
-                        tf.reduce_sum(tf.square(weights_layer)) if tf.rank(weights_layer) == 2 else 0.0  # only mult. weights
-                        for weights_layer in network.trainable_weights
 
-                    ]
-                )
+                l2_norm_loss = 0.0
+                if self.l2_norm_scale_value != 0:
+                    for weights_layer in network.trainable_variables[0::2]:  # skip bias layers
+                        l2_norm_loss += tf.reduce_sum(tf.square(weights_layer))  # sum instead of mean is fine because every weight affects only itself
+                    l2_norm_loss = self.l2_norm_scale_value * l2_norm_loss  # w_new = w_old - lr * d Loss / d_w - lr * norm_scale * w_old
+
                 value_loss = (
                     tf.reduce_mean(sample_importance_weights * td_error ** 2)
                     + l2_norm_loss
@@ -278,12 +278,13 @@ class SoftActorCritic:
             with tf.GradientTape() as tape:  # Autograd
                 estimated_q = network.call(value_network_input_batch, training=True)
                 td_error = estimated_q - target_q
-                l2_norm_loss = self.l2_norm_scale_value * tf.reduce_sum(
-                    [
-                        tf.reduce_sum(tf.square(weights_layer)) if tf.rank(weights_layer) == 2 else 0.0  # only mult. weights
-                        for weights_layer in network.trainable_weights
-                    ]
-                )
+
+                l2_norm_loss = 0.0
+                if self.l2_norm_scale_value != 0:
+                    for weights_layer in network.trainable_variables[0::2]:  # skip bias layers
+                        l2_norm_loss += tf.reduce_sum(tf.square(weights_layer))  # sum instead of mean is fine because every weight affects only itself
+                    l2_norm_loss = self.l2_norm_scale_value * l2_norm_loss  # w_new = w_old - lr * d Loss / d_w - lr * norm_scale * w_old
+
                 value_loss = (
                     tf.reduce_mean(sample_importance_weights * td_error ** 2)
                     + l2_norm_loss
@@ -307,7 +308,13 @@ class SoftActorCritic:
                 value_estimate_1 = self.networks['value'][0]['primary'].call(value_network_input_batch)
                 value_estimate_2 = self.networks['value'][1]['primary'].call(value_network_input_batch)
                 value_estimate_min = tf.reduce_min([value_estimate_1, value_estimate_2], axis=0)
-                l2_norm_loss = self.l2_norm_scale_policy * tf.reduce_sum([tf.reduce_sum(tf.square(weights_layer)) for weights_layer in network.trainable_weights])
+
+                l2_norm_loss = 0.0
+                if self.l2_norm_scale_policy != 0:
+                    for weights_layer in network.trainable_variables[0::2]:  # skip bias layers
+                        l2_norm_loss += tf.reduce_sum(tf.square(weights_layer))  # sum instead of mean is fine because every weight affects only itself
+                    l2_norm_loss = self.l2_norm_scale_policy * l2_norm_loss  # w_new = w_old - lr * d Loss / d_w - lr * norm_scale * w_old
+
                 policy_loss = tf.reduce_mean(
                     # pull towards high value:
                     sample_importance_weights * -value_estimate_min
