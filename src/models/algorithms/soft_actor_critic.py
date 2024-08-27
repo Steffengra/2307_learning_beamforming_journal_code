@@ -246,51 +246,33 @@ class SoftActorCritic:
                 )
 
             value_network_input_batch = tf.concat([states, actions], axis=1)
-            network = self.networks['value'][0]['primary']
-            with tf.GradientTape() as tape:  # Autograd
-                estimated_q = network.call(value_network_input_batch, training=True)
-                td_error = estimated_q - target_q
+            for network in [self.networks['value'][0]['primary'], self.networks['value'][1]['primary']]:
+                with tf.GradientTape() as tape:  # Autograd
+                    estimated_q = network.call(value_network_input_batch, training=True)
+                    td_error = estimated_q - target_q
 
-                # from bengio deep learning book: we note
-                # that for neural networks, we typically choose to use a parameter norm penalty
-                # Ω that only penalizes the interaction weights, i.e we leave the offsets unregular-
-                # ized. The offsets typically require less data to fit accurately than the weights.
-                # Each weight specifies how two variables interact. Fitting the weigth well requires
-                # observing both variables in a variety of conditions. Each offset controls only a
-                # single variable. This means that we do not induce too much variance by leaving
-                # the offsets unregularized. Also, regularizing the offsets can introduce a significant
-                # amount of underfitting.
+                    # from bengio deep learning book: we note
+                    # that for neural networks, we typically choose to use a parameter norm penalty
+                    # Ω that only penalizes the interaction weights, i.e we leave the offsets unregular-
+                    # ized. The offsets typically require less data to fit accurately than the weights.
+                    # Each weight specifies how two variables interact. Fitting the weigth well requires
+                    # observing both variables in a variety of conditions. Each offset controls only a
+                    # single variable. This means that we do not induce too much variance by leaving
+                    # the offsets unregularized. Also, regularizing the offsets can introduce a significant
+                    # amount of underfitting.
 
-                l2_norm_loss = 0.0
-                if self.l2_norm_scale_value != 0:
-                    for weights_layer in network.trainable_variables[0::2]:  # skip bias layers
-                        l2_norm_loss += tf.reduce_sum(tf.square(weights_layer))  # sum instead of mean is fine because every weight affects only itself
-                    l2_norm_loss = self.l2_norm_scale_value * l2_norm_loss  # w_new = w_old - lr * d Loss / d_w - lr * norm_scale * w_old
+                    l2_norm_loss = 0.0
+                    if self.l2_norm_scale_value != 0:
+                        for weights_layer in network.trainable_variables[0::2]:  # skip bias layers
+                            l2_norm_loss += tf.reduce_sum(tf.square(weights_layer))  # sum instead of mean is fine because every weight affects only itself
+                        l2_norm_loss = self.l2_norm_scale_value * l2_norm_loss  # w_new = w_old - lr * d Loss / d_w - lr * norm_scale * w_old
 
-                value_loss = (
-                    tf.reduce_mean(sample_importance_weights * td_error ** 2)
-                    + l2_norm_loss
-                )
-            gradients = tape.gradient(target=value_loss, sources=network.trainable_variables)
-            network.optimizer.apply_gradients(zip(gradients, network.trainable_variables))
-
-            network = self.networks['value'][1]['primary']
-            with tf.GradientTape() as tape:  # Autograd
-                estimated_q = network.call(value_network_input_batch, training=True)
-                td_error = estimated_q - target_q
-
-                l2_norm_loss = 0.0
-                if self.l2_norm_scale_value != 0:
-                    for weights_layer in network.trainable_variables[0::2]:  # skip bias layers
-                        l2_norm_loss += tf.reduce_sum(tf.square(weights_layer))  # sum instead of mean is fine because every weight affects only itself
-                    l2_norm_loss = self.l2_norm_scale_value * l2_norm_loss  # w_new = w_old - lr * d Loss / d_w - lr * norm_scale * w_old
-
-                value_loss = (
-                    tf.reduce_mean(sample_importance_weights * td_error ** 2)
-                    + l2_norm_loss
-                )
-            gradients = tape.gradient(target=value_loss, sources=network.trainable_variables)
-            network.optimizer.apply_gradients(zip(gradients, network.trainable_variables))
+                    value_loss = (
+                        tf.reduce_mean(sample_importance_weights * td_error ** 2)
+                        + l2_norm_loss
+                    )
+                gradients = tape.gradient(target=value_loss, sources=network.trainable_variables)
+                network.optimizer.apply_gradients(zip(gradients, network.trainable_variables))
 
             self.update_target_networks(tau_target_update_momentum=self.training_target_update_momentum_tau)
 
