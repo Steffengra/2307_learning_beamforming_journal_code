@@ -232,9 +232,9 @@ class SatelliteManager:
             if satellite.idx == satellite_id:
                 continue  # skip this one
             if others == 'erroneous':
-                local_channel_state[:, satellite_id*self.satellites[satellite_id].antenna_nr:satellite_id*self.satellites[satellite_id].antenna_nr+self.satellites[satellite_id].antenna_nr] = self.satellites[satellite_id].erroneous_channel_state_to_users
+                local_channel_state[:, satellite.idx*satellite.antenna_nr:satellite.idx*satellite.antenna_nr+satellite.antenna_nr] = satellite.erroneous_channel_state_to_users
             elif others == 'scaled_erroneous':
-                local_channel_state[:, satellite_id*self.satellites[satellite_id].antenna_nr:satellite_id*self.satellites[satellite_id].antenna_nr+self.satellites[satellite_id].antenna_nr] = self.satellites[satellite_id].scaled_erroneous_channel_state_to_users
+                local_channel_state[:, satellite.idx*satellite.antenna_nr:satellite.idx*satellite.antenna_nr+satellite.antenna_nr] = satellite.scaled_erroneous_channel_state_to_users
             else:
                 raise ValueError(f'invalid config {others}')
 
