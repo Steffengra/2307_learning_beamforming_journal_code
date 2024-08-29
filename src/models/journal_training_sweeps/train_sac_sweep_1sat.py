@@ -188,9 +188,9 @@ def main():
     learn_baseline(user_dist=10_000, user_wiggle=5_000, additive_error_on_cosine_of_aod=0.00, testing_range=testing_error_sweep_range_10k)
     learn_baseline(user_dist=10_000, user_wiggle=5_000, additive_error_on_cosine_of_aod=0.03, testing_range=testing_error_sweep_range_10k)
 
-    # learn_other_error_model(additive_error_on_cosine_of_aod=0.1, additive_error_on_aod=0.0, testing_range=testing_error_sweep_range_100k_error2)
-    learn_other_error_model(additive_error_on_cosine_of_aod=0.1, additive_error_on_aod=0.025, testing_range=testing_error_sweep_range_100k_error2)
-    learn_other_error_model(additive_error_on_cosine_of_aod=0.1, additive_error_on_aod=0.05, testing_range=testing_error_sweep_range_100k_error2)
+    # learn_other_error_model(additive_error_on_cosine_of_aod=0.025, additive_error_on_aod=0.0, testing_range=testing_error_sweep_range_100k_error2)
+    learn_other_error_model(additive_error_on_cosine_of_aod=0.025, additive_error_on_aod=0.0, testing_range=testing_error_sweep_range_100k_error2)
+    learn_other_error_model(additive_error_on_cosine_of_aod=0.025, additive_error_on_aod=0.025, testing_range=testing_error_sweep_range_100k_error2)
 
     learn_adapt_slnr(user_dist=10_000, user_wiggle=5_000, additive_error_on_cosine_of_aod=0.00, testing_range=testing_error_sweep_range_10k)
     learn_adapt_slnr(user_dist=10_000, user_wiggle=5_000, additive_error_on_cosine_of_aod=0.03, testing_range=testing_error_sweep_range_10k)
