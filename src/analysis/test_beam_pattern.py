@@ -80,6 +80,7 @@ for iter_id in range(1):
         )
 
         plot_beampattern(
+            config=config,
             # satellite=satellite_manager.satellites[0],
             # users=user_manager.users,
             satellite_manager=satellite_manager,
@@ -89,6 +90,7 @@ for iter_id in range(1):
             # angle_sweep_range=angle_sweep_range,
         )
         plot_directional_signal_interference_gain(
+            config=config,
             # satellites=satellite_manager.satellites[0],
             # users=user_manager.users,
             satellite_manager=satellite_manager,
