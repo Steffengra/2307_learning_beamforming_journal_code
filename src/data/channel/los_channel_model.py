@@ -30,24 +30,24 @@ def los_channel_model(
 
     channel_state_information = np.zeros((len(users), satellite.antenna_nr), dtype='complex128')
 
-    for user_idx, user in enumerate(users):
+    for user in users:
         power_ratio = (
             satellite.antenna_gain_linear
             * user.gain_linear
             * (satellite.wavelength / (4 * np.pi * satellite.distance_to_users[user.idx])) ** 2
         )
-        power_ratio_faded = power_ratio / errors['large_scale_fading'][user_idx]
+        power_ratio_faded = power_ratio / errors['large_scale_fading'][user.idx]
         amplitude_damping = np.sqrt(power_ratio_faded)
 
         phase_shift = satellite.distance_to_users[user.idx] % satellite.wavelength * 2 * np.pi / satellite.wavelength
-        phase_shift_error = errors['additive_error_on_overall_phase_shift'][user_idx]
+        phase_shift_error = errors['additive_error_on_overall_phase_shift'][user.idx]
 
         phase_aod_steering = (
             np.cos(
-                satellite.aods_to_users[user_idx]
-                + errors['additive_error_on_aod'][user_idx]
+                satellite.aods_to_users[user.idx]
+                + errors['additive_error_on_aod'][user.idx]
             )
-            + errors['additive_error_on_cosine_of_aod'][user_idx]
+            + errors['additive_error_on_cosine_of_aod'][user.idx]
         )
 
         steering_vector_to_user = get_steering_vec(
@@ -60,7 +60,7 @@ def los_channel_model(
             * amplitude_damping
             * np.exp(-1j * (phase_shift + phase_shift_error))
             * steering_vector_to_user
-            + errors['additive_error_on_channel_vector'][user_idx]
+            + errors['additive_error_on_channel_vector'][user.idx]
         )
 
     return channel_state_information
