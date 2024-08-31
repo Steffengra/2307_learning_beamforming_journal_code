@@ -8,18 +8,20 @@ def get_steering_vec(
         satellite: 'src.data.satellite.Satellite',
         phase_aod_steering: float,
 ) -> np.ndarray:
-    """TODO: Comment"""
+    """
+    Compared to the center of an antenna array, each individual antenna has a slightly
+      longer/shorter distance to target. Steering vector gives the additional phase rotation introduced
+      by this extra distance.
+    """
 
-    steering_vector_to_user = np.zeros(satellite.antenna_nr, dtype='complex128')
+    steering_idx = np.arange(0, satellite.antenna_nr, dtype='complex128') - (satellite.antenna_nr - 1) / 2  # todo
+    # steering_idx = np.arange(0, satellite.antenna_nr, dtype='complex128')
 
-    steering_idx = np.arange(0, satellite.antenna_nr) - (satellite.antenna_nr - 1) / 2  # todo
-    # steering_idx = np.arange(0, satellite.antenna_nr)
-
-    steering_vector_to_user[:] = np.exp(
-        steering_idx
-        * -1j * 2 * np.pi / satellite.wavelength
+    steering_vector_to_user = np.exp(
+        -1j * 2 * np.pi / satellite.wavelength
         * satellite.antenna_distance
         * phase_aod_steering
+        * steering_idx
     )
 
     return steering_vector_to_user
