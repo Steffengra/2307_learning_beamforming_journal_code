@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 
 import numpy as np
+import tensorflow as tf
 from src.utils.load_model import load_model
 
 import src
@@ -211,15 +212,15 @@ def generate_beampatterns(
 if __name__ == '__main__':
 
     angle_sweep_range = np.arange(1.2, 1.9, 0.1 * np.pi / 180)
-    num_patterns = 10
+    num_patterns = 1000
     generate_mmse = True
-    generate_slnr = False
+    generate_slnr = True
     generate_ones = True
 
     config = Config()
 
     # TODO: UPDATE THIS
-    raise Exception('UPDATE THIS')
+    # raise Exception('UPDATE THIS')
     config.config_learner.training_name = config.generate_name_from_config()
 
     satellite_manager = SatelliteManager(config)
@@ -227,27 +228,27 @@ if __name__ == '__main__':
 
     # todo: models currently must have the same get_state config
     model_paths = {
-        # 'learned_0.0_error':
-        #     Path(
-        #         config.trained_models_path,
-        #         '1_sat_16_ant_3_usr_100000_dist_0.0_error_on_cos_0.1_fading',
-        #         'single_error',
-        #         'userwiggle_50000_snap_4.565',
-        #     ),
-        # 'learned_0.5_error':
-        #     Path(
-        #         config.trained_models_path,
-        #         '1_sat_16_ant_3_usr_100000_dist_0.05_error_on_cos_0.1_fading',
-        #         'single_error',
-        #         'userwiggle_50000_snap_2.710',
-        #     ),
-        'test':
+        'learned_0.0_error':
             Path(
                 config.trained_models_path,
-                '1sat_16ant_100k~0_3usr_100k_50k_additive_0.0',
+                '1sat_16ant_100k~0_3usr_10k~5k_additive_0.0',
                 'base',
-                'full_snap_4.553',
+                'full_snap_3.948',
             ),
+        # 'learned_0.05_error':
+        #     Path(
+        #         config.trained_models_path,
+        #         '1sat_16ant_100k~0_3usr_100k~50k_additive_0.05',
+        #         'base',
+        #         'full_snap_2.570',
+        #     ),
+        # 'test':
+        #     Path(
+        #         config.trained_models_path,
+        #         '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0',
+        #         'base',
+        #         'full_snap_4.620',
+        #     ),
     }
 
     with tf.device('CPU:0'):

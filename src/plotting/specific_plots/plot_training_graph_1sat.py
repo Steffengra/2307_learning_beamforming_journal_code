@@ -93,7 +93,8 @@ def plot_training_graph(
 if __name__ == '__main__':
     cfg = Config()
     plot_cfg = PlotConfig()
-    # path = Path(cfg.output_metrics_path, 'sat_2_ant_4_usr_3_satdist_10000_usrdist_1000', 'err_mult_on_steering_cos', 'single_error', 'training_error_0.0_userwiggle_30.gzip')
+    # path
+    # = Path(cfg.output_metrics_path, 'sat_2_ant_4_usr_3_satdist_10000_usrdist_1000', 'err_mult_on_steering_cos', 'single_error', 'training_error_0.0_userwiggle_30.gzip')
     paths = [
         Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'base', 'training_error_learned_full.gzip'),
         Path(cfg.output_metrics_path, '1sat_16ant_100k~0_3usr_100k~50k_vanilla_sac', 'base', 'training_error_learned_full.gzip'),

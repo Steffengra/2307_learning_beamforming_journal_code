@@ -107,9 +107,9 @@ def plot_error_sweep_testing_graph(
         handles = [h[0] if isinstance(h, container.ErrorbarContainer) else h for h in handles]  # remove error bars
         legend = ax.legend(
             handles, legend,
-            ncols=1,
-            loc='lower left',
-            bbox_to_anchor=(.01, .13)
+            ncols=2,
+            loc='upper right',
+            # bbox_to_anchor=(.99, .9)
         )
         legend.get_frame().set_linewidth(0.8)
 
@@ -123,7 +123,7 @@ def plot_error_sweep_testing_graph(
     #     fontsize=
     # )
     arr = mpatches.FancyArrowPatch(
-        (0.095, 0), (0.095, 4.2),
+        (0.115, 0), (0.115, 4.2),
         arrowstyle='-|>',
         # arrowstyle='simple,head_width=0.7',
         mutation_scale=15,
@@ -143,7 +143,7 @@ def plot_error_sweep_testing_graph(
     )
 
     arr2 = mpatches.FancyArrowPatch(
-        (0, -0.39), (0.10, -0.39),
+        (0, -0.39), (0.12, -0.39),
         arrowstyle='-|>',
         # arrowstyle='simple,head_width=0.7',
         mutation_scale=15,
@@ -162,6 +162,7 @@ def plot_error_sweep_testing_graph(
     )
 
     # ax.set_xlim([-0.01, 0.2])
+    ax.set_ylim((-0.6, 5.5))
 
     generic_styling(ax=ax)
     fig.tight_layout(pad=0)
@@ -176,17 +177,17 @@ if __name__ == '__main__':
 
     data_paths = [
         Path(cfg.output_metrics_path,
-             '1sat_16ant_100k~0_3usr_10k~5k', 'error_sweep',
-             'testing_mmse_sweep_0.0_0.1.gzip'),
+             '1sat_16ant_100k~0_3usr_10k~5k_additive_0.0', 'error_sweep',
+             'testing_mmse_sweep_0.0_0.12.gzip'),
+        Path(cfg.output_metrics_path,
+             '1sat_16ant_100k~0_3usr_10k~5k_additive_0.0', 'error_sweep',
+             'testing_robust_slnr_sweep_0.0_0.12.gzip'),
+        Path(cfg.output_metrics_path,
+             '1sat_16ant_100k~0_3usr_10k~5k_additive_0.0', 'error_sweep',
+             'testing_learned_sweep_0.0_0.12.gzip'),
         Path(cfg.output_metrics_path,
              '1sat_16ant_100k~0_3usr_10k~5k', 'error_sweep',
-             'testing_robust_slnr_sweep_0.0_0.1.gzip'),
-        Path(cfg.output_metrics_path,
-             '1sat_16ant_100k~0_3usr_10k~5k', 'error_sweep',
-             'testing_learned_0.0_sweep_0.0_0.1.gzip'),
-        # Path(cfg.output_metrics_path,
-        #      '1sat_16ant_100k~0_3usr_10k~5k', 'error_sweep',
-        #      'testing_learned_0.03_sweep_0.0_0.1.gzip'),
+             'testing_adapted_slnr_complete_sweep_0.0_0.12.gzip'),
         # Path(cfg.output_metrics_path,
         #      '1sat_16ant_100k~0_3usr_10k~5k', 'error_sweep',
         #      'testing_learned_0.05_sweep_0.0_0.1.gzip'),
@@ -199,7 +200,7 @@ if __name__ == '__main__':
         'MMSE',
         'SLNR',
         'SAC $\Delta\epsilon=0.0$',
-        'SAC $\Delta\epsilon=0.03$',
+        'Adapted SLNR $\Delta\epsilon=0.0$',
         # 'SAC3',
     ]
 
@@ -207,7 +208,7 @@ if __name__ == '__main__':
         'o',
         'x',
         's',
-        'd',
+        # 'd',
         'D',
     ]
     plot_colors = [
@@ -221,8 +222,8 @@ if __name__ == '__main__':
         '-',
         ':',
         '-',
-        '-',
-        '-',
+        'dashed',
+        'dashed',
     ]
 
     plot_error_sweep_testing_graph(

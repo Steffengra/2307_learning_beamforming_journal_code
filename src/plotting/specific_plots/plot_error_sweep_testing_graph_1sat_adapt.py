@@ -1,6 +1,7 @@
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import numpy as np
 from gzip import (
     open as gzip_open,
 )
@@ -45,6 +46,9 @@ def plot_error_sweep_testing_graph(
 
     for data_id, data_entry in enumerate(data):
 
+        if data_id == 2:
+            ax.plot(np.nan, np.nan, '-', color='none', label=' ')  # add empty entry to sort legend
+
         if markerstyle is not None:
             marker = markerstyle[data_id]
         else:
@@ -85,6 +89,7 @@ def plot_error_sweep_testing_graph(
             linestyle=linestyle,
             label=legend[data_id],
             fillstyle='none',
+            # markevery=0.1 if data_id%3==0 else 0.3,
         )
 
         # ax.annotate(
@@ -106,24 +111,14 @@ def plot_error_sweep_testing_graph(
         handles, labels = ax.get_legend_handles_labels()
         handles = [h[0] if isinstance(h, container.ErrorbarContainer) else h for h in handles]  # remove error bars
         legend = ax.legend(
-            handles, legend,
-            ncols=1,
-            loc='lower left',
-            bbox_to_anchor=(0.01, 0.15)
+            # handles, legend,
+            ncols=2,
+            # loc='lower left',
         )
         legend.get_frame().set_linewidth(0.8)
 
-    # ax.annotate(
-    #     text='test',
-    #     xy=(data_entry[0][-1], data_entry[1]['sum_rate']['mean'][-1]),
-    #     xytext=(10, 0),
-    #     textcoords='offset points',
-    #     ha='left',
-    #     va='center_baseline',
-    #     fontsize=
-    # )
     arr = mpatches.FancyArrowPatch(
-        (0.475, 1), (0.475, 3.1),
+        (0.095, 1), (0.095, 3.9),
         arrowstyle='-|>',
         # arrowstyle='simple,head_width=0.7',
         mutation_scale=15,
@@ -143,7 +138,7 @@ def plot_error_sweep_testing_graph(
     )
 
     arr2 = mpatches.FancyArrowPatch(
-        (0, 0.9), (0.50, 0.9),
+        (0, 0.7), (0.10, 0.7),
         arrowstyle='-|>',
         # arrowstyle='simple,head_width=0.7',
         mutation_scale=15,
@@ -176,20 +171,26 @@ if __name__ == '__main__':
 
     data_paths = [
         Path(cfg.output_metrics_path,
-             '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_mmse_decentralized_blind_sweep_0.0_0.5.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_mmse_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_mmse_sweep_0.0_0.5.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_robust_slnr_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_sac_decentralized_blind_0.0_sweep_0.0_0.5.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_learned_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_sac_decentralized_blind_0.25_sweep_0.0_0.5.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_adapted_slnr_powerscaled_sweep_0.0_0.1.gzip'),
+        Path(cfg.output_metrics_path,
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_adapted_slnr_complete_sweep_0.0_0.1.gzip'),
         # Path(cfg.output_metrics_path,
-        #      '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-        #      'testing_learned_0.25_sweep_0.0_0.5.gzip'),
+        #      '1sat_16ant_100k~0_3usr_100k~50k_additive_0.05', 'error_sweep',
+        #      'testing_adapted_slnr_powerscaled_sweep_0.0_0.1.gzip'),
+        # Path(cfg.output_metrics_path,
+        #      '1sat_16ant_100k~0_3usr_100k~50k_additive_0.05', 'error_sweep',
+        #      'testing_adapted_slnr_complete_sweep_0.0_0.1.gzip'),
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
@@ -197,36 +198,37 @@ if __name__ == '__main__':
 
     plot_legend = [
         'MMSE',
-        'MMSE (Central)',
+        'SLNR',
         'SAC $\Delta\epsilon=0.0$',
-        'SAC $\Delta\epsilon=0.25$',
+        'Adapt SLNR Power',
+        'Adapt SLNR Full',
     ]
 
     plot_markerstyle = [
         'o',
-        'o',
+        'x',
         's',
-        'D',
         'd',
+        'D',
     ]
     plot_colors = [
         plot_cfg.cp2['black'],
         plot_cfg.cp2['black'],
         plot_cfg.cp3['blue2'],
-        plot_cfg.cp3['red2'],
         plot_cfg.cp3['red3'],
+        plot_cfg.cp3['red2'],
     ]
     plot_linestyles = [
         '-',
         ':',
         '-',
-        '-',
-        '-',
+        'dashed',
+        'dotted',
     ]
 
     plot_error_sweep_testing_graph(
         paths=data_paths,
-        name='error_sweep_2sat_decentralized_blind',
+        name='error_sweep_adapt_slnr',
         width=plot_width,
         xlabel='Error Bound $\Delta\\varepsilon_{\mathrm{aod}}$',
         ylabel='Avg. Sum Rate (bits/s/Hz)',

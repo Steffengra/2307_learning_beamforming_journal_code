@@ -65,22 +65,26 @@ def plot_beam_patterns(
         # User positions
         for user_id, user_position in enumerate(data[realization]['user_positions'][0]):  # todo: fix this for multi sat
             if user_id == 0:
-                label = 'Users'
+                label = 'User Positions'
             else:
                 label = '_UserHidden'
 
             ax.scatter(
                 user_position,
-                0,
+                -0,
                 label=label,
                 color='black',
+                marker='o',
+                # facecolor='white',
+                zorder=10,
+                s=80,
             )
             ax.axvline(
                 user_position,
                 label='_UserHidden',
                 # color=mpl_colors.TABLEAU_COLORS[list(mpl_colors.TABLEAU_COLORS.keys())[user_idx]],
-                color='black',
-                linestyle='dotted',
+                color='darkgrey',
+                linestyle='dashed',
             )
 
         # Beam patterns
@@ -106,24 +110,33 @@ def plot_beam_patterns(
                     linestyle=line_style_dict[precoder],
                     marker=marker_style_dict[precoder],
                     markevery=[peak],
+                    fillstyle='none',
                 )
 
             print(f'{precoder} sum rate: {data[realization][precoder]["sum_rate"]}')
 
         ax.set_xlim(xlim)
 
-        ax.legend()
+        legend = ax.legend(
+            loc='upper left',
+        )
+        legend.get_frame().set_linewidth(0.8)
 
         if row == (rows-1):
-            ax.set_xlabel('xlabel')
+            ax.set_xlabel('Angle of Departure')
+            # ax.set_xticks([])
+            ax.set_xticklabels([])
         if col == 0:
-            ax.set_ylabel('ylabel')
+            ax.set_ylabel('Power Gain')
+            # ax.set_yticks([])
+            ax.set_yticklabels([])
+            # ax.tick_params(direction='in')
 
         generic_styling(ax=ax)
 
     fig.tight_layout(pad=0)
 
-    # save_figures(plots_parent_path=plots_parent_path, plot_name=name, padding=0)
+    save_figures(plots_parent_path=plots_parent_path, plot_name=name, padding=0)
 
 
 def print_realizations(
@@ -182,28 +195,28 @@ if __name__ == '__main__':
 
     plot_width = 0.99 * plot_cfg.textwidth
     # plot_width = 0.99 * 3.5
-    plot_height = plot_width * 3/4
+    plot_height = plot_width * 1/2
 
     x_limits = [1.45, 1.7]
     # x_limits = None
 
     colors = {
-        'mmse': plot_cfg.cp2['gold'],
-        'slnr': plot_cfg.cp2['magenta'],
-        'learned_0.0_error': plot_cfg.cp2['blue'],
+        'mmse': plot_cfg.cp3['black'],
+        'slnr': plot_cfg.cp3['black'],
+        'learned_0.0_error': plot_cfg.cp3['blue2'],
         'learned_0.05_error': plot_cfg.cp2['green'],
     }
 
     line_styles = {
         'mmse': 'solid',
-        'slnr': 'solid',
+        'slnr': 'dotted',
         'learned_0.0_error': 'solid',
         'learned_0.05_error': 'solid',
     }
 
     marker_styles = {
         'mmse': 'o',
-        'slnr': '^',
+        'slnr': 'x',
         'learned_0.0_error': 's',
         'learned_0.05_error': 'x',
     }
@@ -211,7 +224,7 @@ if __name__ == '__main__':
     labels = {
         'mmse': 'MMSE',
         'slnr': 'SLNR',
-        'learned_0.0_error': 'abc',
+        'learned_0.0_error': 'SAC',
         'learned_0.05_error': 'abc',
     }
 
@@ -229,7 +242,7 @@ if __name__ == '__main__':
         marker_style_dict=marker_styles,
         xlim=x_limits,
         plots_parent_path=plot_cfg.plots_parent_path,
-        name='test',
+        name='beam_pattern_1sat',
     )
 
     plt.show()

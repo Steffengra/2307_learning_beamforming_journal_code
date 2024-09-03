@@ -8,6 +8,7 @@ from src.config.config_plotting import generic_styling
 
 
 def plot_directional_signal_interference_gain(
+        config: 'src.config.config.Config',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         user_manager: 'src.data.user_manager.UserManager',
         w_precoder: np.ndarray,
@@ -50,29 +51,31 @@ def plot_directional_signal_interference_gain(
         position_sweep_range = np.arange(
             user_manager.users[0].spherical_coordinates[2] - 0.5 * max_dist,
             user_manager.users[-1].spherical_coordinates[2] + 0.5 * max_dist,
-            (user_manager.users[-1].spherical_coordinates[2] - user_manager.users[0].spherical_coordinates[2]) / 100
+            (user_manager.users[-1].spherical_coordinates[2] - user_manager.users[0].spherical_coordinates[2]) / 10000
         )
 
     # calculate power gains
-    directional_power_gains = np.zeros((len(satellite_manager.satellites), len(user_manager.users), len(position_sweep_range)))
-    for user in user_manager.users:
-        for position_id, position in enumerate(position_sweep_range):
+    directional_power_gains = np.zeros((len(satellite_manager.satellites), len(user_manager.users), len(position_sweep_range)), dtype='complex128')
+    for position_id, position in enumerate(position_sweep_range):
 
-            user.update_position(
-                [user.spherical_coordinates[0], user.spherical_coordinates[1], position]
-            )
-            satellite_manager.calculate_satellite_distances_to_users(users=user_manager.users)
-            satellite_manager.calculate_satellite_aods_to_users(users=user_manager.users)
+        user_manager.users[0].update_position(
+            [user_manager.users[0].spherical_coordinates[0], user_manager.users[0].spherical_coordinates[1], position]
+        )
+        satellite_manager.calculate_satellite_distances_to_users(users=user_manager.users)
+        satellite_manager.calculate_satellite_aods_to_users(users=user_manager.users)
+        satellite_manager.update_channel_state_information(channel_model=config.channel_model,
+                                                           users=user_manager.users)
 
-            for satellite in satellite_manager.satellites:
+        for satellite in satellite_manager.satellites:
 
-                steering_vector_to_user = get_steering_vec(satellite=satellite, phase_aod_steering=np.cos(satellite.aods_to_users[user.idx]))
+            for user in user_manager.users:
 
-                directional_power_gain = abs(np.matmul(steering_vector_to_user, w_precoder[satellite.idx:satellite.idx + satellite.antenna_nr, user.idx])) ** 2
+                directional_power_gain = np.matmul(satellite.channel_state_to_users[0], w_precoder[satellite.idx:satellite.idx + satellite.antenna_nr, user.idx])
 
                 directional_power_gains[satellite.idx, user.idx, position_id] = directional_power_gain
 
     sum_directional_power_gains = np.sum(directional_power_gains, axis=0)
+    sum_directional_power_gains = abs(sum_directional_power_gains) ** 2
 
     signal_to_interference_ratio_per_user = np.zeros((len(user_manager.users), len(position_sweep_range)))
 
@@ -99,5 +102,7 @@ def plot_directional_signal_interference_gain(
     # reset original coordinates
     for user in user_manager.users:
         user.update_position(original_pos[user.idx])
-    satellite_manager.calculate_satellite_distances_to_users(users=user_manager.users)
-    satellite_manager.calculate_satellite_aods_to_users(users=user_manager.users)
+        satellite_manager.calculate_satellite_distances_to_users(users=user_manager.users)
+        satellite_manager.calculate_satellite_aods_to_users(users=user_manager.users)
+        satellite_manager.update_channel_state_information(channel_model=config.channel_model,
+                                                           users=user_manager.users)

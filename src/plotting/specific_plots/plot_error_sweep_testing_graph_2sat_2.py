@@ -176,20 +176,20 @@ if __name__ == '__main__':
 
     data_paths = [
         Path(cfg.output_metrics_path,
-             '2sat_4ant_10k~0_3usr_1k~500', 'error_sweep',
+             '2sat_4ant_10k~0_3usr_1k~500_additive_0.0', 'error_sweep',
              'testing_mmse_sweep_0.0_0.5.gzip'),
         # Path(cfg.output_metrics_path,
         #      '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
         #      'testing_robust_slnr_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_10k~0_3usr_1k~500', 'error_sweep',
-             'testing_learned_0.0_sweep_0.0_0.5.gzip'),
+             '2sat_4ant_10k~0_3usr_1k~500_additive_0.0', 'error_sweep',
+             'testing_learned_sweep_0.0_0.5.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_10k~0_3usr_1k~500', 'error_sweep',
-             'testing_learned_0.125_sweep_0.0_0.5.gzip'),
+             '2sat_4ant_10k~0_3usr_1k~500_additive_0.125', 'error_sweep',
+             'testing_learned_sweep_0.0_0.5.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_10k~0_3usr_1k~500', 'error_sweep',
-             'testing_learned_0.250_sweep_0.0_0.5.gzip'),
+             '2sat_4ant_10k~0_3usr_1k~500_additive_0.25', 'error_sweep',
+             'testing_learned_sweep_0.0_0.5.gzip'),
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth

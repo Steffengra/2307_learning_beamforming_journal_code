@@ -6,7 +6,6 @@ sys_path.append(str(project_root_path.resolve()))
 
 from datetime import datetime
 from shutil import (
-    copytree,
     rmtree,
 )
 import gzip

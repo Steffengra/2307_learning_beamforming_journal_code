@@ -23,8 +23,8 @@ from src.utils.load_model import load_model
 
 plot = [
     'mmse',
-    # 'slnr',
-    # 'learned',
+    'slnr',
+    'learned',
     # 'slnr_adapted_complete',
     # 'ones',
 ]
@@ -39,14 +39,14 @@ config = Config()
 
 model_path = Path(  # SAC only
     config.trained_models_path,
-    '1sat_16ant_100k~0_3usr_100k_50k_additive_0.0',
+    '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0',
     'base',
-    'full_snap_4.553',
+    'full_snap_4.620',
 )
 
 if any(value in plot for value in ['learned', 'slnr_adapted_complete']):
     from src.utils.compare_configs import compare_configs
-    compare_configs(config, Path(model_path, '..', 'config'))
+    # compare_configs(config, Path(model_path, '..', 'config'))
 
     with tf.device('CPU:0'):
 
@@ -89,17 +89,17 @@ for iter_id in range(1):
             plot_title='mmse',
             # angle_sweep_range=angle_sweep_range,
         )
-        plot_directional_signal_interference_gain(
-            config=config,
-            # satellites=satellite_manager.satellites[0],
-            # users=user_manager.users,
-            satellite_manager=satellite_manager,
-            user_manager=user_manager,
-            w_precoder=w_mmse,
-            plot_title='mmse',
-            log_scale=True,
-            # angle_sweep_range=angle_sweep_range,
-        )
+        # plot_directional_signal_interference_gain(
+        #     config=config,
+        #     # satellites=satellite_manager.satellites[0],
+        #     # users=user_manager.users,
+        #     satellite_manager=satellite_manager,
+        #     user_manager=user_manager,
+        #     w_precoder=w_mmse,
+        #     plot_title='mmse',
+        #     log_scale=True,
+        #     # angle_sweep_range=angle_sweep_range,
+        # )
 
         print(f'mmse: {sum_rate_mmse}')
 
@@ -125,11 +125,12 @@ for iter_id in range(1):
         )
 
         plot_beampattern(
-            satellite=satellite_manager.satellites[0],
-            users=user_manager.users,
+            config=config,
+            satellite_manager=satellite_manager,
+            user_manager=user_manager,
             w_precoder=w_slnr,
             plot_title='slnr',
-            angle_sweep_range=angle_sweep_range,
+            # angle_sweep_range=angle_sweep_range,
         )
 
         # plot_directional_signal_interference_gain(
@@ -170,11 +171,12 @@ for iter_id in range(1):
         print(f'learned: {sum_rate_learned}')
 
         plot_beampattern(
-            satellite=satellite_manager.satellites[0],
-            users=user_manager.users,
+            config=config,
+            satellite_manager=satellite_manager,
+            user_manager=user_manager,
             w_precoder=w_learned,
             plot_title='learned',
-            angle_sweep_range=angle_sweep_range,
+            # angle_sweep_range=angle_sweep_range,
         )
 
     # learned fully adapted slnr

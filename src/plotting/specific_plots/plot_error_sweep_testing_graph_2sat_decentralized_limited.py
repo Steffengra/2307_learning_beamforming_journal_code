@@ -107,9 +107,9 @@ def plot_error_sweep_testing_graph(
         handles = [h[0] if isinstance(h, container.ErrorbarContainer) else h for h in handles]  # remove error bars
         legend = ax.legend(
             handles, legend,
-            ncols=1,
-            loc='lower left',
-            bbox_to_anchor=(0.01, 0.15)
+            ncols=3,
+            # loc='lower left',
+            # bbox_to_anchor=(0.01, 0.15)
         )
         legend.get_frame().set_linewidth(0.8)
 
@@ -123,7 +123,7 @@ def plot_error_sweep_testing_graph(
     #     fontsize=
     # )
     arr = mpatches.FancyArrowPatch(
-        (0.475, 1), (0.475, 3.1),
+        (0.475, 0.5), (0.475, 4),
         arrowstyle='-|>',
         # arrowstyle='simple,head_width=0.7',
         mutation_scale=15,
@@ -133,7 +133,7 @@ def plot_error_sweep_testing_graph(
     ax.add_patch(arr)
     ax.annotate(
         'better',
-        (1.0, .7),
+        (1.0, .83),
         xycoords=arr,
         ha='left',
         va='center',
@@ -143,7 +143,7 @@ def plot_error_sweep_testing_graph(
     )
 
     arr2 = mpatches.FancyArrowPatch(
-        (0, 0.9), (0.50, 0.9),
+        (0, 0.2), (0.50, 0.2),
         arrowstyle='-|>',
         # arrowstyle='simple,head_width=0.7',
         mutation_scale=15,
@@ -162,6 +162,7 @@ def plot_error_sweep_testing_graph(
     )
 
     # ax.set_xlim([-0.01, 0.2])
+    ax.set_ylim((0.0, 5))
 
     generic_styling(ax=ax)
     fig.tight_layout(pad=0)
@@ -177,56 +178,64 @@ if __name__ == '__main__':
     data_paths = [
         Path(cfg.output_metrics_path,
              '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_mmse_decentralized_blind_sweep_0.0_0.5.gzip'),
+             'testing_mmse_decentralized_limited_L1_sweep_0.0_0.5.gzip'),
         Path(cfg.output_metrics_path,
              '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_mmse_sweep_0.0_0.5.gzip'),
+             'testing_mmse_decentralized_limited_L2_sweep_0.0_0.5.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_sac_decentralized_blind_0.0_sweep_0.0_0.5.gzip'),
+             '2sat_4ant_100k~0_3usr_1k~500_additive_0.0', 'error_sweep',
+             'testing_sac_decentralized_limited_L1_sweep_0.0_0.5.gzip'),
         Path(cfg.output_metrics_path,
-             '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-             'testing_sac_decentralized_blind_0.25_sweep_0.0_0.5.gzip'),
-        # Path(cfg.output_metrics_path,
-        #      '2sat_4ant_100k~0_3usr_1k~500', 'error_sweep',
-        #      'testing_learned_0.25_sweep_0.0_0.5.gzip'),
+             '2sat_4ant_100k~0_3usr_1k~500_additive_0.0', 'error_sweep',
+             'testing_sac_decentralized_limited_L2_sweep_0.0_0.5.gzip'),
+        Path(cfg.output_metrics_path,
+             '2sat_4ant_100k~0_3usr_1k~500_additive_0.25', 'error_sweep',
+             'testing_sac_decentralized_limited_L1_sweep_0.0_0.5.gzip'),
+        Path(cfg.output_metrics_path,
+             '2sat_4ant_100k~0_3usr_1k~500_additive_0.25', 'error_sweep',
+             'testing_sac_decentralized_limited_L2_sweep_0.0_0.5.gzip'),
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
     plot_height = plot_width * 15 / 20
 
     plot_legend = [
-        'MMSE',
-        'MMSE (Central)',
-        'SAC $\Delta\epsilon=0.0$',
-        'SAC $\Delta\epsilon=0.25$',
+        'MMSE L1',
+        'MMSE L2',
+        'SAC L1 $\Delta\epsilon=0.0$',
+        'SAC L2 $\Delta\epsilon=0.0$',
+        'SAC L1 $\Delta\epsilon=0.25$',
+        'SAC L2 $\Delta\epsilon=0.25$',
     ]
 
     plot_markerstyle = [
         'o',
         'o',
         's',
+        's',
         'D',
-        'd',
+        'D',
     ]
     plot_colors = [
         plot_cfg.cp2['black'],
         plot_cfg.cp2['black'],
         plot_cfg.cp3['blue2'],
+        plot_cfg.cp3['blue2'],
         plot_cfg.cp3['red2'],
-        plot_cfg.cp3['red3'],
+        plot_cfg.cp3['red2'],
     ]
     plot_linestyles = [
         '-',
-        ':',
+        '--',
         '-',
+        '--',
         '-',
-        '-',
+        '--',
     ]
 
     plot_error_sweep_testing_graph(
         paths=data_paths,
-        name='error_sweep_2sat_decentralized_blind',
+        name='error_sweep_2sat_decentralized_limited',
         width=plot_width,
         xlabel='Error Bound $\Delta\\varepsilon_{\mathrm{aod}}$',
         ylabel='Avg. Sum Rate (bits/s/Hz)',

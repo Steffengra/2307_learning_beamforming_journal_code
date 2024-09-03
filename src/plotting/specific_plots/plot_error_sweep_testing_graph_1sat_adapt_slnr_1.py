@@ -175,20 +175,20 @@ if __name__ == '__main__':
 
     data_paths = [
         Path(cfg.output_metrics_path,
-             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
              'testing_mmse_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
              'testing_robust_slnr_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
-             'testing_learned_0.0_sweep_0.0_0.1.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_learned_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
-             'testing_learned_0.025_sweep_0.0_0.1.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_adapted_slnr_complete_sweep_0.0_0.1.gzip'),
         Path(cfg.output_metrics_path,
-             '1sat_16ant_100k~0_3usr_100k~50k', 'error_sweep',
-             'testing_learned_0.05_sweep_0.0_0.1.gzip'),
+             '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0', 'error_sweep',
+             'testing_adapted_slnr_powerscaled_sweep_0.0_0.1.gzip'),
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
