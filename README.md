@@ -14,7 +14,7 @@ The project structure is as follows
 .
 ├── models                  | trained models
 ├── outputs
-│   
+│   ├── metrics             | metrics from evaluation
 ├── README.md               | this file
 ├── requirements.txt        | project dependencies
 ├── src                     | python source related to..
