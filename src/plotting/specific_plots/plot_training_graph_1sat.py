@@ -138,6 +138,6 @@ if __name__ == '__main__':
         plot_markerstyles=plot_markerstyles,
         plots_parent_path=plot_cfg.plots_parent_path,
         xlabel='Training Episode',
-        ylabel='Mean Reward'
+        ylabel='Avg. Sum Rate\n(bits/s/Hz)'
     )
     plt.show()
