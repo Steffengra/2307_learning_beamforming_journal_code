@@ -6,6 +6,7 @@ import numpy as np
 import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.analysis.helpers.test_precoder_user_distance_sweep import test_precoder_user_distance_sweep
+from src.analysis.helpers.test_rsma_precoder import test_rsma_precoder_user_distance_sweep
 from src.data.calc_sum_rate import calc_sum_rate
 from src.data.calc_sum_rate_RSMA import calc_sum_rate_RSMA
 from src.utils.load_model import (
@@ -18,7 +19,7 @@ from src.utils.get_precoding import (
     get_precoding_learned_decentralized_limited,
     get_precoding_adapted_slnr_powerscaled,
     get_precoding_adapted_slnr_complete,
-    get_precoding_learned_rsma_complete,
+    get_precoding_learned_rsma_complete, get_precoding_learned_rsma_power_scaling,
 )
 
 
@@ -161,7 +162,7 @@ def test_adapted_slnr_powerscaled_error_sweep(
     )
 
 
-def test_learned_rsma_complete(
+def test_learned_rsma_complete_error_sweep(
         config: 'src.config.config.Config',
         model_path: Path,
         error_sweep_parameter: str,
@@ -178,5 +179,48 @@ def test_learned_rsma_complete(
         precoder_name='learned_rsma_full',
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_complete(cfg, sat_man, norm_factors, rsma_network),
+        calc_sum_rate_func=calc_sum_rate_RSMA,
+    )
+
+def test_learned_rsma_complete_user_distance_sweep(
+        config: 'src.config.config.Config',
+        distance_sweep_range: np.ndarray,
+        model_path: Path,
+) -> None:
+    """Test a precoder over a range of distances with zero error."""
+
+    rsma_network, norm_factors = load_model(model_path)
+
+    if norm_factors != {}:
+        config.config_learner.get_state_args['norm_state'] = True
+
+    test_precoder_user_distance_sweep(
+        config=config,
+        distance_sweep_range=distance_sweep_range,
+        precoder_name='learned_rsma_full',
+        mode='user',
+        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_complete(cfg, sat_man, norm_factors, rsma_network),
+        calc_sum_rate_func=calc_sum_rate_RSMA,
+        )
+
+def test_learned_rsma_power_factor_user_distance_sweep(
+        config: 'src.config.config.Config',
+        distance_sweep_range: np.ndarray,
+        model_path: Path,
+) -> None:
+    """Test a precoder over a range of distances with zero error."""
+
+    rsma_power_factor_network, norm_factors = load_model(model_path)
+
+    if norm_factors != {}:
+        config.config_learner.get_state_args['norm_state'] = True
+
+    test_precoder_user_distance_sweep(
+        config=config,
+        distance_sweep_range=distance_sweep_range,
+        precoder_name='learned_rsma_power_factor',
+        mode='user',
+        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_power_scaling(cfg, sat_man, norm_factors,
+                                                                                   rsma_power_factor_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
     )

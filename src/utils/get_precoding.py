@@ -5,6 +5,7 @@ import tensorflow as tf
 import src
 from src.models.precoders.learned_precoder import get_learned_precoder_normalized
 from src.models.precoders.learned_precoder import get_learned_precoder_decentralized_normalized
+from src.models.precoders.learned_precoder import get_learned_rsma_power_factor
 from src.models.precoders.adapted_precoder import adapt_robust_slnr_complete_precoder_normed
 from src.models.precoders.scaled_precoder import scale_robust_slnr_complete_precoder_normed
 from src.data.precoder.mmse_precoder import mmse_precoder_normalized
@@ -119,6 +120,36 @@ def get_precoding_learned_rsma_complete(
     )
 
     return w_precoder_normalized
+
+def get_precoding_learned_rsma_power_scaling(
+        config: 'src.config.config.Config',
+        satellite_manager: 'src.data.satellite_manager.SatelliteManager',
+        norm_factors: dict,
+        power_factor_network: tf.keras.models.Model,
+) -> np.ndarray:
+
+    state = config.config_learner.get_state(
+        satellite_manager=satellite_manager,
+        norm_factors=norm_factors,
+        **config.config_learner.get_state_args
+    )
+
+    rsma_factor = get_learned_rsma_power_factor(
+        state=state,
+        power_factor_network=power_factor_network,
+
+    )
+
+    w_precoder = rate_splitting_no_norm(
+        channel_matrix=satellite_manager.erroneous_channel_state_information,
+        noise_power_watt=config.noise_power_watt,
+        power_constraint_watt=config.power_constraint_watt,
+        rsma_factor=rsma_factor,
+        common_part_precoding_style='MRT',
+    )
+
+    return w_precoder
+
 
 
 def get_precoding_learned_decentralized_blind(

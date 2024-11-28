@@ -28,3 +28,19 @@ def test_rsma_precoder_error_sweep(
         get_precoder_func=lambda cfg, sat_man: get_precoding_rsma(cfg, sat_man, rsma_factor, common_part_precoding_style),
         calc_sum_rate_func=calc_sum_rate_RSMA,
     )
+
+def test_rsma_precoder_user_distance_sweep(
+    config: 'src.config.config.Config',
+    distance_sweep_range: np.ndarray,
+) -> None:
+    """Test the MMSE precoder over a range of distances with zero error."""
+
+    test_precoder_user_distance_sweep(
+        config=config,
+        distance_sweep_range=distance_sweep_range,
+        precoder_name='rsma',
+        mode='user',
+        get_precoder_func=lambda cfg, sat_man: get_precoding_mmse(cfg, sat_man),
+        calc_sum_rate_func=calc_sum_rate,
+    )
+

@@ -50,6 +50,17 @@ def get_learned_precoder_normalized(
 
     return w_precoder_normalized
 
+def get_learned_rsma_power_factor(
+        state: np.ndarray,
+        power_factor_network: tf.keras.Model,
+) -> np.ndarray:
+
+    power_factor_network = power_factor_network.call(state.astype('float32')[np.newaxis])[0]
+    power_factor_network = power_factor_network.numpy().flatten()
+    power_factor_network = 1/2 * (np.tanh(power_factor_network) + 1)
+
+    return power_factor_network
+
 
 def get_learned_precoder_decentralized_no_norm(
         states: list[np.ndarray],
