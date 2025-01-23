@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from sys import path as sys_path
+
 project_root_path = Path(Path(__file__).parent, '..', '..')
 sys_path.append(str(project_root_path.resolve()))
 
@@ -34,6 +35,9 @@ from src.models.helpers.get_state_norm_factors import (
 )
 from src.data.calc_sum_rate_RSMA import (
     calc_sum_rate_RSMA,
+)
+from src.data.calc_fairness_RSMA import (
+    calc_jain_fairness_RSMA,
 )
 from src.data.precoder.mmse_precoder import (
     mmse_precoder_normalized,
@@ -211,11 +215,17 @@ def train_sac_RSMA(
             #print(w_precoder_normed)
 
             # step simulation based on action, determine reward
-            reward = calc_sum_rate_RSMA(
+            sum_rate_reward = calc_sum_rate_RSMA(
                 channel_state=satellite_manager.channel_state_information,
                 w_precoder=w_precoder_normed,
                 noise_power_watt=config.noise_power_watt,
             )
+            fairness_reward = calc_jain_fairness_RSMA(
+                channel_state=satellite_manager.channel_state_information,
+                w_precoder=w_precoder_normed,
+                noise_power_watt=config.noise_power_watt,
+            )
+            reward = fairness_reward #sum_rate_reward +
             step_experience['reward'] = reward
             #print(reward)
             #exit()

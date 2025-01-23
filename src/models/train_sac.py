@@ -34,6 +34,9 @@ from src.models.helpers.get_state_norm_factors import (
 from src.data.calc_sum_rate import (
     calc_sum_rate,
 )
+from src.data.calc_fairness import(
+    calc_jain_fairness
+)
 from src.data.precoder.mmse_precoder import (
     mmse_precoder_normalized,
 )
@@ -209,12 +212,20 @@ def train_sac(
                                               per_satellite=True, sat_nr=config.sat_nr, sat_ant_nr=config.sat_ant_nr)
 
             # step simulation based on action, determine reward
-            reward = calc_sum_rate(
+            sum_rate_reward = calc_sum_rate(
                 channel_state=satellite_manager.channel_state_information,
                 w_precoder=w_precoder_normed,
                 noise_power_watt=config.noise_power_watt,
             )
+            fairness_reward = calc_jain_fairness(
+                channel_state=satellite_manager.channel_state_information,
+                w_precoder=w_precoder_normed,
+                noise_power_watt=config.noise_power_watt,
+            )
+            reward = sum_rate_reward+fairness_reward
             step_experience['reward'] = reward
+            #print("Reward:", reward)
+            #exit()
 
             # optionally add the corresponding mmse precoder to the data set
             if config.rng.random() < config.config_learner.percentage_mmse_samples_added_to_exp_buffer:

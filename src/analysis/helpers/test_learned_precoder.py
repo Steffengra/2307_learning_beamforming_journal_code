@@ -203,6 +203,26 @@ def test_learned_rsma_complete_user_distance_sweep(
         calc_sum_rate_func=calc_sum_rate_RSMA,
         )
 
+def test_learned_rsma_power_factor_error_sweep(
+        config: 'src.config.config.Config',
+        model_path: Path,
+        error_sweep_parameter: str,
+        error_sweep_range: np.ndarray,
+        monte_carlo_iterations: int,
+) -> None:
+
+    rsma_power_factor_network, norm_factors = load_model(model_path)
+
+    test_precoder_error_sweep(
+        config=config,
+        error_sweep_parameter=error_sweep_parameter,
+        error_sweep_range=error_sweep_range,
+        precoder_name='learned_rsma_power_factor',
+        monte_carlo_iterations=monte_carlo_iterations,
+        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_power_scaling(cfg, sat_man, norm_factors, rsma_power_factor_network),
+        calc_sum_rate_func=calc_sum_rate_RSMA,
+    )
+
 def test_learned_rsma_power_factor_user_distance_sweep(
         config: 'src.config.config.Config',
         distance_sweep_range: np.ndarray,
