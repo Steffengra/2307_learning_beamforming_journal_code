@@ -19,8 +19,11 @@ def objective(trial):
     config.verbosity = 0
 
     # Suggest new values for this trial
-    lr_critic = trial.suggest_float(name='lr_critic', low=1e-6, high=1e-4)
-    lr_actor = trial.suggest_float(name='lr_actor', low=1e-7, high=1e-4)
+    lr_critic = trial.suggest_float(name='lr_critic', low=-6, high=-4)
+    lr_actor = trial.suggest_float(name='lr_actor', low=-7, high=-4)
+
+    lr_critic = 10**lr_critic
+    lr_actor = 10**lr_actor
 
     # config.config_learner.training_episodes = int(0.1 * config.config_learner.training_episodes)  # % of training budget
     config.config_learner.training_episodes = 10
