@@ -62,5 +62,12 @@ def los_channel_model(
             * steering_vector_to_user
             + errors['additive_error_on_channel_vector'][user.idx]
         )
+            # calculate csi for user
+            constant_factor = amplitude_damping * np.exp(-1j * (phase_shift + phase_shift_error))
+            channel_state_information[user.idx, :] = (
+                constant_factor
+                * steering_vector_to_user
+            )
+            channel_state_information[user.idx, :] = channel_state_information[user.idx, :] + errors['additive_error_on_channel_vector'][user.idx]
 
     return channel_state_information

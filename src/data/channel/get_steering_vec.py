@@ -17,10 +17,10 @@ def get_steering_vec(
     steering_idx = np.arange(0, satellite.antenna_nr, dtype='complex128') - (satellite.antenna_nr - 1) / 2  # todo
     # steering_idx = np.arange(0, satellite.antenna_nr, dtype='complex128')
 
+    constant_factor = -1j * 2 * np.pi / satellite.wavelength * satellite.antenna_distance * phase_aod_steering
+
     steering_vector_to_user = np.exp(
-        -1j * 2 * np.pi / satellite.wavelength
-        * satellite.antenna_distance
-        * phase_aod_steering
+        constant_factor
         * steering_idx
     )
 
