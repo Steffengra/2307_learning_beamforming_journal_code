@@ -79,7 +79,12 @@ def get_state_norm_factors(
     states = []
     for _ in range(config.config_learner.get_state_norm_factors_iterations):
 
-        state = config.config_learner.get_state(satellite_manager=satellite_manager, **get_state_args)
+        state = config.config_learner.get_state(
+            config=config,
+            user_manager=user_manager,
+            satellite_manager=satellite_manager,
+            **get_state_args
+        )
         states.append(state)
         update_sim(config=config, satellite_manager=satellite_manager, user_manager=user_manager)
 

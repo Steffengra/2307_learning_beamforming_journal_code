@@ -113,6 +113,8 @@ def generate_beampatterns(
 
         for learned_model in learned_models:
             state = config.config_learner.get_state(
+                config=config,
+                user_manager=user_manager,
                 satellite_manager=satellite_manager,
                 norm_factors=learned_models[learned_model]['norm_dict'],
                 **config.config_learner.get_state_args

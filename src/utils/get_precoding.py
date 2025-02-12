@@ -19,12 +19,15 @@ from src.data.precoder.rate_splitting import rate_splitting_no_norm
 
 def get_precoding_learned(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
         precoder_network: tf.keras.models.Model,
 ) -> np.ndarray:
 
     state = config.config_learner.get_state(
+        config=config,
+        user_manager=user_manager,
         satellite_manager=satellite_manager,
         norm_factors=norm_factors,
         **config.config_learner.get_state_args
@@ -41,13 +44,16 @@ def get_precoding_learned(
 
 def get_precoding_adapted_slnr_complete(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
         scaling_network: tf.keras.models.Model,
 ) -> np.ndarray:
 
     scaler_input_state = config.config_learner.get_state(
-        satellite_manager,
+        config=config,
+        user_manager=user_manager,
+        satellite_manager=satellite_manager,
         norm_factors=norm_factors,
         **config.config_learner.get_state_args
     )
@@ -70,13 +76,16 @@ def get_precoding_adapted_slnr_complete(
 
 def get_precoding_adapted_slnr_powerscaled(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
         scaling_network: tf.keras.models.Model,
 ) -> np.ndarray:
 
     scaler_input_state = config.config_learner.get_state(
-        satellite_manager,
+        config=config,
+        user_manager=user_manager,
+        satellite_manager=satellite_manager,
         norm_factors=norm_factors,
         **config.config_learner.get_state_args
     )
@@ -99,12 +108,15 @@ def get_precoding_adapted_slnr_powerscaled(
 
 def get_precoding_learned_rsma_complete(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
         precoder_network: tf.keras.models.Model,
 ) -> np.ndarray:
 
     state = config.config_learner.get_state(
+        config=config,
+        user_manager=user_manager,
         satellite_manager=satellite_manager,
         norm_factors=norm_factors,
         **config.config_learner.get_state_args
@@ -123,12 +135,15 @@ def get_precoding_learned_rsma_complete(
 
 def get_precoding_learned_rsma_power_scaling(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
         power_factor_network: tf.keras.models.Model,
 ) -> np.ndarray:
 
     state = config.config_learner.get_state(
+        config=config,
+        user_manager=user_manager,
         satellite_manager=satellite_manager,
         norm_factors=norm_factors,
         **config.config_learner.get_state_args
@@ -154,12 +169,15 @@ def get_precoding_learned_rsma_power_scaling(
 
 def get_precoding_learned_decentralized_blind(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
         precoder_networks: list[tf.keras.models.Model],
 ) -> np.ndarray:
 
     states = config.config_learner.get_state(
+        config=config,
+        user_manager=user_manager,
         satellite_manager=satellite_manager,
         norm_factors=norm_factors,
         **config.config_learner.get_state_args,
@@ -177,15 +195,18 @@ def get_precoding_learned_decentralized_blind(
 
 def get_precoding_learned_decentralized_limited(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         norm_factors: dict,
         precoder_networks: list[tf.keras.models.Model],
 ) -> np.ndarray:
 
     states = config.config_learner.get_state(
-            satellite_manager=satellite_manager,
-            norm_factors=norm_factors,
-            **config.config_learner.get_state_args,
+        config=config,
+        user_manager=user_manager,
+        satellite_manager=satellite_manager,
+        norm_factors=norm_factors,
+        **config.config_learner.get_state_args,
     )
 
     w_precoder_normalized = get_learned_precoder_decentralized_normalized(

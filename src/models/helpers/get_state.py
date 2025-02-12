@@ -2,6 +2,7 @@
 import numpy as np
 
 import src
+from src.models.helpers.pad_csi_users import pad_csi_users
 from src.utils.real_complex_vector_reshaping import (
     complex_vector_to_double_real_vector,
     complex_vector_to_rad_and_phase,
@@ -11,6 +12,8 @@ from src.utils.real_complex_vector_reshaping import (
 # todo: cleanup
 
 def get_state_erroneous_channel_state_information(
+        config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         csi_format: str,
         norm_state: bool,
@@ -99,7 +102,9 @@ def get_state_erroneous_channel_state_information(
         return states_real
 
     else:
-        erroneous_csi = satellite_manager.erroneous_channel_state_information.flatten()
+        erroneous_csi = satellite_manager.erroneous_channel_state_information
+        erroneous_csi = pad_csi_users(config=config, user_manager=user_manager, csi=erroneous_csi).flatten()
+
         if csi_format == 'rad_phase':
             state_real = method_rad_phase(erroneous_csi, norm_factors)
 
