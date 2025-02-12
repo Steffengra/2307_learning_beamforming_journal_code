@@ -85,6 +85,7 @@ def test_precoder_user_distance_sweep(
 
         w_precoder = get_precoder_func(
             config,
+            user_manager,
             satellite_manager,
         )
         sum_rate = calc_sum_rate_func(

@@ -157,6 +157,8 @@ def train_sac_adapt_robust_slnr_complete(
 
         update_sim(config, satellite_manager, user_manager)  # reset for new episode
         state_next = config.config_learner.get_state(
+            config=config,
+            user_manager=user_manager,
             satellite_manager=satellite_manager,
             norm_factors=norm_dict['norm_factors'],
             **config.config_learner.get_state_args
@@ -211,6 +213,8 @@ def train_sac_adapt_robust_slnr_complete(
 
             # get new state
             state_next = config.config_learner.get_state(
+                config=config,
+                user_manager=user_manager,
                 satellite_manager=satellite_manager,
                 norm_factors=norm_dict['norm_factors'],
                 **config.config_learner.get_state_args
