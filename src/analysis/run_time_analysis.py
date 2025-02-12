@@ -54,7 +54,13 @@ def main():
         model, norm_factors = load_model(model_path)
 
         def precoder(sat_man):
-            state = config.config_learner.get_state(satellite_manager=sat_man, norm_factors=norm_factors, **config.config_learner.get_state_args)
+            state = config.config_learner.get_state(
+                config=config,
+                user_manager=user_manager,
+                satellite_manager=sat_man,
+                norm_factors=norm_factors,
+                **config.config_learner.get_state_args
+            )
             w_learned = get_learned_precoder_normalized(state=state, precoder_network=model, **config.learned_precoder_args)
             return w_learned
 

@@ -19,7 +19,8 @@ from src.utils.get_precoding import (
     get_precoding_learned_decentralized_limited,
     get_precoding_adapted_slnr_powerscaled,
     get_precoding_adapted_slnr_complete,
-    get_precoding_learned_rsma_complete, get_precoding_learned_rsma_power_scaling,
+    get_precoding_learned_rsma_complete,
+    get_precoding_learned_rsma_power_scaling,
 )
 
 
@@ -40,7 +41,7 @@ def test_sac_precoder_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='learned',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned(cfg, sat_man, norm_factors, precoder_network),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned(cfg, usr_man, sat_man, norm_factors, precoder_network),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -62,7 +63,7 @@ def test_sac_precoder_user_distance_sweep(
         distance_sweep_range=distance_sweep_range,
         precoder_name='learned',
         mode='user',
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned(cfg, sat_man, norm_factors, precoder_network),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned(cfg, usr_man, sat_man, norm_factors, precoder_network),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -84,7 +85,7 @@ def test_sac_precoder_decentralized_blind_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='sac_decentralized_blind',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_decentralized_blind(cfg, sat_man, norm_factors, precoder_networks),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_decentralized_blind(cfg, usr_man, sat_man, norm_factors, precoder_networks),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -115,7 +116,7 @@ def test_sac_precoder_decentralized_limited_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name=precoder_name,
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_decentralized_limited(cfg, sat_man, norm_factors, precoder_networks),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_decentralized_limited(cfg, usr_man, sat_man, norm_factors, precoder_networks),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -136,7 +137,7 @@ def test_adapted_slnr_complete_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='adapted_slnr_complete',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_adapted_slnr_complete(cfg, sat_man, norm_factors, scaling_network),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_adapted_slnr_complete(cfg, usr_man, sat_man, norm_factors, scaling_network),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -157,7 +158,7 @@ def test_adapted_slnr_powerscaled_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='adapted_slnr_powerscaled',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_adapted_slnr_powerscaled(cfg, sat_man, norm_factors, scaling_network),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_adapted_slnr_powerscaled(cfg, usr_man, sat_man, norm_factors, scaling_network),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -178,7 +179,7 @@ def test_learned_rsma_complete_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='learned_rsma_full',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_complete(cfg, sat_man, norm_factors, rsma_network),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_complete(cfg, usr_man, sat_man, norm_factors, rsma_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
     )
 
@@ -199,7 +200,7 @@ def test_learned_rsma_complete_user_distance_sweep(
         distance_sweep_range=distance_sweep_range,
         precoder_name='learned_rsma_full',
         mode='user',
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_complete(cfg, sat_man, norm_factors, rsma_network),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_complete(cfg, usr_man, sat_man, norm_factors, rsma_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
         )
 
@@ -219,7 +220,7 @@ def test_learned_rsma_power_factor_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='learned_rsma_power_factor',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_power_scaling(cfg, sat_man, norm_factors, rsma_power_factor_network),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_power_scaling(cfg, usr_man, sat_man, norm_factors, rsma_power_factor_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
     )
 
@@ -240,7 +241,7 @@ def test_learned_rsma_power_factor_user_distance_sweep(
         distance_sweep_range=distance_sweep_range,
         precoder_name='learned_rsma_power_factor',
         mode='user',
-        get_precoder_func=lambda cfg, sat_man: get_precoding_learned_rsma_power_scaling(cfg, sat_man, norm_factors,
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_power_scaling(cfg, usr_man, sat_man, norm_factors,
                                                                                    rsma_power_factor_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
     )

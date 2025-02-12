@@ -100,6 +100,7 @@ def test_precoder_error_sweep(
 
             w_precoder = get_precoder_func(
                 config,
+                user_manager,
                 satellite_manager,
             )
 
