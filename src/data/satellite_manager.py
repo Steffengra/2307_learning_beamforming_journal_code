@@ -142,7 +142,7 @@ class SatelliteManager:
     def update_channel_state_information(
             self,
             channel_model,
-            users: list,
+            user_manager: 'src.data.user_manager.UserManager'
     ) -> None:
 
         """
@@ -155,15 +155,23 @@ class SatelliteManager:
 
         # update channel state per satellite
         for satellite in self.satellites:
-            satellite.update_channel_state_information(channel_model=channel_model, users=users)
+            satellite.update_channel_state_information(
+                channel_model=channel_model,
+                users=user_manager.users,
+            )
 
-        for satellite in self.satellites:
-            self.channel_state_information[:, satellite.idx*satellite.antenna_nr:satellite.idx*satellite.antenna_nr+satellite.antenna_nr] = satellite.channel_state_to_users
+        channel_state = [
+            satellite.channel_state_to_users
+            for satellite in self.satellites
+        ]
+        channel_state = np.concatenate(channel_state)
+
+        self.channel_state_information = channel_state[user_manager.active_user_idx]
 
     def update_erroneous_channel_state_information(
             self,
             channel_model,
-            users: list,
+            user_manager: 'src.data.user_manager.UserManager'
     ) -> None:
         """Todo: doc"""
 
@@ -172,11 +180,18 @@ class SatelliteManager:
 
         # apply error model per satellite
         for satellite in self.satellites:
-            satellite.update_erroneous_channel_state_information(channel_model=channel_model, users=users)
+            satellite.update_erroneous_channel_state_information(
+                channel_model=channel_model,
+                users=user_manager.users,
+            )
 
-        # gather global erroneous channel state information
-        for satellite in self.satellites:
-            self.erroneous_channel_state_information[:, satellite.idx*satellite.antenna_nr:satellite.idx*satellite.antenna_nr+satellite.antenna_nr] = satellite.erroneous_channel_state_to_users
+        erroneous_channel_state = [
+            satellite.erroneous_channel_state_to_users
+            for satellite in self.satellites
+        ]
+        erroneous_channel_state = np.concatenate(erroneous_channel_state)
+
+        self.erroneous_channel_state_information = erroneous_channel_state[user_manager.active_user_idx]
 
     def update_scaled_erroneous_channel_state_information(
             self,

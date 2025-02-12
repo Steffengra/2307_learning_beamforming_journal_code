@@ -21,6 +21,10 @@ class UserManager:
         self.users: list[src.data.user.User] = []
         self._initialize_users(config=config)
 
+        self.user_mask: np.ndarray = None
+        self.active_user_idx: np.ndarray = None
+        self.set_active_users(np.ones(len(self.users)))
+
         self.logger.info('user setup complete')
 
     def calc_spherical_coordinates(
@@ -83,6 +87,27 @@ class UserManager:
                     **config.user_args,
                 )
             )
+
+    def set_active_users(
+            self,
+            user_mask: np.ndarray,
+    ) -> None:
+        """
+        Set enabled status of users to True or False.
+        enabled status can be used in csi calculation to disable users.
+        """
+
+        self.user_mask = user_mask
+        self.active_user_idx = np.where(user_mask == 1)[0]
+
+        for user_id, user in enumerate(self.users):
+            if user_mask[user_id] == 0:
+                user.enabled = False
+            elif user_mask[user_id] == 1:
+                user.enabled = True
+            else:
+                raise ValueError(f'user_mask must be 0 or 1, is {user_mask[user_id]}')
+
 
     def update_positions(
             self,

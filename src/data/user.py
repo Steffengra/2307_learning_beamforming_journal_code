@@ -22,6 +22,8 @@ class User:
         self.spherical_coordinates: np.ndarray = spherical_coordinates
         self.cartesian_coordinates: np.ndarray = spherical_to_cartesian_coordinates(spherical_coordinates)
 
+        self.enabled: bool = True
+
         self.gain_linear: float = gain_linear
 
     def update_position(
