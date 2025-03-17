@@ -160,11 +160,12 @@ class SatelliteManager:
                 users=user_manager.users,
             )
 
+
         channel_state = [
             satellite.channel_state_to_users
             for satellite in self.satellites
         ]
-        channel_state = np.concatenate(channel_state)
+        channel_state = np.concatenate(channel_state, axis=1)
 
         self.channel_state_information = channel_state[user_manager.active_user_idx]
 
@@ -189,7 +190,7 @@ class SatelliteManager:
             satellite.erroneous_channel_state_to_users
             for satellite in self.satellites
         ]
-        erroneous_channel_state = np.concatenate(erroneous_channel_state)
+        erroneous_channel_state = np.concatenate(erroneous_channel_state, axis=1)
 
         self.erroneous_channel_state_information = erroneous_channel_state[user_manager.active_user_idx]
 
