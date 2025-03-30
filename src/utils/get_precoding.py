@@ -265,6 +265,7 @@ def get_precoding_mmse_decentralized_limited(
 
 def get_precoding_mrc(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
 ) -> np.ndarray:
 
@@ -278,6 +279,7 @@ def get_precoding_mrc(
 
 def get_precoding_robust_slnr(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
 ) -> np.ndarray:
 

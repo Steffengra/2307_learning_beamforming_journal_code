@@ -226,8 +226,6 @@ def train_sac(
             )
             reward = sum_rate_reward+fairness_reward
             step_experience['reward'] = reward
-            #print("Reward:", reward)
-            #exit()
 
             # optionally add the corresponding mmse precoder to the data set
             if config.rng.random() < config.config_learner.percentage_mmse_samples_added_to_exp_buffer:

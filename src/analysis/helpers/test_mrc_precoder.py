@@ -22,7 +22,7 @@ def test_mrc_precoder_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='mrc',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_mrc(cfg, sat_man),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mrc(cfg, usr_man, sat_man),
         calc_sum_rate_func=calc_sum_rate_no_iui,
     )
 
@@ -38,6 +38,6 @@ def test_mrc_precoder_user_distance_sweep(
         distance_sweep_range=distance_sweep_range,
         precoder_name='mrc',
         mode='user',
-        get_precoder_func=lambda cfg, sat_man: get_precoding_mrc(cfg, sat_man),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mrc(cfg, usr_man, sat_man),
         calc_sum_rate_func=calc_sum_rate_no_iui,
     )
