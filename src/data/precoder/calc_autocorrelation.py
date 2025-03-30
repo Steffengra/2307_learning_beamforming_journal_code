@@ -23,54 +23,36 @@ def calc_autocorrelation(
     sat_antenna_spacing = satellite.antenna_distance
     errors = satellite.estimation_errors
 
-    autocorrelation_matrix = np.zeros((user_nr, sat_ant_nr, sat_ant_nr), dtype='complex128')
+    # calc characteristic function all at once for performance reasons
+    antenna_shift_idxs = np.zeros((sat_ant_nr, sat_ant_nr))
+    for antenna_row_id in range(sat_ant_nr):
+        for antenna_col_id in range(sat_ant_nr):
+            antenna_shift_idxs[antenna_row_id, antenna_col_id] = antenna_col_id - antenna_row_id
+    antenna_shift_idxs = antenna_shift_idxs
 
-    for user_id in range(user_nr):
-
-        phi_dach = (
-                np.cos(
-                    satellite.aods_to_users[user_id]
-                    + errors['additive_error_on_aod'][user_id]
-                )
-                + errors['additive_error_on_cosine_of_aod'][user_id]
-        )
-
-        # calc characteristic function all at once for performance reasons
-        antenna_shift_idxs = np.zeros((sat_ant_nr, sat_ant_nr))
-        for antenna_row_id in range(sat_ant_nr):
-            for antenna_col_id in range(sat_ant_nr):
-
-                antenna_shift_idxs[antenna_row_id, antenna_col_id] = (
-                    wavenumber * sat_antenna_spacing
-                    * (antenna_col_id - antenna_row_id)
-                )
-
-        if error_distribution == 'uniform':
-            characteristic_functions = np.sinc(
-                antenna_shift_idxs
+    if error_distribution == 'uniform':
+        temp = (
+                antenna_shift_idxs * wavenumber * sat_antenna_spacing
                 * error_model_config.error_rng_parametrizations['additive_error_on_cosine_of_aod']['args']['high']
                 / np.pi
-            )
+        )
+        characteristic_functions = np.sinc(temp)
 
-        elif error_distribution == 'gaussian':
-            characteristic_functions = np.exp(
-                -antenna_shift_idxs**2
-                * error_model_config.error_rng_parametrizations['additive_error_on_cosine_of_aod']['args']['scale']**2
+    elif error_distribution == 'gaussian':
+        temp = (
+                (-(antenna_shift_idxs * wavenumber * sat_antenna_spacing)) ** 2
+                * error_model_config.error_rng_parametrizations['additive_error_on_cosine_of_aod']['args']['scale'] ** 2
                 / 2
-            )
+        )
+        characteristic_functions = np.exp(temp)
 
-        else:
-            raise ValueError('Unknown error distribution on cosine of AODs')
+    else:
+        raise ValueError('Unknown error distribution on cosine of AODs')
 
-        # calc autocorrelation matrix entries
-        for antenna_row_id in range(sat_ant_nr):
-
-            for antenna_col_id in range(sat_ant_nr):
-
-                autocorrelation_matrix[user_id, antenna_row_id, antenna_col_id] = (
-                        np.exp(1j * wavenumber * sat_antenna_spacing * (antenna_row_id - antenna_col_id) * phi_dach)
-                        * characteristic_functions[antenna_row_id, antenna_col_id]
-                )
+    temp = np.cos(satellite.aods_to_users + errors['additive_error_on_aod']) + errors['additive_error_on_cosine_of_aod']
+    temp = temp[:, np.newaxis, np.newaxis] * (1j * wavenumber * sat_antenna_spacing * (-antenna_shift_idxs))
+    temp = np.exp(temp)
+    autocorrelation_matrix = characteristic_functions[np.newaxis, :, :] * temp
 
     return autocorrelation_matrix
 
