@@ -6,9 +6,11 @@ import numpy as np
 import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.analysis.helpers.test_precoder_user_distance_sweep import test_precoder_user_distance_sweep
+from src.analysis.helpers.test_precoder_user_sweep import test_precoder_user_sweep
 from src.analysis.helpers.test_rsma_precoder import test_rsma_precoder_user_distance_sweep
 from src.data.calc_sum_rate import calc_sum_rate
 from src.data.calc_sum_rate_RSMA import calc_sum_rate_RSMA
+from src.data.calc_fairness_RSMA import calc_jain_fairness_RSMA
 from src.utils.load_model import (
     load_model,
     load_models,
@@ -181,6 +183,7 @@ def test_learned_rsma_complete_error_sweep(
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_complete(cfg, usr_man, sat_man, norm_factors, rsma_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
+        # calc_sum_rate_func=calc_jain_fairness_RSMA,
     )
 
 def test_learned_rsma_complete_user_distance_sweep(
@@ -222,6 +225,7 @@ def test_learned_rsma_power_factor_error_sweep(
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_power_scaling(cfg, usr_man, sat_man, norm_factors, rsma_power_factor_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
+        # calc_sum_rate_func=calc_jain_fairness_RSMA,
     )
 
 def test_learned_rsma_power_factor_user_distance_sweep(
@@ -244,4 +248,27 @@ def test_learned_rsma_power_factor_user_distance_sweep(
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_power_scaling(cfg, usr_man, sat_man, norm_factors,
                                                                                    rsma_power_factor_network),
         calc_sum_rate_func=calc_sum_rate_RSMA,
+    )
+
+def test_learned_rsma_power_factor_user_number_sweep(
+        config: 'import src.config.config',
+        user_number_sweep_range: np.ndarray,
+        monte_carlo_iterations: int,
+        model_path: Path
+) -> None:
+    """Test a RSMA precoder over a range of user numbers"""
+
+    rsma_power_factor_network, norm_factors = load_model(model_path)
+
+    if norm_factors != {}:
+        config.config_learner.get_state_args['norm_state'] = True
+
+    test_precoder_user_sweep(
+        config=config,
+        user_number_sweep_range=user_number_sweep_range,
+        precoder_name='learned_rsma_power_factor',
+        monte_carlo_iterations=monte_carlo_iterations,
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_power_scaling(cfg, usr_man, sat_man, norm_factors,
+                                                                                   rsma_power_factor_network),
+        calc_sum_rate_func=calc_sum_rate_RSMA
     )

@@ -25,8 +25,8 @@ def objective(trial):
     lr_critic = 10**lr_critic
     lr_actor = 10**lr_actor
 
-    # config.config_learner.training_episodes = int(0.1 * config.config_learner.training_episodes)  # % of training budget
-    config.config_learner.training_episodes = 10
+    config.config_learner.training_episodes = int(0.2 * config.config_learner.training_episodes)  # % of training budget
+    # config.config_learner.training_episodes = 10
 
     # Apply values to config
     config.config_learner.network_args['policy_network_optimizer_args']['learning_rate'] = lr_actor
@@ -51,15 +51,15 @@ if __name__ == '__main__':
         direction='maximize',
         pruner=optuna.pruners.MedianPruner(
             n_startup_trials=2,  # don't prune until n number of trials
-            n_warmup_steps=1,  # don't prune until n number of steps within a trial
-            n_min_trials=1,  # minimum number of trials to prune, ensure at least n trials survive
+            n_warmup_steps=2000,  # don't prune until n number of steps within a trial
+            n_min_trials=3,  # minimum number of trials to prune, ensure at least n trials survive
             interval_steps=10,  # number of steps between pruning checks
         )
     )
 
     study.optimize(
         func=objective,
-        n_trials=2,
+        n_trials=100,
         gc_after_trial=True,  # garbage collection
     )
     print(study.best_trial)

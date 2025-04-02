@@ -298,6 +298,7 @@ def get_precoding_robust_slnr(
 
 def get_precoding_rsma(
         config: 'src.config.config.Config',
+        user_manager: 'src.data.user_manager.UserManager',
         satellite_manager: 'src.data.satellite_manager.SatelliteManager',
         rsma_factor: float,
         common_part_precoding_style: str,

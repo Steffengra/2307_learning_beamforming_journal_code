@@ -6,7 +6,9 @@ import numpy as np
 import src
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.analysis.helpers.test_precoder_user_distance_sweep import test_precoder_user_distance_sweep
+from src.analysis.helpers.test_precoder_user_sweep import test_precoder_user_sweep
 from src.data.calc_sum_rate_RSMA import calc_sum_rate_RSMA
+from src.data.calc_fairness_RSMA import calc_jain_fairness_RSMA
 from src.utils.get_precoding import get_precoding_rsma
 
 
@@ -27,6 +29,7 @@ def test_rsma_precoder_error_sweep(
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_rsma(cfg, usr_man, sat_man, rsma_factor, common_part_precoding_style),
         calc_sum_rate_func=calc_sum_rate_RSMA,
+        # calc_sum_rate_func=calc_jain_fairness_RSMA,
     )
 
 def test_rsma_precoder_user_distance_sweep(
@@ -42,5 +45,23 @@ def test_rsma_precoder_user_distance_sweep(
         mode='user',
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mmse(cfg, usr_man, sat_man),
         calc_sum_rate_func=calc_sum_rate,
+    )
+
+def test_rsma_precoder_user_number_sweep(
+    config: 'src.config.config.Config',
+    user_number_sweep_range: np.ndarray,
+    monte_carlo_iterations: int,
+    rsma_factor: float,
+    common_part_precoding_style: str,
+) -> None:
+
+    test_precoder_user_sweep(
+        config=config,
+        user_number_sweep_range=user_number_sweep_range,
+        monte_carlo_iterations=monte_carlo_iterations,
+        precoder_name='rsma',
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_rsma(cfg, usr_man, sat_man, rsma_factor,
+                                                                           common_part_precoding_style),
+        calc_sum_rate_func=calc_sum_rate_RSMA
     )
 

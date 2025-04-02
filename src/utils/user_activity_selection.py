@@ -17,6 +17,9 @@ def user_activity_selection(
     elif config.user_activity_selection == 'all_active':
         user_mask = np.ones(shape=len(user_manager.users))
 
+    elif config.user_activity_selection == 'keep_as_is':
+        return
+
     else:
         raise ValueError(f'Unknown user_activity_selection mode {config.user_activity_selection}')
 
