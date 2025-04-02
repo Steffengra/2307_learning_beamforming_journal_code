@@ -163,9 +163,9 @@ def train_sac_RSMA_power_scaling_factor(
     logger.info(norm_dict)
 
     metrics: dict = {
-        'mean_sum_rate_per_episode': -np.infty * np.ones(config.config_learner.training_episodes)
+        'mean_sum_rate_per_episode': -np.inf * np.ones(config.config_learner.training_episodes)
     }
-    high_score = -np.infty
+    high_score = -np.inf
     high_scores = []
 
     real_time_start = datetime.now()
@@ -179,9 +179,9 @@ def train_sac_RSMA_power_scaling_factor(
     for training_episode_id in range(config.config_learner.training_episodes):
 
         episode_metrics: dict = {
-            'sum_rate_per_step': -np.infty * np.ones(config.config_learner.training_steps_per_episode),
-            'mean_log_prob_density': np.infty * np.ones(config.config_learner.training_steps_per_episode),
-            'value_loss': -np.infty * np.ones(config.config_learner.training_steps_per_episode),
+            'sum_rate_per_step': -np.inf * np.ones(config.config_learner.training_steps_per_episode),
+            'mean_log_prob_density': np.inf * np.ones(config.config_learner.training_steps_per_episode),
+            'value_loss': -np.inf * np.ones(config.config_learner.training_steps_per_episode),
         }
 
         update_sim(config, satellite_manager, user_manager)  # reset for new episode

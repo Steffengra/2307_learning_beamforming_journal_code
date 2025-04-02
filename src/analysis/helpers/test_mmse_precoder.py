@@ -26,7 +26,7 @@ def test_mmse_precoder_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='mmse',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_mmse(cfg, sat_man),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mmse(cfg, usr_man, sat_man),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -42,7 +42,7 @@ def test_mmse_precoder_user_distance_sweep(
         distance_sweep_range=distance_sweep_range,
         precoder_name='mmse',
         mode='user',
-        get_precoder_func=lambda cfg, sat_man: get_precoding_mmse(cfg, sat_man),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mmse(cfg, usr_man, sat_man),
         calc_sum_rate_func=calc_sum_rate,
     )
 
@@ -58,7 +58,7 @@ def test_mmse_precoder_satellite_distance_sweep(
         distance_sweep_range=distance_sweep_range,
         precoder_name='mmse',
         mode='satellite',
-        get_precoder_func=lambda cfg, sat_man: get_precoding_mmse(cfg, sat_man),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mmse(cfg, usr_man, sat_man),
         calc_sum_rate_func=calc_sum_rate,
     )
 

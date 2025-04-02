@@ -23,7 +23,7 @@ def test_robust_slnr_precoder_error_sweep(
         error_sweep_range=error_sweep_range,
         precoder_name='robust_slnr',
         monte_carlo_iterations=monte_carlo_iterations,
-        get_precoder_func=lambda cfg, sat_man: get_precoding_robust_slnr(cfg, sat_man),
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_robust_slnr(cfg, usr_man, sat_man),
         calc_sum_rate_func=calc_sum_rate,
     )
 

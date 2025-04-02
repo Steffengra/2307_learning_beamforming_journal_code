@@ -164,9 +164,9 @@ def train_sac(
     logger.info(norm_dict)
 
     metrics: dict = {
-        'mean_sum_rate_per_episode': -np.infty * np.ones(config.config_learner.training_episodes)
+        'mean_sum_rate_per_episode': -np.inf * np.ones(config.config_learner.training_episodes)
     }
-    high_score = -np.infty
+    high_score = -np.inf
     high_scores = []
 
     real_time_start = datetime.now()
@@ -180,9 +180,9 @@ def train_sac(
     for training_episode_id in range(config.config_learner.training_episodes):
 
         episode_metrics: dict = {
-            'sum_rate_per_step': -np.infty * np.ones(config.config_learner.training_steps_per_episode),
-            'mean_log_prob_density': np.infty * np.ones(config.config_learner.training_steps_per_episode),
-            'value_loss': -np.infty * np.ones(config.config_learner.training_steps_per_episode),
+            'sum_rate_per_step': -np.inf * np.ones(config.config_learner.training_steps_per_episode),
+            'mean_log_prob_density': np.inf * np.ones(config.config_learner.training_steps_per_episode),
+            'value_loss': -np.inf * np.ones(config.config_learner.training_steps_per_episode),
         }
 
         update_sim(config, satellite_manager, user_manager)  # reset for new episode
@@ -226,8 +226,6 @@ def train_sac(
             )
             reward = sum_rate_reward+fairness_reward
             step_experience['reward'] = reward
-            #print("Reward:", reward)
-            #exit()
 
             # optionally add the corresponding mmse precoder to the data set
             if config.rng.random() < config.config_learner.percentage_mmse_samples_added_to_exp_buffer:
