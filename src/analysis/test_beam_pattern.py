@@ -23,7 +23,7 @@ from src.utils.load_model import load_model
 
 plot = [
     'mmse',
-    'slnr',
+    # 'slnr',
     'learned',
     # 'slnr_adapted_complete',
     # 'ones',
@@ -39,9 +39,9 @@ config = Config()
 
 model_path = Path(  # SAC only
     config.trained_models_path,
-    '1sat_16ant_100k~0_3usr_100k~50k_additive_0.0',
+    '1sat_32ant_100k~0_9usr_10k~5k_additive_0.0',
     'base',
-    'full_snap_4.620',
+    'full_snap_5.222',
 )
 
 if any(value in plot for value in ['learned', 'slnr_adapted_complete']):

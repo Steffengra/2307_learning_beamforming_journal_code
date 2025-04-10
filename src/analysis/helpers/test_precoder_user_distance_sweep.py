@@ -33,9 +33,10 @@ def test_precoder_user_distance_sweep(
     config: 'src.config.config.Config',
     distance_sweep_range,
     precoder_name: str,
+    monte_carlo_iterations: int,
     mode: str,
     get_precoder_func,
-    calc_sum_rate_func,
+    calc_reward_funcs: list,
 ) -> None:
     """
     Calculate the sum rates that a given precoder achieves for a given config
@@ -64,13 +65,16 @@ def test_precoder_user_distance_sweep(
         profiler = start_profiling()
 
     metrics = {
-        'sum_rate': {
+        calc_reward_func: {
             'mean': np.zeros(len(distance_sweep_range)),
             'std': np.zeros(len(distance_sweep_range)),
-        },
+        }
+        for calc_reward_func in calc_reward_funcs
     }
 
     for distance_sweep_idx, distance_sweep_value in enumerate(distance_sweep_range):
+
+        metrics_per_monte_carlo = np.zeros((len(calc_reward_funcs), monte_carlo_iterations))
 
         if mode == 'user':
             config.user_dist_average = distance_sweep_value
@@ -81,38 +85,51 @@ def test_precoder_user_distance_sweep(
 
         config.config_error_model.set_zero_error()
 
-        update_sim(config, satellite_manager, user_manager)
+        for iter_idx in range(monte_carlo_iterations):
 
-        w_precoder = get_precoder_func(
-            config,
-            user_manager,
-            satellite_manager,
-        )
-        sum_rate = calc_sum_rate_func(
-            channel_state=satellite_manager.channel_state_information,
-            w_precoder=w_precoder,
-            noise_power_watt=config.noise_power_watt,
-        )
+            update_sim(config, satellite_manager, user_manager)
 
-        metrics['sum_rate']['mean'][distance_sweep_idx] = sum_rate
-        metrics['sum_rate']['std'][distance_sweep_idx] = 0
+            w_precoder = get_precoder_func(
+                config,
+                user_manager,
+                satellite_manager,
+            )
 
-        if config.verbosity > 0:
-            if distance_sweep_idx % 10 == 0:
-                progress_print()
+            for reward_func_id, reward_func in enumerate(calc_reward_funcs):
+                metrics_per_monte_carlo[reward_func_id, iter_idx] = reward_func(
+                    channel_state=satellite_manager.channel_state_information,
+                    w_precoder=w_precoder,
+                    noise_power_watt=config.noise_power_watt,
+                )
+
+            if config.verbosity > 0:
+                if iter_idx % 50 == 0:
+                    progress_print()
+
+        for reward_func_id in range(metrics_per_monte_carlo.shape[0]):
+            metrics[calc_reward_funcs[reward_func_id]]['mean'][distance_sweep_idx] = np.mean(metrics_per_monte_carlo[reward_func_id, :])
+            metrics[calc_reward_funcs[reward_func_id]]['std'][distance_sweep_idx] = np.std(metrics_per_monte_carlo[reward_func_id, :])
 
     if profiler is not None:
         end_profiling(profiler)
 
+    if config.verbosity > 0:
+        print()
+        for metric in metrics.keys():
+            for error_sweep_value, mean_metric, std_metric in zip(distance_sweep_range, metrics[metric]['mean'], metrics[metric]['std']):
+                print(f'{error_sweep_value:.2f}: {metric} - {mean_metric:.2f}+-{std_metric:.4f}')
+
     save_results()
 
-    plot_sweep(
-        x=distance_sweep_range,
-        y=metrics['sum_rate']['mean'],
-        xlabel='User_dist',
-        ylabel='Mean Sum Rate',
-        yerr=metrics['sum_rate']['std'],
-    )
+    for metric in metrics.keys():
+        plot_sweep(
+            x=distance_sweep_range,
+            y=metrics[metric]['mean'],
+            yerr=metrics[metric]['std'],
+            xlabel='user distance',
+            ylabel=str(metric),
+            title=precoder_name,
+        )
 
     if config.show_plots:
         plt_show()

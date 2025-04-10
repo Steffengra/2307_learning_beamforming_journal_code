@@ -19,7 +19,14 @@ def test_rsma_precoder_error_sweep(
         monte_carlo_iterations: int,
         rsma_factor: float,
         common_part_precoding_style: str,
+        metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
 ) -> None:
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate_RSMA)
+    if 'fairness' in metrics:
+        calc_reward_funcs.append(calc_jain_fairness_RSMA)
 
     test_precoder_error_sweep(
         config=config,
@@ -28,23 +35,33 @@ def test_rsma_precoder_error_sweep(
         precoder_name=f'rsma_{rsma_factor}_{common_part_precoding_style}',
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_rsma(cfg, usr_man, sat_man, rsma_factor, common_part_precoding_style),
-        calc_sum_rate_func=calc_sum_rate_RSMA,
-        # calc_sum_rate_func=calc_jain_fairness_RSMA,
+        calc_reward_funcs=calc_reward_funcs,
     )
 
 def test_rsma_precoder_user_distance_sweep(
     config: 'src.config.config.Config',
     distance_sweep_range: np.ndarray,
+    rsma_factor: float,
+    common_part_precoding_style: str,
+    monte_carlo_iterations: int,
+    metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
 ) -> None:
     """Test the MMSE precoder over a range of distances with zero error."""
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate_RSMA)
+    if 'fairness' in metrics:
+        calc_reward_funcs.append(calc_jain_fairness_RSMA)
 
     test_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='rsma',
+        monte_carlo_iterations=monte_carlo_iterations,
         mode='user',
-        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mmse(cfg, usr_man, sat_man),
-        calc_sum_rate_func=calc_sum_rate,
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_rsma(cfg, usr_man, sat_man, rsma_factor, common_part_precoding_style),
+        calc_reward_funcs=calc_reward_funcs,
     )
 
 def test_rsma_precoder_user_number_sweep(
@@ -53,7 +70,14 @@ def test_rsma_precoder_user_number_sweep(
     monte_carlo_iterations: int,
     rsma_factor: float,
     common_part_precoding_style: str,
+    metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
 ) -> None:
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate_RSMA)
+    if 'fairness' in metrics:
+        calc_reward_funcs.append(calc_jain_fairness_RSMA)
 
     test_precoder_user_sweep(
         config=config,
@@ -62,6 +86,6 @@ def test_rsma_precoder_user_number_sweep(
         precoder_name='rsma',
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_rsma(cfg, usr_man, sat_man, rsma_factor,
                                                                            common_part_precoding_style),
-        calc_sum_rate_func=calc_sum_rate_RSMA
+        calc_reward_funcs=calc_reward_funcs,
     )
 

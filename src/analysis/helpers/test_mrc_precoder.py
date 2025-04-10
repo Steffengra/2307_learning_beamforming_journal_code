@@ -13,8 +13,15 @@ def test_mrc_precoder_error_sweep(
         error_sweep_parameter: str,
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
+        metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
 ) -> None:
     """Test the MRC precoder for a range of error configuration with monte carlo average."""
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate_no_iui)
+    if 'fairness' in metrics:
+        raise ValueError('not implemented')
 
     test_precoder_error_sweep(
         config=config,
@@ -23,21 +30,30 @@ def test_mrc_precoder_error_sweep(
         precoder_name='mrc',
         monte_carlo_iterations=monte_carlo_iterations,
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mrc(cfg, usr_man, sat_man),
-        calc_sum_rate_func=calc_sum_rate_no_iui,
+        calc_reward_funcs=calc_reward_funcs,
     )
 
 
 def test_mrc_precoder_user_distance_sweep(
     config: 'src.config.config.Config',
     distance_sweep_range: np.ndarray,
+    monte_carlo_iterations: int,
+    metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
 ) -> None:
     """Test the MRC precoder over a range of distances with zero error."""
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate_no_iui)
+    if 'fairness' in metrics:
+        raise ValueError('not implemented')
 
     test_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='mrc',
+        monte_carlo_iterations=monte_carlo_iterations,
         mode='user',
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mrc(cfg, usr_man, sat_man),
-        calc_sum_rate_func=calc_sum_rate_no_iui,
+        calc_reward_funcs=calc_reward_funcs,
     )
