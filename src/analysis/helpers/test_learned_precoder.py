@@ -85,6 +85,35 @@ def test_sac_precoder_user_distance_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+def test_sac_user_number_sweep(
+        config: 'import src.config.config',
+        user_number_sweep_range: np.ndarray,
+        monte_carlo_iterations: int,
+        model_path: Path,
+        metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
+) -> None:
+    """Test a RSMA precoder over a range of user numbers"""
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate)
+    if 'fairness' in metrics:
+        calc_reward_funcs.append(calc_jain_fairness)
+
+    sac_complete_network, norm_factors = load_model(model_path)
+
+    if norm_factors != {}:
+        config.config_learner.get_state_args['norm_state'] = True
+
+    test_precoder_user_sweep(
+        config=config,
+        user_number_sweep_range=user_number_sweep_range,
+        precoder_name='learned_sac',
+        monte_carlo_iterations=monte_carlo_iterations,
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned(cfg, usr_man, sat_man, norm_factors,
+                                                                                   sac_complete_network),
+        calc_reward_funcs=calc_reward_funcs,
+    )
 
 def test_sac_precoder_decentralized_blind_error_sweep(
         config: 'src.config.config.Config',
@@ -263,6 +292,36 @@ def test_learned_rsma_complete_user_distance_sweep(
         monte_carlo_iterations=monte_carlo_iterations,
         mode='user',
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_complete(cfg, usr_man, sat_man, norm_factors, rsma_network),
+        calc_reward_funcs=calc_reward_funcs,
+    )
+
+def test_learned_rsma_complete_user_number_sweep(
+        config: 'import src.config.config',
+        user_number_sweep_range: np.ndarray,
+        monte_carlo_iterations: int,
+        model_path: Path,
+        metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
+) -> None:
+    """Test a RSMA precoder over a range of user numbers"""
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate_RSMA)
+    if 'fairness' in metrics:
+        calc_reward_funcs.append(calc_jain_fairness_RSMA)
+
+    rsma_complete_network, norm_factors = load_model(model_path)
+
+    if norm_factors != {}:
+        config.config_learner.get_state_args['norm_state'] = True
+
+    test_precoder_user_sweep(
+        config=config,
+        user_number_sweep_range=user_number_sweep_range,
+        precoder_name='learned_rsma_complete',
+        monte_carlo_iterations=monte_carlo_iterations,
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_learned_rsma_complete(cfg, usr_man, sat_man, norm_factors,
+                                                                                   rsma_complete_network),
         calc_reward_funcs=calc_reward_funcs,
     )
 

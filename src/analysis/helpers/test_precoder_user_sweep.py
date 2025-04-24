@@ -48,7 +48,7 @@ def test_precoder_user_sweep(
 
     def save_results():
         name = f'testing_{precoder_name}sweep_{round(user_number_sweep_range[0])}_{round(user_number_sweep_range[-1])}.gzip'
-        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'distance_sweep')
+        results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'user_number_sweep')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump([user_number_sweep_range, metrics], file=file)

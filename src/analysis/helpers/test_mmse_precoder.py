@@ -6,6 +6,7 @@ from src.data.calc_fairness import calc_jain_fairness
 from src.data.calc_sum_rate import calc_sum_rate
 from src.analysis.helpers.test_precoder_error_sweep import test_precoder_error_sweep
 from src.analysis.helpers.test_precoder_user_distance_sweep import test_precoder_user_distance_sweep
+from src.analysis.helpers.test_precoder_user_sweep import test_precoder_user_sweep
 from src.utils.get_precoding import (
     get_precoding_mmse,
     get_precoding_mmse_decentralized_limited,
@@ -62,6 +63,29 @@ def test_mmse_precoder_user_distance_sweep(
         get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mmse(cfg, usr_man, sat_man),
         calc_reward_funcs=calc_reward_funcs,
     )
+
+def test_mmse_precoder_user_sweep(
+    config: 'src.config.config.Config',
+    user_number_sweep_range: np.ndarray,
+    monte_carlo_iterations: int,
+    metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
+) -> None:
+
+    calc_reward_funcs = []
+    if 'sumrate' in metrics:
+        calc_reward_funcs.append(calc_sum_rate)
+    if 'fairness' in metrics:
+        calc_reward_funcs.append(calc_jain_fairness)
+
+    test_precoder_user_sweep(
+        config=config,
+        user_number_sweep_range=user_number_sweep_range,
+        monte_carlo_iterations=monte_carlo_iterations,
+        precoder_name='mmse',
+        get_precoder_func=lambda cfg, usr_man, sat_man: get_precoding_mmse(cfg, usr_man, sat_man),
+        calc_reward_funcs=calc_reward_funcs,
+    )
+
 
 
 def test_mmse_precoder_satellite_distance_sweep(
