@@ -33,7 +33,7 @@ def test_sac_precoder_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test the learned SAC precoder for a range of error configuration with monte carlo average."""
 
     calc_reward_funcs = []
@@ -44,7 +44,7 @@ def test_sac_precoder_error_sweep(
 
     precoder_network, norm_factors = load_model(model_path)
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -54,6 +54,8 @@ def test_sac_precoder_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 
 def test_sac_precoder_user_distance_sweep(
         config: 'src.config.config.Config',
@@ -61,7 +63,7 @@ def test_sac_precoder_user_distance_sweep(
         model_path: Path,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test a precoder over a range of distances with zero error."""
 
     calc_reward_funcs = []
@@ -75,7 +77,7 @@ def test_sac_precoder_user_distance_sweep(
     if norm_factors != {}:
         config.config_learner.get_state_args['norm_state'] = True
 
-    test_precoder_user_distance_sweep(
+    metrics = test_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='learned',
@@ -85,13 +87,15 @@ def test_sac_precoder_user_distance_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 def test_sac_user_number_sweep(
         config: 'import src.config.config',
         user_number_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         model_path: Path,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test a RSMA precoder over a range of user numbers"""
 
     calc_reward_funcs = []
@@ -105,7 +109,7 @@ def test_sac_user_number_sweep(
     if norm_factors != {}:
         config.config_learner.get_state_args['norm_state'] = True
 
-    test_precoder_user_sweep(
+    metrics = test_precoder_user_sweep(
         config=config,
         user_number_sweep_range=user_number_sweep_range,
         precoder_name='learned_sac',
@@ -115,6 +119,8 @@ def test_sac_user_number_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 def test_sac_precoder_decentralized_blind_error_sweep(
         config: 'src.config.config.Config',
         models_path: Path,
@@ -122,7 +128,7 @@ def test_sac_precoder_decentralized_blind_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test decentralized learned SAC precoders for a range of error configuration with monte carlo average."""
 
     calc_reward_funcs = []
@@ -133,7 +139,7 @@ def test_sac_precoder_decentralized_blind_error_sweep(
 
     precoder_networks, norm_factors = load_models(models_path)
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -143,6 +149,8 @@ def test_sac_precoder_decentralized_blind_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 
 def test_sac_precoder_decentralized_limited_error_sweep(
         config: 'src.config.config.Config',
@@ -151,7 +159,7 @@ def test_sac_precoder_decentralized_limited_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
 
     calc_reward_funcs = []
     if 'sumrate' in metrics:
@@ -171,7 +179,7 @@ def test_sac_precoder_decentralized_limited_error_sweep(
     else:
         raise ValueError('Unknown decentralized_limited scenario')
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -181,6 +189,8 @@ def test_sac_precoder_decentralized_limited_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 
 def test_adapted_slnr_complete_error_sweep(
         config: 'src.config.config.Config',
@@ -189,7 +199,7 @@ def test_adapted_slnr_complete_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
 
     calc_reward_funcs = []
     if 'sumrate' in metrics:
@@ -199,7 +209,7 @@ def test_adapted_slnr_complete_error_sweep(
 
     scaling_network, norm_factors = load_model(model_path)
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -209,6 +219,8 @@ def test_adapted_slnr_complete_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 
 def test_adapted_slnr_powerscaled_error_sweep(
         config: 'src.config.config.Config',
@@ -217,7 +229,7 @@ def test_adapted_slnr_powerscaled_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
 
     calc_reward_funcs = []
     if 'sumrate' in metrics:
@@ -227,7 +239,7 @@ def test_adapted_slnr_powerscaled_error_sweep(
 
     scaling_network, norm_factors = load_model(model_path)
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -237,6 +249,8 @@ def test_adapted_slnr_powerscaled_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 
 def test_learned_rsma_complete_error_sweep(
         config: 'src.config.config.Config',
@@ -245,7 +259,7 @@ def test_learned_rsma_complete_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
 
     calc_reward_funcs = []
     if 'sumrate' in metrics:
@@ -255,7 +269,7 @@ def test_learned_rsma_complete_error_sweep(
 
     rsma_network, norm_factors = load_model(model_path)
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -265,13 +279,15 @@ def test_learned_rsma_complete_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 def test_learned_rsma_complete_user_distance_sweep(
         config: 'src.config.config.Config',
         distance_sweep_range: np.ndarray,
         model_path: Path,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test a precoder over a range of distances with zero error."""
 
     calc_reward_funcs = []
@@ -285,7 +301,7 @@ def test_learned_rsma_complete_user_distance_sweep(
     if norm_factors != {}:
         config.config_learner.get_state_args['norm_state'] = True
 
-    test_precoder_user_distance_sweep(
+    metrics = test_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='learned_rsma_full',
@@ -295,13 +311,15 @@ def test_learned_rsma_complete_user_distance_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 def test_learned_rsma_complete_user_number_sweep(
         config: 'import src.config.config',
         user_number_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         model_path: Path,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test a RSMA precoder over a range of user numbers"""
 
     calc_reward_funcs = []
@@ -315,7 +333,7 @@ def test_learned_rsma_complete_user_number_sweep(
     if norm_factors != {}:
         config.config_learner.get_state_args['norm_state'] = True
 
-    test_precoder_user_sweep(
+    metrics = test_precoder_user_sweep(
         config=config,
         user_number_sweep_range=user_number_sweep_range,
         precoder_name='learned_rsma_complete',
@@ -325,6 +343,8 @@ def test_learned_rsma_complete_user_number_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 def test_learned_rsma_power_factor_error_sweep(
         config: 'src.config.config.Config',
         model_path: Path,
@@ -332,7 +352,7 @@ def test_learned_rsma_power_factor_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
 
     calc_reward_funcs = []
     if 'sumrate' in metrics:
@@ -342,7 +362,7 @@ def test_learned_rsma_power_factor_error_sweep(
 
     rsma_power_factor_network, norm_factors = load_model(model_path)
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -352,13 +372,15 @@ def test_learned_rsma_power_factor_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 def test_learned_rsma_power_factor_user_distance_sweep(
         config: 'src.config.config.Config',
         distance_sweep_range: np.ndarray,
         model_path: Path,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test a precoder over a range of distances with zero error."""
 
     calc_reward_funcs = []
@@ -372,7 +394,7 @@ def test_learned_rsma_power_factor_user_distance_sweep(
     if norm_factors != {}:
         config.config_learner.get_state_args['norm_state'] = True
 
-    test_precoder_user_distance_sweep(
+    metrics = test_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='learned_rsma_power_factor',
@@ -383,13 +405,15 @@ def test_learned_rsma_power_factor_user_distance_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 def test_learned_rsma_power_factor_user_number_sweep(
         config: 'import src.config.config',
         user_number_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         model_path: Path,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test a RSMA precoder over a range of user numbers"""
 
     calc_reward_funcs = []
@@ -403,7 +427,7 @@ def test_learned_rsma_power_factor_user_number_sweep(
     if norm_factors != {}:
         config.config_learner.get_state_args['norm_state'] = True
 
-    test_precoder_user_sweep(
+    metrics = test_precoder_user_sweep(
         config=config,
         user_number_sweep_range=user_number_sweep_range,
         precoder_name='learned_rsma_power_factor',
@@ -412,3 +436,5 @@ def test_learned_rsma_power_factor_user_number_sweep(
                                                                                    rsma_power_factor_network),
         calc_reward_funcs=calc_reward_funcs,
     )
+
+    return metrics

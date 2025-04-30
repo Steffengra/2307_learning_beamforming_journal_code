@@ -13,7 +13,7 @@ from src.utils.get_precoding import get_precoding_rsma
 
 def main():
 
-    rsma_factors = np.arange(0, 1, step=0.1)
+    rsma_factors = np.arange(0, 1+0.1, step=0.1)
 
     cfg = Config()
     sat_man = SatelliteManager(config=cfg)
@@ -26,9 +26,10 @@ def main():
     for rsma_idx, rsma_factor in enumerate(rsma_factors):
         rsma_precoding_matrix = get_precoding_rsma(
             config=cfg,
+            user_manager=usr_man,
             satellite_manager=sat_man,
             rsma_factor=rsma_factor,
-            common_part_precoding_style='basic',
+            common_part_precoding_style='MRT',
         )
 
         sum_rates[rsma_idx] = calc_sum_rate_RSMA(

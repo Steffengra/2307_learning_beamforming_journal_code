@@ -36,7 +36,7 @@ def test_precoder_error_sweep(
     monte_carlo_iterations: int,
     get_precoder_func,
     calc_reward_funcs: list,
-) -> None:
+) -> dict:
     """Test a precoder for a range of error configuration with monte carlo average."""
 
     def progress_print() -> None:
@@ -142,3 +142,5 @@ def test_precoder_error_sweep(
             ylabel=str(metric),
             title=precoder_name,
         )
+
+    return metrics
