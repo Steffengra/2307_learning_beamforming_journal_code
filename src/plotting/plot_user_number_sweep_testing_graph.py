@@ -1,4 +1,3 @@
-
 import gzip
 import pickle
 
@@ -18,7 +17,7 @@ from src.config.config_plotting import (
 )
 
 
-def plot_distance_sweep_testing_graph(
+def plot_user_number_sweep_testing_graph(
         paths,
         name,
         width,
@@ -29,6 +28,7 @@ def plot_distance_sweep_testing_graph(
         markerstyle: list or None = None,
         linestyles: list or None = None,
         metric: str = 'sumrate'
+
 ) -> None:
 
     def get_metric_key(data_dict):
@@ -53,7 +53,6 @@ def plot_distance_sweep_testing_graph(
         with gzip.open(path, 'rb') as file:
             data.append(pickle.load(file))
     for data_id, data_entry in enumerate(data):
-        #first_entry = list(data_entry[1]['sum_rate'].keys())[0]
         metric_key = get_metric_key(data_entry)
 
         if markerstyle is not None:
@@ -83,19 +82,20 @@ def plot_distance_sweep_testing_graph(
                 data_entry[1][metric_key]['mean'],
                 color=color,
                 marker=marker,
-                #markevery=markevery,
+                # markevery=markevery,
                 linestyle=linestyle
                 )
 
-    ax.set_xlabel('User Distance $ D_{usr} $ [m]')
+    ax.set_xlabel('User Number $ K $')
 
     if metric == 'sumrate':
         ax.set_ylabel('Rate $ R $ [bps/Hz]')
     elif metric == 'fairness':
         ax.set_ylabel('Fairness $F$')
 
+
     if legend:
-        ax.legend(legend, ncols=3)
+        ax.legend(legend, ncols=2)
 
     generic_styling(ax=ax)
     fig.tight_layout(pad=0)
@@ -110,17 +110,24 @@ if __name__ == '__main__':
 
     data_paths = [
         Path(cfg.output_metrics_path,
-             'test', 'distance_sweep',
-             'testing_mmse_usersweep_12500_37500.gzip'),
+             'test', 'user_number_sweep',
+             'testing_mmse_sweep_1_16.gzip'),
         Path(cfg.output_metrics_path,
-             'test', 'distance_sweep',
-             'testing_learned_usersweep_12500_37500.gzip'),
+             'test', 'user_number_sweep',
+             'testing_learned_sac_sweep_1_16.gzip'),
         Path(cfg.output_metrics_path,
-             'test', 'distance_sweep',
-             'testing_learned_rsma_full_usersweep_12500_37500.gzip'),
+             'test', 'user_number_sweep',
+             'testing_learned_rsma_complete_sweep_1_16.gzip'),
         Path(cfg.output_metrics_path,
-             'test', 'distance_sweep',
-             'testing_learned_rsma_power_factor_usersweep_12500_37500.gzip'),
+             'test', 'user_number_sweep',
+             'testing_learned_rsma_power_factor_sweep_1_16.gzip'),
+        # Path(cfg.output_metrics_path,
+        #      'sat_2_ant_4_usr_3_satdist_10000_usrdist_1000', 'distance_sweep',
+        #      'testing_sac_error_0.1_userwiggle_30_snap_3.422_sweep_970.0_1029.9899999999454.gzip'),
+        # Path(cfg.output_metrics_path,
+        #      'sat_2_ant_4_usr_3_satdist_10000_usrdist_1000', 'distance_sweep',
+        #      'testing_mrc_sweep_970.0_1029.9899999999454.gzip'),
+
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
@@ -131,10 +138,10 @@ if __name__ == '__main__':
     plot_colors = [plot_cfg.cp2['gold'],plot_cfg.cp2['blue'], plot_cfg.cp2['magenta'], plot_cfg.cp2['black']]
     plot_linestyles = ['-','-', '-', '--']
 
-    plot_distance_sweep_testing_graph(
+    plot_user_number_sweep_testing_graph(
         paths=data_paths,
         metric='fairness',
-        name='dist_sweep_test_long',
+        name='user_sweep_test_long',
         width=plot_width,
         height=plot_height,
         legend=plot_legend,

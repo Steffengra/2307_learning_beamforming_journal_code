@@ -47,7 +47,7 @@ def test_precoder_user_sweep(
         progress_printer(progress=progress, real_time_start=real_time_start)
 
     def save_results():
-        name = f'testing_{precoder_name}sweep_{round(user_number_sweep_range[0])}_{round(user_number_sweep_range[-1])}.gzip'
+        name = f'testing_{precoder_name}_sweep_{round(user_number_sweep_range[0])}_{round(user_number_sweep_range[-1])}.gzip'
         results_path = Path(config.output_metrics_path, config.config_learner.training_name, 'user_number_sweep')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
