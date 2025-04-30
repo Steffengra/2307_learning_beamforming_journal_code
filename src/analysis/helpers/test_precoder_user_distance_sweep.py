@@ -37,7 +37,7 @@ def test_precoder_user_distance_sweep(
     mode: str,
     get_precoder_func,
     calc_reward_funcs: list,
-) -> None:
+) -> dict:
     """
     Calculate the sum rates that a given precoder achieves for a given config
     over a given range of inter-user-distances or inter-satellite-distances with no channel error
@@ -133,3 +133,5 @@ def test_precoder_user_distance_sweep(
 
     if config.show_plots:
         plt_show()
+
+    return metrics

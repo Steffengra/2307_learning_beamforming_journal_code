@@ -16,7 +16,7 @@ def test_robust_slnr_precoder_error_sweep(
         error_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test the robust SLNR precoder for a range of error configuration with monte carlo average."""
 
     calc_reward_funcs = []
@@ -25,7 +25,7 @@ def test_robust_slnr_precoder_error_sweep(
     if 'fairness' in metrics:
         calc_reward_funcs.append(calc_jain_fairness)
 
-    test_precoder_error_sweep(
+    metrics = test_precoder_error_sweep(
         config=config,
         error_sweep_parameter=error_sweep_parameter,
         error_sweep_range=error_sweep_range,
@@ -35,13 +35,15 @@ def test_robust_slnr_precoder_error_sweep(
         calc_reward_funcs=calc_reward_funcs,
     )
 
+    return metrics
+
 
 def test_robust_slnr_precoder_distance_sweep(
         config: 'src.config.config.Config',
         distance_sweep_range: np.ndarray,
         monte_carlo_iterations: int,
         metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
-) -> None:
+) -> dict:
     """Test the robust SLNR precoder over a range of distances with zero error."""
 
     calc_reward_funcs = []
@@ -50,7 +52,7 @@ def test_robust_slnr_precoder_distance_sweep(
     if 'fairness' in metrics:
         calc_reward_funcs.append(calc_jain_fairness)
 
-    test_precoder_user_distance_sweep(
+    metrics = test_precoder_user_distance_sweep(
         config=config,
         distance_sweep_range=distance_sweep_range,
         precoder_name='robust_slnr',
@@ -59,3 +61,5 @@ def test_robust_slnr_precoder_distance_sweep(
         get_precoder_func=lambda cfg, sat_man: get_precoding_robust_slnr(cfg, sat_man),
         calc_reward_funcs=calc_reward_funcs,
     )
+
+    return metrics
