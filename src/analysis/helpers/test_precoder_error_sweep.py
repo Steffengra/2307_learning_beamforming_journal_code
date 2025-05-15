@@ -5,6 +5,7 @@ import gzip
 import pickle
 
 import numpy as np
+from matplotlib.pyplot import show as plt_show
 
 import src
 from src.data.satellite_manager import (
@@ -133,14 +134,18 @@ def test_precoder_error_sweep(
 
     config.config_error_model.error_rng_parametrizations[error_sweep_parameter]['args'] = initial_error_config
 
-    for metric in metrics.keys():
-        plot_sweep(
-            x=error_sweep_range,
-            y=metrics[metric]['mean'],
-            yerr=metrics[metric]['std'],
-            xlabel='error value',
-            ylabel=str(metric),
-            title=precoder_name,
-        )
+    if config.show_plots:
+
+        for metric in metrics.keys():
+            plot_sweep(
+                x=error_sweep_range,
+                y=metrics[metric]['mean'],
+                yerr=metrics[metric]['std'],
+                xlabel='error value',
+                ylabel=str(metric),
+                title=precoder_name,
+            )
+
+        plt_show()
 
     return metrics

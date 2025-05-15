@@ -121,17 +121,19 @@ def test_precoder_user_distance_sweep(
 
     save_results()
 
-    for metric in metrics.keys():
-        plot_sweep(
-            x=distance_sweep_range,
-            y=metrics[metric]['mean'],
-            yerr=metrics[metric]['std'],
-            xlabel='user distance',
-            ylabel=str(metric),
-            title=precoder_name,
-        )
-
     if config.show_plots:
+
+        for metric in metrics.keys():
+            plot_sweep(
+                x=distance_sweep_range,
+                y=metrics[metric]['mean'],
+                yerr=metrics[metric]['std'],
+                xlabel='user distance',
+                ylabel=str(metric),
+                title=precoder_name,
+            )
+
+
         plt_show()
 
     return metrics

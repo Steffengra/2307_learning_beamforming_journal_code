@@ -14,7 +14,7 @@ from src.config.config import (
 from src.config.config_plotting import (
     PlotConfig,
     save_figures,
-    generic_styling,
+    generic_styling, change_lightness,
 )
 
 
@@ -83,7 +83,7 @@ def plot_distance_sweep_testing_graph(
                 data_entry[1][metric_key]['mean'],
                 color=color,
                 marker=marker,
-                #markevery=markevery,
+                markevery=7,
                 linestyle=linestyle
                 )
 
@@ -111,29 +111,35 @@ if __name__ == '__main__':
     data_paths = [
         Path(cfg.output_metrics_path,
              'test', 'distance_sweep',
-             'testing_mmse_usersweep_12500_37500.gzip'),
+             'testing_rsma_user_sweep_alpha_0_0_50000.gzip'),
         Path(cfg.output_metrics_path,
              'test', 'distance_sweep',
-             'testing_learned_usersweep_12500_37500.gzip'),
+             'testing_rsma_user_sweep_alpha_0_5_0_50000.gzip'),
         Path(cfg.output_metrics_path,
              'test', 'distance_sweep',
-             'testing_learned_rsma_full_usersweep_12500_37500.gzip'),
+             'testing_rsma_user_sweep_alpha_0_75_0_50000.gzip'),
         Path(cfg.output_metrics_path,
              'test', 'distance_sweep',
-             'testing_learned_rsma_power_factor_usersweep_12500_37500.gzip'),
+             'testing_rsma_user_sweep_alpha_1_0_50000.gzip'),
+        Path(cfg.output_metrics_path,
+             'test', 'distance_sweep',
+             'testing_learned_rsma_power_factor_usersweep_0_50000.gzip'),
+        Path(cfg.output_metrics_path,
+             'test', 'user_distance_sweep',
+             'testing_rsma_genie_sweep_0.0_50000.0.gzip'),
     ]
 
     plot_width = 0.99 * plot_cfg.textwidth
-    plot_height = plot_width * 0.42
+    plot_height = plot_width * 0.66
 
-    plot_legend = ['MMSE','SAC', 'RSMA full', 'RSMA power']
-    plot_markerstyle = ['v','o', 's', '^']
-    plot_colors = [plot_cfg.cp2['gold'],plot_cfg.cp2['blue'], plot_cfg.cp2['magenta'], plot_cfg.cp2['black']]
-    plot_linestyles = ['-','-', '-', '--']
+    plot_legend = ['$ \\alpha =0 $', '$ \\alpha =0.5 $', '$ \\alpha =0.75 $', '$ \\alpha =1 $','RSMA power','RSMA power genie']
+    plot_markerstyle = [ '', '', '', '','d','']
+    plot_colors = [ change_lightness(plot_cfg.cp2['blue'], 0.5), plot_cfg.cp2['blue'], change_lightness(plot_cfg.cp2['green'], 0.5), plot_cfg.cp2['green'],plot_cfg.cp2['gold'],plot_cfg.cp2['magenta']]
+    plot_linestyles = [ ':', ':', ':', ':','-','-']
 
     plot_distance_sweep_testing_graph(
         paths=data_paths,
-        metric='fairness',
+        metric='sumrate',
         name='dist_sweep_test_long',
         width=plot_width,
         height=plot_height,

@@ -55,7 +55,10 @@ def test_precoder_user_sweep(
 
     config.user_nr = user_number_sweep_range[-1]
 
-    config.user_activity_selection = 'keep_as_is'
+    if 'area_constant' in config.user_activity_selection:
+        config.user_activity_selection = 'keep_as_is_area_constant'
+    elif 'area_flexible' in config.user_activity_selection:
+        config.user_activity_selection = 'keep_as_is_area_flexible'
 
     satellite_manager = SatelliteManager(config=config)
     user_manager = UserManager(config=config)
@@ -79,6 +82,7 @@ def test_precoder_user_sweep(
         user_mask = np.concatenate([np.ones(user_number_value), np.zeros(user_number_sweep_range[-1] - user_number_value)])
         user_mask = np.roll(user_mask, int(user_number_sweep_range[-1]/2)-int(user_number_value/2))  # move users to center to keep block with same distances
         user_manager.set_active_users(user_mask)
+        user_manager.update_positions(config=config)
 
         # set up per monte carlo metrics
         metrics_per_monte_carlo = np.zeros((len(calc_reward_funcs), monte_carlo_iterations))
@@ -117,17 +121,19 @@ def test_precoder_user_sweep(
                 print(f'{error_sweep_value:.2f}: {metric} - {mean_metric:.2f}+-{std_metric:.4f}')
     save_results()
 
-    for metric in metrics.keys():
-        plot_sweep(
-            x=user_number_sweep_range,
-            y=metrics[metric]['mean'],
-            yerr=metrics[metric]['std'],
-            xlabel='user number',
-            ylabel=str(metric),
-            title=precoder_name,
-        )
-
     if config.show_plots:
+
+        for metric in metrics.keys():
+            plot_sweep(
+                x=user_number_sweep_range,
+                y=metrics[metric]['mean'],
+                yerr=metrics[metric]['std'],
+                xlabel='user number',
+                ylabel=str(metric),
+                title=precoder_name,
+            )
+
+
         plt_show()
 
     return metrics

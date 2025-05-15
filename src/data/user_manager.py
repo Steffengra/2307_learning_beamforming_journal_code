@@ -19,11 +19,12 @@ class UserManager:
         self.logger = config.logger.getChild(__name__)
 
         self.users: list[src.data.user.User] = []
-        self._initialize_users(config=config)
 
         self.user_mask: np.ndarray = None
         self.active_user_idx: np.ndarray = None
-        self.set_active_users(np.ones(len(self.users)))
+        self.set_active_users(np.ones(config.user_nr))
+
+        self._initialize_users(config=config)
 
         self.logger.info('user setup complete')
 
@@ -33,12 +34,24 @@ class UserManager:
     ) -> (np.ndarray, list):
         """TODO: Comment"""
 
+        active_user_nr = sum(self.user_mask)
+
+        if 'area_constant' in config.user_activity_selection:
+            #config.user_dist_bound = config.user_dist_average / config.user_dist_bound
+            if active_user_nr > 1:
+                config.user_dist_average = config.user_area/(active_user_nr-1)
+            elif active_user_nr == 1:
+                config.user_dist_average = config.user_area
+
+        print(active_user_nr)
+        print(config.user_dist_average)
+
         # calculate average user positions
         user_pos_average = (np.arange(0, config.user_nr, dtype='float128') - (config.user_nr - 1) / 2) * config.user_dist_average
 
         # add random value on user distances
-        random_factor = self.rng.uniform(low=-config.user_dist_bound,
-                                         high=config.user_dist_bound,
+        random_factor = self.rng.uniform(low=-config.user_dist_bound * config.user_dist_average,
+                                         high=config.user_dist_bound * config.user_dist_average,
                                          size=config.user_nr)
         # random_factor = self.rng.choice([-config.user_dist_bound, 0, config.user_dist_bound])
         user_dist = user_pos_average + random_factor

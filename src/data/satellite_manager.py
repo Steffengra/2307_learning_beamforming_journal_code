@@ -39,8 +39,8 @@ class SatelliteManager:
         sat_pos_average = (np.arange(0, config.sat_nr, dtype='float128') - (config.sat_nr - 1) / 2) * config.sat_dist_average
 
         # add random value on satellite distances
-        random_factor = self.rng.uniform(low=-config.sat_dist_bound,
-                                         high=config.sat_dist_bound,
+        random_factor = self.rng.uniform(low=-config.sat_dist_bound * config.sat_dist_average,
+                                         high=config.sat_dist_bound * config.sat_dist_average,
                                          size=config.sat_nr)
         sat_dist = sat_pos_average + random_factor
 

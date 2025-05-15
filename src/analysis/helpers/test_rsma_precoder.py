@@ -77,7 +77,7 @@ def test_rsma_precoder_user_number_sweep(
     metrics: list = ['sumrate'],  # 'sumrate', 'fairness'
 ) -> dict:
 
-    metrics = calc_reward_funcs = []
+    calc_reward_funcs = []
     if 'sumrate' in metrics:
         calc_reward_funcs.append(calc_sum_rate_RSMA)
     if 'fairness' in metrics:
