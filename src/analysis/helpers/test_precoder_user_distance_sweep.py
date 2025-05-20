@@ -83,7 +83,7 @@ def test_precoder_user_distance_sweep(
             config.sat_dist_average = distance_sweep_value
             config.sat_dist_bound = 0
 
-        config.config_error_model.set_zero_error()
+        # config.config_error_model.set_zero_error()
 
         for iter_idx in range(monte_carlo_iterations):
 

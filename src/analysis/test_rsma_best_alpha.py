@@ -13,8 +13,8 @@ from src.analysis.helpers.test_rsma_precoder import test_rsma_precoder_user_dist
 def main():
 
     rsma_factors = np.arange(0, 1+0.1, step=0.1)  # exclusive interval
-    common_part_precoding_style = 'MRT'
-    monte_carlo_iterations = 100
+    common_part_precoding_style = 'basic'
+    monte_carlo_iterations = 10000
 
     distance_sweep_range = np.linspace(0, 50_000, 100)
 

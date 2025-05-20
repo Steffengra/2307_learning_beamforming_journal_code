@@ -43,9 +43,6 @@ class UserManager:
             elif active_user_nr == 1:
                 config.user_dist_average = config.user_area
 
-        print(active_user_nr)
-        print(config.user_dist_average)
-
         # calculate average user positions
         user_pos_average = (np.arange(0, config.user_nr, dtype='float128') - (config.user_nr - 1) / 2) * config.user_dist_average
 
