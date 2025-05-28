@@ -224,7 +224,7 @@ def train_sac(
                 w_precoder=w_precoder_normed,
                 noise_power_watt=config.noise_power_watt,
             )
-            reward = sum_rate_reward+fairness_reward
+            reward = sum_rate_reward
             step_experience['reward'] = reward
 
             # optionally add the corresponding mmse precoder to the data set

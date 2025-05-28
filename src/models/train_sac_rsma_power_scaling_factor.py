@@ -35,6 +35,9 @@ from src.models.helpers.get_state_norm_factors import (
 from src.data.calc_sum_rate_RSMA import (
     calc_sum_rate_RSMA,
 )
+from src.data.calc_fairness_RSMA import (
+    calc_jain_fairness_RSMA,
+)
 from src.data.precoder.mmse_precoder import (
     mmse_precoder_normalized,
 )
@@ -213,7 +216,7 @@ def train_sac_RSMA_power_scaling_factor(
                 noise_power_watt=config.noise_power_watt,
                 power_constraint_watt=config.power_constraint_watt,
                 rsma_factor=rsma_factor,
-                common_part_precoding_style='MRT',
+                common_part_precoding_style='basic',
             )
             #real_vector_to_half_complex_vector(action)
             # w_precoder_vector = rad_and_phase_to_complex_vector(action)
@@ -223,11 +226,17 @@ def train_sac_RSMA_power_scaling_factor(
             #print(w_precoder_normed)
 
             # step simulation based on action, determine reward
-            reward = calc_sum_rate_RSMA(
+            sum_rate_reward = calc_sum_rate_RSMA(
                 channel_state=satellite_manager.channel_state_information,
                 w_precoder=w_precoder,
                 noise_power_watt=config.noise_power_watt,
             )
+            fairness_reward = calc_jain_fairness_RSMA(
+                channel_state=satellite_manager.channel_state_information,
+                w_precoder=w_precoder_normed,
+                noise_power_watt=config.noise_power_watt,
+            )
+            reward = sum_rate_reward
             step_experience['reward'] = reward
             #print(reward)
             #exit()

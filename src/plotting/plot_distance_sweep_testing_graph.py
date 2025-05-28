@@ -123,7 +123,7 @@ if __name__ == '__main__':
              'testing_rsma_user_sweep_alpha_1_0_50000.gzip'),
         Path(cfg.output_metrics_path,
              'test', 'distance_sweep',
-             'testing_learned_rsma_power_factor_usersweep_0_50000.gzip'),
+             'testing_learned_rsma_power_factor_usersweep_0_50000_without_error.gzip'),
         Path(cfg.output_metrics_path,
              'test', 'user_distance_sweep',
              'testing_rsma_genie_sweep_0.0_50000.0.gzip'),

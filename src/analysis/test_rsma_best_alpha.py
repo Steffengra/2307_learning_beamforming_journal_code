@@ -12,9 +12,9 @@ from src.analysis.helpers.test_rsma_precoder import test_rsma_precoder_user_dist
 
 def main():
 
-    rsma_factors = np.arange(0, 1+0.1, step=0.1)  # exclusive interval
+    rsma_factors = np.arange(0, 1+0.01, step=0.01)  # exclusive interval
     common_part_precoding_style = 'basic'
-    monte_carlo_iterations = 10000
+    monte_carlo_iterations = 10
 
     distance_sweep_range = np.linspace(0, 50_000, 100)
 
@@ -47,8 +47,8 @@ def main():
     best_indices = np.argmax(results, axis=0)
     fairness_at_best = results_fairness[best_indices, np.arange(results.shape[1])]
     best_power_factor = rsma_factors[best_indices]
-    print(best_values.shape)
-    print(fairness_at_best.shape)
+    # print(best_values.shape)
+    # print(fairness_at_best.shape)
     # fairness_at_best_indices = results_fairness[:,best_indices]
     # print(fairness_at_best_indices)
     # print(fairness_at_best_indices.shape)
@@ -74,7 +74,7 @@ def main():
             f'_sweep_{distance_sweep_range[0]}_{distance_sweep_range[-1]}'
             f'.gzip'
         )
-        results_path = Path(cfg.output_metrics_path, cfg.config_learner.training_name, 'user_distance_sweep')
+        results_path = Path(cfg.output_metrics_path, cfg.config_learner.training_name, 'user_distance_sweep_best_alpha')
         results_path.mkdir(parents=True, exist_ok=True)
         with gzip.open(Path(results_path, name), 'wb') as file:
             pickle.dump([distance_sweep_range, metrics], file=file)

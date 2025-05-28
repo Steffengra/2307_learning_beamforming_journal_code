@@ -227,7 +227,7 @@ def train_sac_RSMA(
                 w_precoder=w_precoder_normed,
                 noise_power_watt=config.noise_power_watt,
             )
-            reward = fairness_reward #sum_rate_reward +
+            reward = sum_rate_reward
             step_experience['reward'] = reward
             #print(reward)
             #exit()
