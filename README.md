@@ -3,10 +3,10 @@
 # Work in progress
 This code was used in the following unpublished work [(preprint not available yet)](url).
 
-[1] Steffen Gracla, Alea Schröder, Carsten Bockelmann, Armin Dekorsy,
+[1] Alea Schröder, Steffen Gracla, Carsten Bockelmann, Dirk Wübben, Armin Dekorsy,
 "Model-free Robust Beamforming in Satellite Downlink using Reinforcement Learning", under review.
 
-Email: {**gracla**, **schroeder**, bockelmann, dekorsy}@ant.uni-bremen.de
+Email: {**schroeder**, **gracla**, bockelmann, wuebben, dekorsy}@ant.uni-bremen.de
 
 The code version associated with this paper along with the used learned models and evaluation results is found in the releases.
 The project structure is as follows
